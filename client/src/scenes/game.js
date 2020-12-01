@@ -191,7 +191,6 @@ function touchBase(enemy, enemyBase){
 
 function decrementBlueScore(){
   score -= 1;
-  console.log(score);
   redText.setText("Blue: " + score);
   if(score < 0){
     gameOver = true;
@@ -203,7 +202,6 @@ function decrementBlueScore(){
 
 function decrementRedScore(){
   score -= 1;
-  console.log(score);
   redText.setText("Red: " + score);
   if(score < 0){
     gameOver = true;
