@@ -183,7 +183,7 @@ var EnemyBase = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function EnemyBase(scene){
-    Phaser.GameObjects.Image.call(this, scene, 715, 224, "sprites", "turret");
+    Phaser.GameObjects.Image.call(this, scene, 715, 224, "p2base");
   },
 })
 
@@ -196,10 +196,10 @@ function touchBase(enemy, enemyBase){
 
 function decrementBlueScore(){
   score -= 1;
-  redText.setText("Blue: " + score);
-  if(score < 0){
+  blueText.setText("P1 | " + score);
+  if(score <= 0){
     gameOver = true;
-    blueText.setText("Blue: 0");
+    blueText.setText("P1 | 0");
     return true;
   }
   return null;
@@ -207,10 +207,13 @@ function decrementBlueScore(){
 
 function decrementRedScore(){
   score -= 1;
-  redText.setText("Red: " + score);
-  if(score < 0){
+  redText.setText("P2 | " + score);
+  if(score <= 0){
     gameOver = true;
-    redText.setText("Red: 0");
+    redText.setText("P2 | 0");
+    this.scene.start("SceneTwo", {
+      "message": "Game Over, Player One wins!"
+    });
     return true;
   }
   return null;
@@ -240,7 +243,7 @@ function placeTurret(pointer) {
     if(resourcePoints){
     var turret = turrets.get();
     resourcePoints -= 3;
-    resourceText.setText("Resource: " + resourcePoints)
+    resourceText.setText("RESOURCE | " + resourcePoints)
     if (turret) {
       turret.setActive(true);
       turret.setVisible(true);
@@ -297,10 +300,16 @@ export default class Game extends Phaser.Scene {
     this.load.spritesheet('p1attackers', "src/assets/player1_attackers.png", { frameWidth: 70, frameHeight: 45 })
     this.load.image('p2turret', "src/assets/player2_turret.png")
     this.load.image("bullet", "src/assets/bullet.png");
+    this.load.image('scoreboard', 'src/assets/scoreboard.png')
+    this.load.image('blackboard', 'src/assets/blackboard.png')
+    this.load.spritesheet('p2base', 'src/assets/player2_base2.png', {frameWidth:70, frameHeight:85})
   }
 
   create() {
     this.add.image(400, 300, 'background');
+    this.add.image(85,508, "scoreboard")
+    this.add.image(400, 535, "blackboard")
+
     //sets the default to "you are not Player A"
     this.isPlayerA = false;
 
@@ -365,11 +374,11 @@ export default class Game extends Phaser.Scene {
       // this graphics element is only for visualization,
       // its not related to our path
 
-      resourceText = self.add.text(345, 508, `Resource: ` + resourcePoints, { fontSize: '24px', fill: 'white' })
+      resourceText = self.add.text(300, 520, `RESOURCE | ` + resourcePoints, { fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
 
-      redText = self.add.text(640, 508, `Red: ` + score, { fontSize: '24px', fill: '#FF0000' })
+      redText = self.add.text(50, 540, `P2 | ` + score, { fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
 
-      blueText = self.add.text(85, 508, `Blue: ` + score, { fontSize: '24px', fill: '#0000FF' })
+      blueText = self.add.text(50, 505, `P1 | ` + score, {fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
 
       bullets = self.physics.add.group({
         classType: Bullet,
@@ -384,7 +393,7 @@ export default class Game extends Phaser.Scene {
       self.physics.add.overlap(enemies, bullets, damageEnemy);
 
       self.physics.add.collider(enemies, enemyBase, touchBase, decrementRedScore, self);
-    });
+
 
 
 
@@ -410,9 +419,9 @@ export default class Game extends Phaser.Scene {
     //that an enemy has been deployed
     // if its time for the next enemy
 
-//     if(gameOver){
-//       return;
-//     }
+    // if(gameOver){
+
+    // }
 //     else{
 //     if (time > this.nextEnemy) {
 //       var enemy = enemies.get();
