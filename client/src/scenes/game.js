@@ -1,14 +1,13 @@
 import io from "socket.io-client";
 
 var map = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, -1, -1, -1, -1, 0, 0, 0],
-  [0, -1, -1, 0, 0, 0, 0, -1, -1, 0],
-  [-1, 0, 0, 0, 0, 0, 0, 0, 0, -1],
-  [-1, 0, 0, 0, 0, 0, 0, 0, 0, -1],
-  [0, -1, -1, 0, 0, 0, 0, -1, -1, 0],
-  [0, 0, 0, -1, -1, -1, -1, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
+  [-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
+  [-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
+  [-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
+  [-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
 ];
 
 //var graphics;
@@ -29,7 +28,6 @@ var Enemy = new Phaser.Class({
     Phaser.GameObjects.Image.call(this, scene, 5, 256, "sprites", "enemy");
     this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     this.path = selectPath();
-    console.log(this.path);
   },
 
   startOnPath: function () {
@@ -101,7 +99,7 @@ var Turret = new Phaser.Class({
   // we will place the turret according to the grid
   place: function (i, j) {
     this.y = i * 64 + 64 / 2;
-    this.x = j * 64 + 64 / 2;
+    this.x = j * 64 + 64 / 2 + 14;
     map[i][j] = 1;
   },
   update: function (time, delta) {
@@ -165,13 +163,13 @@ var Bullet = new Phaser.Class({
 
 function drawGrid(graphics) {
   graphics.lineStyle(1, 0x0000ff, 0.8);
-  for (var i = 0; i < 8; i++) {
-    graphics.moveTo(0, i * 64);
-    graphics.lineTo(640, i * 64);
+  for (var i = 1; i < 8; i++) {
+    graphics.moveTo(80, i * 64);
+    graphics.lineTo(720, i * 64);
   }
-  for (var j = 0; j < 10; j++) {
-    graphics.moveTo(j * 64, 0);
-    graphics.lineTo(j * 64, 512);
+  for (var j = 0; j < 11; j++) {
+    graphics.moveTo(80 + j * 64, 0);
+    graphics.lineTo(80 + j * 64, 450);
   }
   graphics.strokePath();
 }
@@ -207,7 +205,6 @@ function damageEnemy(enemy, bullet) {
 
 function selectPath() {
   var randomPath = Math.floor(Math.random() * 3) + 1;
-  console.log(randomPath);
   if (randomPath === 1) return path1;
   if (randomPath === 2) return path2;
   if (randomPath === 3) return path3;
@@ -258,21 +255,20 @@ export default class Game extends Phaser.Scene {
 
       // the path for our enemies
       // parameters are the start x and y of our path
-      console.log(path1);
-      path1 = self.add.path(5, 256);
-      path1.lineTo(635, 256);
+      path1 = self.add.path(85, 224);
+      path1.lineTo(715, 224);
 
-      path2 = self.add.path(5, 256);
-      path2.lineTo(160, 128);
-      path2.lineTo(320, 64);
-      path2.lineTo(480, 128);
-      path2.lineTo(635, 256);
+      path2 = self.add.path(85, 224);
+      path2.lineTo(240, 96);
+      path2.lineTo(400, 32);
+      path2.lineTo(560, 96);
+      path2.lineTo(715, 224);
 
-      path3 = self.add.path(5, 256);
-      path3.lineTo(160, 384);
-      path3.lineTo(320, 448);
-      path3.lineTo(480, 384);
-      path3.lineTo(635, 256);
+      path3 = self.add.path(85, 224);
+      path3.lineTo(240, 352);
+      path3.lineTo(400, 416);
+      path3.lineTo(560, 352);
+      path3.lineTo(715, 224);
 
       graphics.lineStyle(3, 0xffffff, 1);
       // visualize the path

@@ -29,6 +29,11 @@ io.on("connection", function (socket) {
   //   io.emit("dealCards");
   // });
 
+  //emit setPath
+  socket.on("setPath", function () {
+    io.emit("setPath");
+  });
+
   // //emit cardPlayed
   // socket.on("cardPlayed", function (gameObject, isPlayerA) {
   //   io.emit("cardPlayed", gameObject, isPlayerA);
