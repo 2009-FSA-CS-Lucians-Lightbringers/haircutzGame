@@ -25,7 +25,7 @@ var Enemy = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Enemy(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 5, 256, "sprites", "enemy");
+    Phaser.GameObjects.Image.call(this, scene, 5, 256, "p1attackers");
     this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     this.path = selectPath();
   },
@@ -93,7 +93,7 @@ var Turret = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Turret(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 0, 0, "sprites", "turret");
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "p2turret");
     this.nextTic = 0;
   },
   // we will place the turret according to the grid
@@ -218,16 +218,15 @@ export default class Game extends Phaser.Scene {
   }
 
   preload() {
-    // load the game assets – enemy and turret atlas
-    this.load.atlas(
-      "sprites",
-      "src/assets/spritesheet.png",
-      "src/assets/spritesheet.json"
-    );
+    // load the game assets –
+    this.load.image('background', "src/assets/background.png")
+    this.load.spritesheet('p1attackers', "src/assets/player1_attackers.png", { frameWidth: 70, frameHeight: 45 })
+    this.load.image('p2turret', "src/assets/player2_turret.png")
     this.load.image("bullet", "src/assets/bullet.png");
   }
 
   create() {
+    this.add.image(400, 300, 'background');
     //sets the default to "you are not Player A"
     this.isPlayerA = false;
 
@@ -288,6 +287,8 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
     self.input.on("pointerdown", placeTurret);
+
+
 
     bullets = self.physics.add.group({
       classType: Bullet,
