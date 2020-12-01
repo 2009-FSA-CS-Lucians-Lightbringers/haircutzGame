@@ -247,54 +247,54 @@ export default class Game extends Phaser.Scene {
     //false to true.
     this.socket.on("isPlayerA", function () {
       self.isPlayerA = true;
-
-      // this graphics element is only for visualization,
-      // its not related to our path
-      var graphics = self.add.graphics();
-      drawGrid(graphics);
-
-      // the path for our enemies
-      // parameters are the start x and y of our path
-      path1 = self.add.path(85, 224);
-      path1.lineTo(715, 224);
-
-      path2 = self.add.path(85, 224);
-      path2.lineTo(240, 96);
-      path2.lineTo(400, 32);
-      path2.lineTo(560, 96);
-      path2.lineTo(715, 224);
-
-      path3 = self.add.path(85, 224);
-      path3.lineTo(240, 352);
-      path3.lineTo(400, 416);
-      path3.lineTo(560, 352);
-      path3.lineTo(715, 224);
-
-      graphics.lineStyle(3, 0xffffff, 1);
-      // visualize the path
-      path1.draw(graphics);
-      path2.draw(graphics);
-      path3.draw(graphics);
-
-      enemies = self.physics.add.group({
-        classType: Enemy,
-        runChildUpdate: true,
-      });
-      self.nextEnemy = 0;
-
-      turrets = self.physics.add.group({
-        classType: Turret,
-        runChildUpdate: true,
-      });
-      self.input.on("pointerdown", placeTurret);
-
-      bullets = self.physics.add.group({
-        classType: Bullet,
-        runChildUpdate: true,
-      });
-
-      self.physics.add.overlap(enemies, bullets, damageEnemy);
     });
+
+    // this graphics element is only for visualization,
+    // its not related to our path
+    var graphics = self.add.graphics();
+    drawGrid(graphics);
+
+    // the path for our enemies
+    // parameters are the start x and y of our path
+    path1 = self.add.path(85, 224);
+    path1.lineTo(715, 224);
+
+    path2 = self.add.path(85, 224);
+    path2.lineTo(240, 96);
+    path2.lineTo(400, 32);
+    path2.lineTo(560, 96);
+    path2.lineTo(715, 224);
+
+    path3 = self.add.path(85, 224);
+    path3.lineTo(240, 352);
+    path3.lineTo(400, 416);
+    path3.lineTo(560, 352);
+    path3.lineTo(715, 224);
+
+    graphics.lineStyle(3, 0xffffff, 1);
+    // visualize the path
+    path1.draw(graphics);
+    path2.draw(graphics);
+    path3.draw(graphics);
+
+    enemies = self.physics.add.group({
+      classType: Enemy,
+      runChildUpdate: true,
+    });
+    self.nextEnemy = 0;
+
+    turrets = self.physics.add.group({
+      classType: Turret,
+      runChildUpdate: true,
+    });
+    self.input.on("pointerdown", placeTurret);
+
+    bullets = self.physics.add.group({
+      classType: Bullet,
+      runChildUpdate: true,
+    });
+
+    self.physics.add.overlap(enemies, bullets, damageEnemy);
   }
 
   update(time, delta) {
