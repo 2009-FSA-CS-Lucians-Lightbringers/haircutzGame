@@ -24,14 +24,15 @@ io.on("connection", function (socket) {
     io.emit("isPlayerA");
   }
 
-  // //emit dealCards
-  // socket.on("dealCards", function () {
-  //   io.emit("dealCards");
-  // });
+  //emit spawnEnemy
+  socket.on("spawnEnemy", function () {
+    io.emit("spawnEnemy");
+  });
 
   //emit setPath
-  socket.on("setPath", function () {
-    io.emit("setPath");
+  socket.on("choosePath", function () {
+    console.log("CHOOSING PATH");
+    io.emit("choosePath");
   });
 
   // //emit cardPlayed
