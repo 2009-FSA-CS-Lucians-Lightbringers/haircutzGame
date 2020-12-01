@@ -14,9 +14,22 @@ var map = [
 var path1;
 var path2;
 var path3;
+var path4;
+
+// Sprites
 var enemies;
 var turrets;
 var bullets;
+var enemyBase;
+
+// Scoreboard
+var score = 5;
+var blueText;
+var redText;
+var resourcePoints = 12
+var resourceText;
+var gameOver = false;
+
 var BULLET_DAMAGE = 20;
 
 var ENEMY_SPEED = 1 / 10000;
@@ -161,6 +174,45 @@ var Bullet = new Phaser.Class({
   },
 });
 
+var EnemyBase = new Phaser.Class({
+  Extends: Phaser.GameObjects.Image,
+
+  initialize: function EnemyBase(scene){
+    Phaser.GameObjects.Image.call(this, scene, 715, 224, "sprites", "turret");
+  },
+})
+
+function touchBase(enemy, enemyBase){
+  // enemy.setActive(false);
+  // enemy.setVisible(false);
+  enemyBase.destroy();
+  // }
+}
+
+function decrementBlueScore(){
+  score -= 1;
+  console.log(score);
+  redText.setText("Blue: " + score);
+  if(score < 0){
+    gameOver = true;
+    blueText.setText("Blue: 0");
+    return true;
+  }
+  return null;
+}
+
+function decrementRedScore(){
+  score -= 1;
+  console.log(score);
+  redText.setText("Red: " + score);
+  if(score < 0){
+    gameOver = true;
+    redText.setText("Red: 0");
+    return true;
+  }
+  return null;
+}
+
 function drawGrid(graphics) {
   graphics.lineStyle(1, 0x0000ff, 0.8);
   for (var i = 1; i < 8; i++) {
@@ -182,12 +234,16 @@ function placeTurret(pointer) {
   var i = Math.floor(pointer.y / 64);
   var j = Math.floor(pointer.x / 64);
   if (canPlaceTurret(i, j)) {
+    if(resourcePoints){
     var turret = turrets.get();
+    resourcePoints -= 3;
+    resourceText.setText("Resource: " + resourcePoints)
     if (turret) {
       turret.setActive(true);
       turret.setVisible(true);
       turret.place(i, j);
     }
+  }
   }
 }
 
@@ -270,11 +326,21 @@ export default class Game extends Phaser.Scene {
       path3.lineTo(560, 352);
       path3.lineTo(715, 224);
 
+      path4 = self.add.path(400,32);
+      path4.lineTo(400, 416)
+
       graphics.lineStyle(3, 0xffffff, 1);
       // visualize the path
       path1.draw(graphics);
       path2.draw(graphics);
       path3.draw(graphics);
+      path4.draw(graphics);
+
+      resourceText = self.add.text(345, 508, `Resource: ` + resourcePoints, { fontSize: '24px', fill: 'white' })
+
+      redText = self.add.text(640, 508, `Red: ` + score, { fontSize: '24px', fill: '#FF0000' })
+
+      blueText = self.add.text(85, 508, `Blue: ` + score, { fontSize: '24px', fill: '#0000FF' })
 
       enemies = self.physics.add.group({
         classType: Enemy,
@@ -293,12 +359,24 @@ export default class Game extends Phaser.Scene {
         runChildUpdate: true,
       });
 
+      enemyBase = self.physics.add.group({
+        classType: EnemyBase,
+        runChildUpdate: true,
+      }).create();
+
       self.physics.add.overlap(enemies, bullets, damageEnemy);
+
+      self.physics.add.collider(enemies, enemyBase, touchBase, decrementRedScore, self);
     });
+
   }
 
   update(time, delta) {
     // if its time for the next enemy
+    if(gameOver){
+      return;
+    }
+    else{
     if (time > this.nextEnemy) {
       var enemy = enemies.get();
       if (enemy) {
@@ -310,7 +388,7 @@ export default class Game extends Phaser.Scene {
 
         this.nextEnemy = time + 2000;
       }
-    }
+    }}
   }
 }
 
