@@ -31,6 +31,8 @@ var resourceText;
 var gameOver = false;
 
 var BULLET_DAMAGE = 20;
+var myEnemies = [];
+var enemyNumber = -1;
 
 var ENEMY_SPEED = 1 / 10000;
 
@@ -38,13 +40,14 @@ var Enemy = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Enemy(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 5, 256, "sprites", "enemy");
+    Phaser.GameObjects.Image.call(this, scene, 85, 224, "p1attackers");
     this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
-    this.path = selectPath();
+    enemyNumber++;
+    this.number = enemyNumber;
   },
 
-  startOnPath: function () {
-    //this.path = selectPath();
+  startOnPath: function (path) {
+    this.path = path;
     // set the t parameter at the start of the path
     this.follower.t = 0;
     // get x and y of the given t point
@@ -65,19 +68,21 @@ var Enemy = new Phaser.Class({
   },
 
   update: function (time, delta) {
-    // move the t point along the path, 0 is the start and 0 is the end
-    this.follower.t += ENEMY_SPEED * delta;
+    if (this.path) {
+      // move the t point along the path, 0 is the start and 0 is the end
+      this.follower.t += ENEMY_SPEED * delta;
 
-    //get x and y of the given t point
-    this.path.getPoint(this.follower.t, this.follower.vec);
+      //get x and y of the given t point
+      this.path.getPoint(this.follower.t, this.follower.vec);
 
-    // update enemy x and y to the newly obtained x and y
-    this.setPosition(this.follower.vec.x, this.follower.vec.y);
+      // update enemy x and y to the newly obtained x and y
+      this.setPosition(this.follower.vec.x, this.follower.vec.y);
 
-    // if we have reached the end of the path, remove the enemy
-    if (this.follower.t >= 1) {
-      this.setActive(false);
-      this.setVisible(false);
+      // if we have reached the end of the path, remove the enemy
+      if (this.follower.t >= 1) {
+        this.setActive(false);
+        this.setVisible(false);
+      }
     }
   },
 });
@@ -106,7 +111,7 @@ var Turret = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Turret(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 0, 0, "sprites", "turret");
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "p2turret");
     this.nextTic = 0;
   },
   // we will place the turret according to the grid
@@ -245,6 +250,21 @@ function placeTurret(pointer) {
   }
 }
 
+//this should happen if we get event from server
+function spawnEnemy() {
+  var enemy = enemies.get();
+  if (enemy) {
+    enemy.setActive(true);
+    enemy.setVisible(true);
+    myEnemies.push(enemy);
+  }
+}
+
+function choosePath(enemy, path) {
+  console.log("CHOOSING PATH");
+  enemy.startOnPath(path);
+}
+
 function damageEnemy(enemy, bullet) {
   // only if both enemy and bullet are alive
   if (enemy.active === true && bullet.active === true) {
@@ -257,12 +277,12 @@ function damageEnemy(enemy, bullet) {
   }
 }
 
-function selectPath() {
-  var randomPath = Math.floor(Math.random() * 3) + 1;
-  if (randomPath === 1) return path1;
-  if (randomPath === 2) return path2;
-  if (randomPath === 3) return path3;
-}
+// function selectPath() {
+//   var randomPath = Math.floor(Math.random() * 3) + 1;
+//   if (randomPath === 1) return path1;
+//   if (randomPath === 2) return path2;
+//   if (randomPath === 3) return path3;
+// }
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -272,16 +292,15 @@ export default class Game extends Phaser.Scene {
   }
 
   preload() {
-    // load the game assets – enemy and turret atlas
-    this.load.atlas(
-      "sprites",
-      "src/assets/spritesheet.png",
-      "src/assets/spritesheet.json"
-    );
+    // load the game assets –
+    this.load.image('background', "src/assets/background.png")
+    this.load.spritesheet('p1attackers', "src/assets/player1_attackers.png", { frameWidth: 70, frameHeight: 45 })
+    this.load.image('p2turret', "src/assets/player2_turret.png")
     this.load.image("bullet", "src/assets/bullet.png");
   }
 
   create() {
+    this.add.image(400, 300, 'background');
     //sets the default to "you are not Player A"
     this.isPlayerA = false;
 
@@ -301,56 +320,56 @@ export default class Game extends Phaser.Scene {
     //false to true.
     this.socket.on("isPlayerA", function () {
       self.isPlayerA = true;
+    });
+
+    // this graphics element is only for visualization,
+    // its not related to our path
+    var graphics = self.add.graphics();
+    drawGrid(graphics);
+
+    // the path for our enemies
+    // parameters are the start x and y of our path
+    path1 = self.add.path(85, 224);
+    path1.lineTo(715, 224);
+
+    path2 = self.add.path(85, 224);
+    path2.lineTo(240, 96);
+    path2.lineTo(400, 32);
+    path2.lineTo(560, 96);
+    path2.lineTo(715, 224);
+
+    path3 = self.add.path(85, 224);
+    path3.lineTo(240, 352);
+    path3.lineTo(400, 416);
+    path3.lineTo(560, 352);
+    path3.lineTo(715, 224);
+
+    graphics.lineStyle(3, 0xffffff, 1);
+    // visualize the path
+    path1.draw(graphics);
+    path2.draw(graphics);
+    path3.draw(graphics);
+
+    enemies = self.physics.add.group({
+      classType: Enemy,
+      runChildUpdate: true,
+    });
+    self.nextEnemy = 0;
+
+    turrets = self.physics.add.group({
+      classType: Turret,
+      runChildUpdate: true,
+    });
+    self.input.on("pointerdown", placeTurret);
 
       // this graphics element is only for visualization,
       // its not related to our path
-      var graphics = self.add.graphics();
-      drawGrid(graphics);
-
-      // the path for our enemies
-      // parameters are the start x and y of our path
-      path1 = self.add.path(85, 224);
-      path1.lineTo(715, 224);
-
-      path2 = self.add.path(85, 224);
-      path2.lineTo(240, 96);
-      path2.lineTo(400, 32);
-      path2.lineTo(560, 96);
-      path2.lineTo(715, 224);
-
-      path3 = self.add.path(85, 224);
-      path3.lineTo(240, 352);
-      path3.lineTo(400, 416);
-      path3.lineTo(560, 352);
-      path3.lineTo(715, 224);
-
-      path4 = self.add.path(400,32);
-      path4.lineTo(400, 416)
-
-      graphics.lineStyle(3, 0xffffff, 1);
-      // visualize the path
-      path1.draw(graphics);
-      path2.draw(graphics);
-      path3.draw(graphics);
-      path4.draw(graphics);
 
       resourceText = self.add.text(345, 508, `Resource: ` + resourcePoints, { fontSize: '24px', fill: 'white' })
 
       redText = self.add.text(640, 508, `Red: ` + score, { fontSize: '24px', fill: '#FF0000' })
 
       blueText = self.add.text(85, 508, `Blue: ` + score, { fontSize: '24px', fill: '#0000FF' })
-
-      enemies = self.physics.add.group({
-        classType: Enemy,
-        runChildUpdate: true,
-      });
-      self.nextEnemy = 0;
-
-      turrets = self.physics.add.group({
-        classType: Turret,
-        runChildUpdate: true,
-      });
-      self.input.on("pointerdown", placeTurret);
 
       bullets = self.physics.add.group({
         classType: Bullet,
@@ -367,26 +386,58 @@ export default class Game extends Phaser.Scene {
       self.physics.add.collider(enemies, enemyBase, touchBase, decrementRedScore, self);
     });
 
+
+
+    self.socket.on("spawnEnemy", spawnEnemy);
+
+    self.input.keyboard.on("keydown-A", function () {
+      self.socket.emit("spawnEnemy");
+    });
+
+    self.socket.on("choosePath", function () {
+      choosePath(myEnemies[enemyNumber], path1);
+    });
+
+    self.input.keyboard.on("keydown-S", function () {
+      console.log("S has been pressed");
+      self.socket.emit("choosePath");
+    });
+
   }
 
   update(time, delta) {
+    //emit a socket event to the server that tells it
+    //that an enemy has been deployed
     // if its time for the next enemy
-    if(gameOver){
-      return;
-    }
-    else{
-    if (time > this.nextEnemy) {
-      var enemy = enemies.get();
-      if (enemy) {
-        enemy.setActive(true);
-        enemy.setVisible(true);
 
-        // place the enemy at the start of the path
-        enemy.startOnPath();
+//     if(gameOver){
+//       return;
+//     }
+//     else{
+//     if (time > this.nextEnemy) {
+//       var enemy = enemies.get();
+//       if (enemy) {
+//         enemy.setActive(true);
+//         enemy.setVisible(true);
 
-        this.nextEnemy = time + 2000;
-      }
-    }}
+//         // place the enemy at the start of the path
+//         enemy.startOnPath();
+
+//         this.nextEnemy = time + 2000;
+//       }
+//     }}
+
+    // if (time > this.nextEnemy) {
+    //   var enemy = enemies.get();
+    //   if (enemy) {
+    //     enemy.setActive(true);
+    //     enemy.setVisible(true);
+    //     // place the enemy at the start of the path
+    //     enemy.startOnPath();
+    //     this.nextEnemy = time + 2000;
+    //   }
+    // }
+
   }
 }
 
