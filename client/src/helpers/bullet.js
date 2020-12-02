@@ -1,4 +1,4 @@
-var Bullet = new Phaser.Class({
+export default new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Bullet(scene) {
