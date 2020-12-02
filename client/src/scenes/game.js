@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import Zone from '../helpers/zone.js';
+import Zone from "../helpers/zone.js";
 
 var map = [
   [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
@@ -52,108 +52,108 @@ var ENEMY_SPEED = 1 / 10000;
 var Enemy = new Phaser.Class({
   Extends: Phaser.GameObjects.Sprite,
 
-	initialize: function Enemy(scene) {
-		this.createdByPlayerA = scene.event;
-		if (scene.event) {
-			//if playerA hit the keyboard - create a p1 attacker
+  initialize: function Enemy(scene) {
+    this.createdByPlayerA = scene.event;
+    if (scene.event) {
+      //if playerA hit the keyboard - create a p1 attacker
 
-			Phaser.GameObjects.Sprite.call(this, scene, 85, 224, 'p1attackers');
-			this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
-			enemyNumber++;
-			this.number = enemyNumber;
-		} else {
-			Phaser.GameObjects.Sprite.call(this, scene, 650, 224, 'p2attackers');
-			this.follower = { t: 0.8, vec: new Phaser.Math.Vector2() };
-			enemyNumber++;
-			this.number = enemyNumber;
-		}
-	},
-	//differentiate player attacks based on class
-	//if playerA then create a playera attacker else create a playerb attacker
-	//
-	startOnPath: function (path) {
-		if (this.createdByPlayerA) {
-			this.path = path;
-			// set the t parameter at the start of the path
-			this.follower.t = 0;
-			// get x and y of the given t point
-			// console.log(this.path.getPoint(this.follower.t, this.follower.vec));
+      Phaser.GameObjects.Sprite.call(this, scene, 85, 224, "p1attackers");
+      this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
+      enemyNumber++;
+      this.number = enemyNumber;
+    } else {
+      Phaser.GameObjects.Sprite.call(this, scene, 650, 224, "p2attackers");
+      this.follower = { t: 0.8, vec: new Phaser.Math.Vector2() };
+      enemyNumber++;
+      this.number = enemyNumber;
+    }
+  },
+  //differentiate player attacks based on class
+  //if playerA then create a playera attacker else create a playerb attacker
+  //
+  startOnPath: function (path) {
+    if (this.createdByPlayerA) {
+      this.path = path;
+      // set the t parameter at the start of the path
+      this.follower.t = 0;
+      // get x and y of the given t point
+      // console.log(this.path.getPoint(this.follower.t, this.follower.vec));
 
-			this.path.getPoint(this.follower.t, this.follower.vec);
-			// set the x and y of our enemy to the received from the previous step
-			this.setPosition(this.follower.vec.x, this.follower.vec.y);
-			this.hp = 100;
-		} else {
-			this.path = path;
-			this.follower.t = 0.8;
+      this.path.getPoint(this.follower.t, this.follower.vec);
+      // set the x and y of our enemy to the received from the previous step
+      this.setPosition(this.follower.vec.x, this.follower.vec.y);
+      this.hp = 100;
+    } else {
+      this.path = path;
+      this.follower.t = 0.8;
 
-			this.path.getPoint(this.follower.t, this.follower.vec);
-			// set the x and y of our enemy to the received from the previous step
-			this.setPosition(this.follower.vec.x, this.follower.vec.y);
-			this.hp = 100;
-		}
-	},
+      this.path.getPoint(this.follower.t, this.follower.vec);
+      // set the x and y of our enemy to the received from the previous step
+      this.setPosition(this.follower.vec.x, this.follower.vec.y);
+      this.hp = 100;
+    }
+  },
 
-	receiveDamage: function (damage) {
-		this.hp -= damage;
+  receiveDamage: function (damage) {
+    this.hp -= damage;
 
-		// if hp drops below 0 we deactivate this enemy
-		if (this.hp <= 0) {
-			this.setActive(false);
-			this.setVisible(false);
-		}
-	},
+    // if hp drops below 0 we deactivate this enemy
+    if (this.hp <= 0) {
+      this.setActive(false);
+      this.setVisible(false);
+    }
+  },
 
-	update: function (time, delta) {
-		if (this.path) {
-			this.path.getPoint(this.follower.t, this.follower.vec);
+  update: function (time, delta) {
+    if (this.path) {
+      this.path.getPoint(this.follower.t, this.follower.vec);
 
-			this.setPosition(this.follower.vec.x, this.follower.vec.y);
+      this.setPosition(this.follower.vec.x, this.follower.vec.y);
 
-			if (this.createdByPlayerA) {
-				this.follower.t += ENEMY_SPEED * delta;
+      if (this.createdByPlayerA) {
+        this.follower.t += ENEMY_SPEED * delta;
 
-				if (this.follower.t >= 1) {
-					this.setActive(false);
-					this.setVisible(false);
-				}
-			} else {
-				this.follower.t -= ENEMY_SPEED * delta;
+        if (this.follower.t >= 1) {
+          this.setActive(false);
+          this.setVisible(false);
+        }
+      } else {
+        this.follower.t -= ENEMY_SPEED * delta;
 
-				if (this.follower.t <= 0) {
-					this.setActive(false);
-					this.setVisible(false);
-				}
-			}
-		}
-	},
+        if (this.follower.t <= 0) {
+          this.setActive(false);
+          this.setVisible(false);
+        }
+      }
+    }
+  },
 });
 
 function addBullet(x, y, angle) {
-	var bullet = bullets.get();
-	if (bullet) {
-		bullet.fire(x, y, angle);
-	}
+  var bullet = bullets.get();
+  if (bullet) {
+    bullet.fire(x, y, angle);
+  }
 }
 
 function getEnemy(x, y, distance) {
-	var enemyUnits = enemies.getChildren();
-	for (var i = 0; i < enemyUnits.length; i++) {
-		if (
-			enemyUnits[i].active &&
-			Phaser.Math.Distance.Between(x, y, enemyUnits[i].x, enemyUnits[i].y) <=
-				distance
-		)
-			return enemyUnits[i];
-	}
-	return false;
+  var enemyUnits = enemies.getChildren();
+  for (var i = 0; i < enemyUnits.length; i++) {
+    if (
+      enemyUnits[i].active &&
+      Phaser.Math.Distance.Between(x, y, enemyUnits[i].x, enemyUnits[i].y) <=
+        distance
+    )
+      return enemyUnits[i];
+  }
+  return false;
 }
 
 var Turret = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Turret(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 0, 0, "p1turret");
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "p2turret");
     this.nextTic = 0;
   },
   // we will place the turret according to the grid
@@ -180,52 +180,51 @@ var Turret = new Phaser.Class({
 });
 
 var Bullet = new Phaser.Class({
-	Extends: Phaser.GameObjects.Image,
+  Extends: Phaser.GameObjects.Image,
 
-	initialize: function Bullet(scene) {
-		Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet');
+  initialize: function Bullet(scene) {
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "bullet");
 
-		this.dx = 0;
-		this.dy = 0;
-		this.lifespan = 0;
+    this.dx = 0;
+    this.dy = 0;
+    this.lifespan = 0;
 
-		this.speed = Phaser.Math.GetSpeed(600, 1);
-	},
+    this.speed = Phaser.Math.GetSpeed(600, 1);
+  },
 
-	fire: function (x, y, angle) {
-		this.setActive(true);
-		this.setVisible(true);
+  fire: function (x, y, angle) {
+    this.setActive(true);
+    this.setVisible(true);
 
-		//  Bullets fire from the middle of the screen to the given x/y
-		this.setPosition(x, y);
+    //  Bullets fire from the middle of the screen to the given x/y
+    this.setPosition(x, y);
 
-		//  we don't need to rotate the bullets as they are round
-		//  this.setRotation(angle);
+    //  we don't need to rotate the bullets as they are round
+    //  this.setRotation(angle);
 
-		this.dx = Math.cos(angle);
-		this.dy = Math.sin(angle);
+    this.dx = Math.cos(angle);
+    this.dy = Math.sin(angle);
 
-		this.lifespan = 300;
-	},
+    this.lifespan = 300;
+  },
 
-	update: function (time, delta) {
-		this.lifespan -= delta;
+  update: function (time, delta) {
+    this.lifespan -= delta;
 
-		this.x += this.dx * (this.speed * delta);
-		this.y += this.dy * (this.speed * delta);
+    this.x += this.dx * (this.speed * delta);
+    this.y += this.dy * (this.speed * delta);
 
-		if (this.lifespan <= 0) {
-			this.setActive(false);
-			this.setVisible(false);
-		}
-	},
+    if (this.lifespan <= 0) {
+      this.setActive(false);
+      this.setVisible(false);
+    }
+  },
 });
-
 
 var EnemyBase = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
-  initialize: function EnemyBase(scene){
+  initialize: function EnemyBase(scene) {
     Phaser.GameObjects.Image.call(this, scene, 715, 224, "p2base");
   },
 });
@@ -240,7 +239,7 @@ function touchBase(enemy, enemyBase) {
 function decrementBlueScore() {
   score -= 1;
   blueText.setText("P1 | " + score);
-  if(score <= 0){
+  if (score <= 0) {
     gameOver = true;
     blueText.setText("P1 | 0");
     return true;
@@ -251,11 +250,11 @@ function decrementBlueScore() {
 function decrementRedScore() {
   score -= 1;
   redText.setText("P2 | " + score);
-  if(score <= 0){
+  if (score <= 0) {
     gameOver = true;
     redText.setText("P2 | 0");
     this.scene.start("SceneTwo", {
-      "message": "Game Over, Player One wins!"
+      message: "Game Over, Player One wins!",
     });
     return true;
   }
@@ -263,34 +262,35 @@ function decrementRedScore() {
 }
 
 function drawGrid(graphics) {
-	graphics.lineStyle(1, 0x0000ff, 0.8);
-	for (var i = 1; i < 8; i++) {
-		graphics.moveTo(80, i * 64);
-		graphics.lineTo(720, i * 64);
-	}
-	for (var j = 0; j < 11; j++) {
-		graphics.moveTo(80 + j * 64, 0);
-		graphics.lineTo(80 + j * 64, 450);
-	}
-	graphics.strokePath();
+  graphics.lineStyle(1, 0x0000ff, 0.8);
+  for (var i = 1; i < 8; i++) {
+    graphics.moveTo(80, i * 64);
+    graphics.lineTo(720, i * 64);
+  }
+  for (var j = 0; j < 11; j++) {
+    graphics.moveTo(80 + j * 64, 0);
+    graphics.lineTo(80 + j * 64, 450);
+  }
+  graphics.strokePath();
 }
 
 function canPlaceTurret(i, j) {
-	return map[i][j] === 0;
+  return map[i][j] === 0;
 }
 
 function placeTurret(pointer) {
   var i = Math.floor(pointer.y / 64);
   var j = Math.floor(pointer.x / 64);
   if (canPlaceTurret(i, j)) {
-    if(resourcePoints){
-    var turret = turrets.get();
-    resourcePoints -= 3;
-    resourceText.setText("RESOURCE | " + resourcePoints)
-    if (turret) {
-      turret.setActive(true);
-      turret.setVisible(true);
-      turret.place(i, j);
+    if (resourcePoints) {
+      var turret = turrets.get();
+      resourcePoints -= 3;
+      resourceText.setText("RESOURCE | " + resourcePoints);
+      if (turret) {
+        turret.setActive(true);
+        turret.setVisible(true);
+        turret.place(i, j);
+      }
     }
   }
 }
@@ -298,19 +298,19 @@ function placeTurret(pointer) {
 //this should happen if we get event from server
 
 function choosePath(enemy, path) {
-	enemy.startOnPath(path);
+  enemy.startOnPath(path);
 }
 
 function damageEnemy(enemy, bullet) {
-	// only if both enemy and bullet are alive
-	if (enemy.active === true && bullet.active === true) {
-		// we remove the bullet right away
-		bullet.setActive(false);
-		bullet.setVisible(false);
+  // only if both enemy and bullet are alive
+  if (enemy.active === true && bullet.active === true) {
+    // we remove the bullet right away
+    bullet.setActive(false);
+    bullet.setVisible(false);
 
-		// decrease the enemy hp with BULLET_DAMAGE
-		enemy.receiveDamage(BULLET_DAMAGE);
-	}
+    // decrease the enemy hp with BULLET_DAMAGE
+    enemy.receiveDamage(BULLET_DAMAGE);
+  }
 }
 
 // function selectPath() {
@@ -320,75 +320,85 @@ function damageEnemy(enemy, bullet) {
 //   if (randomPath === 3) return path3;
 // }
 function spawnEnemy() {
-	var enemy = enemies.get();
-	if (enemy) {
-		enemy.setActive(true);
-		enemy.setVisible(true);
-		myEnemies.push(enemy);
-	}
+  var enemy = enemies.get();
+  if (enemy) {
+    enemy.setActive(true);
+    enemy.setVisible(true);
+    myEnemies.push(enemy);
+  }
 }
 
 export default class Game extends Phaser.Scene {
-	constructor() {
-		super({
-			key: 'Game',
-		});
-	}
+  constructor() {
+    super({
+      key: "Game",
+    });
+  }
 
-	preload() {
-		// load the game assets –
-    this.load.image('background', "src/assets/background.png")
-    this.load.spritesheet('p1attackers', "src/assets/player1_attackers.png", { frameWidth: 70, frameHeight: 45 })
-    this.load.image('p2turret', "src/assets/player2_turret.png")
+  preload() {
+    // load the game assets –
+    this.load.image("background", "src/assets/background.png");
+    this.load.spritesheet("p1attackers", "src/assets/player1_attackers.png", {
+      frameWidth: 70,
+      frameHeight: 45,
+    });
+    this.load.spritesheet("p2attackers", "src/assets/player2_attackers.png", {
+      frameWidth: 70,
+      frameHeight: 45,
+    });
+    this.load.image("p2turret", "src/assets/player2_turret.png");
     this.load.image("bullet", "src/assets/bullet.png");
-    this.load.image('scoreboard', 'src/assets/scoreboard.png')
-    this.load.image('blackboard', 'src/assets/blackboard.png')
-    this.load.spritesheet('p2base', 'src/assets/player2_base2.png', {frameWidth:70, frameHeight:85})
-	}
+    this.load.image("scoreboard", "src/assets/scoreboard.png");
+    this.load.image("blackboard", "src/assets/blackboard.png");
+    this.load.spritesheet("p2base", "src/assets/player2_base2.png", {
+      frameWidth: 70,
+      frameHeight: 85,
+    });
+  }
 
-	create() {
-    this.add.image(400, 300, 'background');
-    this.add.image(85,508, "scoreboard")
-    this.add.image(400, 535, "blackboard")
-    
-		//sets the default to "you are not Player A"
-		let self = this;
-		this.isPlayerA = false;
-		this.isPlayerB = false;
-    
+  create() {
+    this.add.image(400, 300, "background");
+    this.add.image(85, 508, "scoreboard");
+    this.add.image(400, 535, "blackboard");
+
+    //sets the default to "you are not Player A"
+    let self = this;
+    this.isPlayerA = false;
+    this.isPlayerB = false;
+
     // this.zone = new Zone(this);
     // this.dropZone = this.zone.renderZone();
     // this.outline = this.zone.renderOutline(this.dropZone);
-    
-		//connecting to our socket on the client-side
-		this.socket = io('http://localhost:3000');
 
-		this.socket.on('connect', function () {
-			console.log('Connected!');
-		});
+    //connecting to our socket on the client-side
+    this.socket = io("http://localhost:3000");
 
-		//If our client is the first to connect to the server, the server will emit
-		//an event that tells the client that it will be Player A.  The client
-		//socket receives that event and turns our "isPlayerA" boolean from
-		//false to true.
-		this.socket.on('isPlayerA', function () {
-			self.isPlayerA = true;
-			console.log('Welcome Player A!');
-		});
-		this.socket.on('isPlayerB', function () {
-			if (!self.isPlayerA) {
-				self.isPlayerB = true;
-				console.log('Welcome Player B');
-			}
-		});
+    this.socket.on("connect", function () {
+      console.log("Connected!");
+    });
 
-		// this graphics element is only for visualization,
-		// its not related to our path
-		var graphics = this.add.graphics();
-		drawGrid(graphics);
+    //If our client is the first to connect to the server, the server will emit
+    //an event that tells the client that it will be Player A.  The client
+    //socket receives that event and turns our "isPlayerA" boolean from
+    //false to true.
+    this.socket.on("isPlayerA", function () {
+      self.isPlayerA = true;
+      console.log("Welcome Player A!");
+    });
+    this.socket.on("isPlayerB", function () {
+      if (!self.isPlayerA) {
+        self.isPlayerB = true;
+        console.log("Welcome Player B");
+      }
+    });
 
-		// the path for our enemies
-		// parameters are the start x and y of our path
+    // this graphics element is only for visualization,
+    // its not related to our path
+    var graphics = this.add.graphics();
+    drawGrid(graphics);
+
+    // the path for our enemies
+    // parameters are the start x and y of our path
     path1 = this.add.path(125, 240);
     path1.lineTo(655, 240);
 
@@ -404,124 +414,139 @@ export default class Game extends Phaser.Scene {
     // path3.lineTo(495, 368);
     path3.lineTo(655, 240);
 
-		graphics.lineStyle(3, 0xffffff, 1);
-		// visualize the path
-		path1.draw(graphics);
-		path2.draw(graphics);
-		path3.draw(graphics);
-    
-		enemies = this.physics.add.group({
-			classType: Enemy,
-			runChildUpdate: true,
-		});
-		this.nextEnemy = 0;
+    graphics.lineStyle(3, 0xffffff, 1);
+    // visualize the path
+    path1.draw(graphics);
+    path2.draw(graphics);
+    path3.draw(graphics);
 
-		turrets = this.physics.add.group({
-			classType: Turret,
-			runChildUpdate: true,
-		});
-		this.input.on('pointerdown', placeTurret);
+    enemies = this.physics.add.group({
+      classType: Enemy,
+      runChildUpdate: true,
+    });
+    this.nextEnemy = 0;
 
-		// this graphics element is only for visualization,
-		// its not related to our path
+    turrets = this.physics.add.group({
+      classType: Turret,
+      runChildUpdate: true,
+    });
+    this.input.on("pointerdown", placeTurret);
 
-    resourceText = self.add.text(300, 520, `RESOURCE | ` + resourcePoints, { fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
+    // this graphics element is only for visualization,
+    // its not related to our path
 
-    redText = self.add.text(50, 540, `P2 | ` + score, { fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
+    resourceText = self.add.text(300, 520, `RESOURCE | ` + resourcePoints, {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "24px",
+      fill: "white",
+    });
 
-    blueText = self.add.text(50, 505, `P1 | ` + score, {fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
+    redText = self.add.text(50, 540, `P2 | ` + score, {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "24px",
+      fill: "white",
+    });
 
-		bullets = this.physics.add.group({
-			classType: Bullet,
-			runChildUpdate: true,
-		});
+    blueText = self.add.text(50, 505, `P1 | ` + score, {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "24px",
+      fill: "white",
+    });
 
-		enemyBase = this.physics.add
-			.group({
-				classType: EnemyBase,
-				runChildUpdate: true,
-			})
-			.create();
+    bullets = this.physics.add.group({
+      classType: Bullet,
+      runChildUpdate: true,
+    });
 
-		this.physics.add.overlap(enemies, bullets, damageEnemy);
+    enemyBase = this.physics.add
+      .group({
+        classType: EnemyBase,
+        runChildUpdate: true,
+      })
+      .create();
 
-		this.physics.add.collider(
-			enemies,
-			enemyBase,
-			touchBase,
-			decrementRedScore,
-			self
-		);
-		//change origin of player B enemies
-		//change color of player B enemies
+    this.physics.add.overlap(enemies, bullets, damageEnemy);
 
-		this.socket.on('spawnEnemy', (event) => {
-			self.event = event;
-			spawnEnemy(event);
-		});
+    this.physics.add.collider(
+      enemies,
+      enemyBase,
+      touchBase,
+      decrementRedScore,
+      self
+    );
+    //change origin of player B enemies
+    //change color of player B enemies
 
-		this.input.keyboard.on('keydown-A', function (event) {
-			// if (self.isPlayerA) {
-			// 	self.socket.emit('spawnEnemy', { isPlayerA: true });
-			// }
-			// if (self.isPlayerB) {
-			// 	self.socket.emit('spawnEnemy', { isPlayerB: true });
-			// }
-			self.socket.emit('spawnEnemy', self.isPlayerA);
-		});
+    this.socket.on("spawnEnemy", (event) => {
+      self.event = event;
+      spawnEnemy(event);
+    });
 
-		this.socket.on('choosePath', function (event) {
-			if (event.key === 1) {
-				choosePath(myEnemies[enemyNumber], path1);
-			}
-			if (event.key === 2) {
-				choosePath(myEnemies[enemyNumber], path2);
-			}
-			if (event.key === 3) {
-				choosePath(myEnemies[enemyNumber], path3);
-			}
-		});
+    this.input.keyboard.on("keydown-A", function (event) {
+      // if (self.isPlayerA) {
+      // 	self.socket.emit('spawnEnemy', { isPlayerA: true });
+      // }
+      // if (self.isPlayerB) {
+      // 	self.socket.emit('spawnEnemy', { isPlayerB: true });
+      // }
+      self.socket.emit("spawnEnemy", self.isPlayerA);
+    });
 
-		this.input.keyboard.on('keydown-S', function (event) {
-			self.socket.emit('choosePath', { key: 1 });
-		});
-		this.input.keyboard.on('keydown-D', function (event) {
-			self.socket.emit('choosePath', { key: 2 });
-		});
-		this.input.keyboard.on('keydown-F', function (event) {
-			self.socket.emit('choosePath', { key: 3 });
-		});
-	}
+    this.socket.on("choosePath", function (event) {
+      if (event.key === 1) {
+        choosePath(myEnemies[enemyNumber], path1);
+      }
+      if (event.key === 2) {
+        choosePath(myEnemies[enemyNumber], path2);
+      }
+      if (event.key === 3) {
+        choosePath(myEnemies[enemyNumber], path3);
+      }
+    });
 
-	update(time, delta) {
-		//emit a socket event to the server that tells it
-		//that an enemy has been deployed
-		// if its time for the next enemy
-		//     if(gameOver){
-		//       return;
-		//     }
-		//     else{
-		//     if (time > this.nextEnemy) {
-		//       var enemy = enemies.get();
-		//       if (enemy) {
-		//         enemy.setActive(true);
-		//         enemy.setVisible(true);
-		//         // place the enemy at the start of the path
-		//         enemy.startOnPath();
-		//         this.nextEnemy = time + 2000;
-		//       }
-		//     }}
-		// if (time > this.nextEnemy) {
-		//   var enemy = enemies.get();
-		//   if (enemy) {
-		//     enemy.setActive(true);
-		//     enemy.setVisible(true);
-		//     // place the enemy at the start of the path
-		//     enemy.startOnPath();
-		//     this.nextEnemy = time + 2000;
-		//   }
-		// }
-	}
+    this.input.keyboard.on("keydown-S", function (event) {
+      self.socket.emit("choosePath", { key: 1 });
+    });
+    this.input.keyboard.on("keydown-D", function (event) {
+      self.socket.emit("choosePath", { key: 2 });
+    });
+    this.input.keyboard.on("keydown-F", function (event) {
+      self.socket.emit("choosePath", { key: 3 });
+    });
+  }
+
+  update(time, delta) {
+    //emit a socket event to the server that tells it
+    //that an enemy has been deployed
+    // if its time for the next enemy
+    //     if(gameOver){
+    //       return;
+    //     }
+    //     else{
+    //     if (time > this.nextEnemy) {
+    //       var enemy = enemies.get();
+    //       if (enemy) {
+    //         enemy.setActive(true);
+    //         enemy.setVisible(true);
+    //         // place the enemy at the start of the path
+    //         enemy.startOnPath();
+    //         this.nextEnemy = time + 2000;
+    //       }
+    //     }}
+    // if (time > this.nextEnemy) {
+    //   var enemy = enemies.get();
+    //   if (enemy) {
+    //     enemy.setActive(true);
+    //     enemy.setVisible(true);
+    //     // place the enemy at the start of the path
+    //     enemy.startOnPath();
+    //     this.nextEnemy = time + 2000;
+    //   }
+    // }
+  }
 }
 
 // cardPlayed Functionality
