@@ -39,19 +39,19 @@ var enemyNumber = -1;
 var ENEMY_SPEED = 1 / 10000;
 
 var Enemy = new Phaser.Class({
-	Extends: Phaser.GameObjects.Image,
+  Extends: Phaser.GameObjects.Sprite,
 
 	initialize: function Enemy(scene) {
 		this.createdByPlayerA = scene.event;
 		if (scene.event) {
 			//if playerA hit the keyboard - create a p1 attacker
 
-			Phaser.GameObjects.Image.call(this, scene, 85, 224, 'p1attackers');
+			Phaser.GameObjects.Sprite.call(this, scene, 85, 224, 'p1attackers');
 			this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
 			enemyNumber++;
 			this.number = enemyNumber;
 		} else {
-			Phaser.GameObjects.Image.call(this, scene, 650, 224, 'p2attackers');
+			Phaser.GameObjects.Sprite.call(this, scene, 650, 224, 'p2attackers');
 			this.follower = { t: 0.8, vec: new Phaser.Math.Vector2() };
 			enemyNumber++;
 			this.number = enemyNumber;
@@ -139,33 +139,33 @@ function getEnemy(x, y, distance) {
 }
 
 var Turret = new Phaser.Class({
-	Extends: Phaser.GameObjects.Image,
+  Extends: Phaser.GameObjects.Image,
 
-	initialize: function Turret(scene) {
-		Phaser.GameObjects.Image.call(this, scene, 0, 0, 'p2turret');
-		this.nextTic = 0;
-	},
-	// we will place the turret according to the grid
-	place: function (i, j) {
-		this.y = i * 64 + 64 / 2;
-		this.x = j * 64 + 64 / 2 + 14;
-		map[i][j] = 1;
-	},
-	update: function (time, delta) {
-		// time to shoot
-		if (time > this.nextTic) {
-			this.fire();
-			this.nextTic = time + 1000;
-		}
-	},
-	fire: function () {
-		var enemy = getEnemy(this.x, this.y, 100);
-		if (enemy) {
-			var angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
-			addBullet(this.x, this.y, angle);
-			this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
-		}
-	},
+  initialize: function Turret(scene) {
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "p1turret");
+    this.nextTic = 0;
+  },
+  // we will place the turret according to the grid
+  place: function (i, j) {
+    this.y = i * 64 + 64 / 2;
+    this.x = j * 64 + 64 / 2 + 14;
+    map[i][j] = 1;
+  },
+  update: function (time, delta) {
+    // time to shoot
+    if (time > this.nextTic) {
+      this.fire();
+      this.nextTic = time + 1000;
+    }
+  },
+  fire: function () {
+    var enemy = getEnemy(this.x, this.y, 100);
+    if (enemy) {
+      var angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
+      addBullet(this.x, this.y, angle);
+      this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
+    }
+  },
 });
 
 var Bullet = new Phaser.Class({
@@ -209,6 +209,7 @@ var Bullet = new Phaser.Class({
 		}
 	},
 });
+
 
 var EnemyBase = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
@@ -371,26 +372,27 @@ export default class Game extends Phaser.Scene {
 
 		// the path for our enemies
 		// parameters are the start x and y of our path
-		path1 = this.add.path(85, 224);
-		path1.lineTo(715, 224);
+    path1 = this.add.path(125, 240);
+    path1.lineTo(655, 240);
 
-		path2 = this.add.path(85, 224);
-		path2.lineTo(240, 96);
-		path2.lineTo(400, 32);
-		path2.lineTo(560, 96);
-		path2.lineTo(715, 224);
+    path2 = this.add.path(125, 240);
+    // path2.lineTo(315, 112);
+    path2.lineTo(400, 48);
+    // path2.lineTo(495, 112);
+    path2.lineTo(655, 240);
 
-		path3 = this.add.path(85, 224);
-		path3.lineTo(240, 352);
-		path3.lineTo(400, 416);
-		path3.lineTo(560, 352);
-		path3.lineTo(715, 224);
+    path3 = this.add.path(125, 240);
+    // path3.lineTo(315, 368);
+    path3.lineTo(400, 432);
+    // path3.lineTo(495, 368);
+    path3.lineTo(655, 240);
 
 		graphics.lineStyle(3, 0xffffff, 1);
 		// visualize the path
 		path1.draw(graphics);
 		path2.draw(graphics);
 		path3.draw(graphics);
+    
 		enemies = this.physics.add.group({
 			classType: Enemy,
 			runChildUpdate: true,
