@@ -3,13 +3,13 @@ body {
 }
 
 #game {
-  float: left;
+  position: left;
   width: 50%;
   height: 512px;
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
+  left: 5em;
   right: 0;
   margin: auto;
 }
@@ -18,9 +18,13 @@ body {
   float: left;
   width: 25%;
   height: 100vh;
-  background-position: left top, left bottom, right 10px bottom 35px, center;
-  background-size: 45%, 35%, 15%, contain;
+  margin: 0;
+  background-image: url("src/assets/hanging_sign.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
+
 
 #left div {
   display: block;
@@ -31,6 +35,12 @@ body {
   width: 25%;
   height: 100vh;
   margin: 0;
-  background-position: right bottom, right top, left 10px top 35px, center;
-  background-size: 40%, 35%, 15%, contain;
+  background-image: url("src/assets/hanging_sign.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+#right div {
+  display: block;
 }
