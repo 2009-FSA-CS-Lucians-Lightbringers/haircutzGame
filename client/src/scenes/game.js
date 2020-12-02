@@ -211,40 +211,40 @@ var Bullet = new Phaser.Class({
 });
 
 var EnemyBase = new Phaser.Class({
-	Extends: Phaser.GameObjects.Image,
+  Extends: Phaser.GameObjects.Image,
 
-	initialize: function EnemyBase(scene) {
-		Phaser.GameObjects.Image.call(this, scene, 715, 224, 'sprites', 'turret');
-	},
+  initialize: function EnemyBase(scene) {
+    Phaser.GameObjects.Image.call(this, scene, 715, 224, "sprites", "turret");
+  },
 });
 
 function touchBase(enemy, enemyBase) {
-	// enemy.setActive(false);
-	// enemy.setVisible(false);
-	enemyBase.destroy();
-	// }
+  // enemy.setActive(false);
+  // enemy.setVisible(false);
+  enemyBase.destroy();
+  // }
 }
 
 function decrementBlueScore() {
-	score -= 1;
-	redText.setText('Blue: ' + score);
-	if (score < 0) {
-		gameOver = true;
-		blueText.setText('Blue: 0');
-		return true;
-	}
-	return null;
+  score -= 1;
+  redText.setText("Blue: " + score);
+  if (score < 0) {
+    gameOver = true;
+    blueText.setText("Blue: 0");
+    return true;
+  }
+  return null;
 }
 
 function decrementRedScore() {
-	score -= 1;
-	redText.setText('Red: ' + score);
-	if (score < 0) {
-		gameOver = true;
-		redText.setText('Red: 0');
-		return true;
-	}
-	return null;
+  score -= 1;
+  redText.setText("Red: " + score);
+  if (score < 0) {
+    gameOver = true;
+    redText.setText("Red: 0");
+    return true;
+  }
+  return null;
 }
 
 function drawGrid(graphics) {
@@ -265,20 +265,20 @@ function canPlaceTurret(i, j) {
 }
 
 function placeTurret(pointer) {
-	var i = Math.floor(pointer.y / 64);
-	var j = Math.floor(pointer.x / 64);
-	if (canPlaceTurret(i, j)) {
-		if (resourcePoints) {
-			var turret = turrets.get();
-			resourcePoints -= 3;
-			resourceText.setText('Resource: ' + resourcePoints);
-			if (turret) {
-				turret.setActive(true);
-				turret.setVisible(true);
-				turret.place(i, j);
-			}
-		}
-	}
+  var i = Math.floor(pointer.y / 64);
+  var j = Math.floor(pointer.x / 64);
+  if (canPlaceTurret(i, j)) {
+    if (resourcePoints) {
+      var turret = turrets.get();
+      resourcePoints -= 3;
+      resourceText.setText("Resource: " + resourcePoints);
+      if (turret) {
+        turret.setActive(true);
+        turret.setVisible(true);
+        turret.place(i, j);
+      }
+    }
+  }
 }
 
 //this should happen if we get event from server
