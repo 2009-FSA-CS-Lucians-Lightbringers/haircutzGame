@@ -1,13 +1,24 @@
-import io from 'socket.io-client';
+import io from "socket.io-client";
+import Zone from '../helpers/zone.js';
 
 var map = [
-	[-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
-	[-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
-	[-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
-	[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-	[-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
-	[-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
-	[-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
+  [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1],
+  [-1, 0, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 0, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+  [-1, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1],
+  [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
+];
+
+var map2 = [
+  [-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
+  [-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
+  [-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
+  [-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
+  [-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
 ];
 
 //var graphics;
@@ -214,8 +225,8 @@ var Bullet = new Phaser.Class({
 var EnemyBase = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
-  initialize: function EnemyBase(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 715, 224, "sprites", "turret");
+  initialize: function EnemyBase(scene){
+    Phaser.GameObjects.Image.call(this, scene, 715, 224, "p2base");
   },
 });
 
@@ -228,10 +239,10 @@ function touchBase(enemy, enemyBase) {
 
 function decrementBlueScore() {
   score -= 1;
-  redText.setText("Blue: " + score);
-  if (score < 0) {
+  blueText.setText("P1 | " + score);
+  if(score <= 0){
     gameOver = true;
-    blueText.setText("Blue: 0");
+    blueText.setText("P1 | 0");
     return true;
   }
   return null;
@@ -239,10 +250,13 @@ function decrementBlueScore() {
 
 function decrementRedScore() {
   score -= 1;
-  redText.setText("Red: " + score);
-  if (score < 0) {
+  redText.setText("P2 | " + score);
+  if(score <= 0){
     gameOver = true;
-    redText.setText("Red: 0");
+    redText.setText("P2 | 0");
+    this.scene.start("SceneTwo", {
+      "message": "Game Over, Player One wins!"
+    });
     return true;
   }
   return null;
@@ -269,15 +283,14 @@ function placeTurret(pointer) {
   var i = Math.floor(pointer.y / 64);
   var j = Math.floor(pointer.x / 64);
   if (canPlaceTurret(i, j)) {
-    if (resourcePoints) {
-      var turret = turrets.get();
-      resourcePoints -= 3;
-      resourceText.setText("Resource: " + resourcePoints);
-      if (turret) {
-        turret.setActive(true);
-        turret.setVisible(true);
-        turret.place(i, j);
-      }
+    if(resourcePoints){
+    var turret = turrets.get();
+    resourcePoints -= 3;
+    resourceText.setText("RESOURCE | " + resourcePoints)
+    if (turret) {
+      turret.setActive(true);
+      turret.setVisible(true);
+      turret.place(i, j);
     }
   }
 }
@@ -324,25 +337,29 @@ export default class Game extends Phaser.Scene {
 
 	preload() {
 		// load the game assets –
-		this.load.image('background', 'src/assets/background.png');
-		this.load.spritesheet('p1attackers', 'src/assets/player1_attackers.png', {
-			frameWidth: 70,
-			frameHeight: 45,
-		});
-		this.load.spritesheet('p2attackers', 'src/assets/player2_attackers.png', {
-			frameWidth: 70,
-			frameHeight: 45,
-		});
-		this.load.image('p2turret', 'src/assets/player2_turret.png');
-		this.load.image('bullet', 'src/assets/bullet.png');
+    this.load.image('background', "src/assets/background.png")
+    this.load.spritesheet('p1attackers', "src/assets/player1_attackers.png", { frameWidth: 70, frameHeight: 45 })
+    this.load.image('p2turret', "src/assets/player2_turret.png")
+    this.load.image("bullet", "src/assets/bullet.png");
+    this.load.image('scoreboard', 'src/assets/scoreboard.png')
+    this.load.image('blackboard', 'src/assets/blackboard.png')
+    this.load.spritesheet('p2base', 'src/assets/player2_base2.png', {frameWidth:70, frameHeight:85})
 	}
 
 	create() {
-		this.add.image(400, 300, 'background');
+    this.add.image(400, 300, 'background');
+    this.add.image(85,508, "scoreboard")
+    this.add.image(400, 535, "blackboard")
+    
 		//sets the default to "you are not Player A"
 		let self = this;
 		this.isPlayerA = false;
 		this.isPlayerB = false;
+    
+    // this.zone = new Zone(this);
+    // this.dropZone = this.zone.renderZone();
+    // this.outline = this.zone.renderOutline(this.dropZone);
+    
 		//connecting to our socket on the client-side
 		this.socket = io('http://localhost:3000');
 
@@ -408,20 +425,11 @@ export default class Game extends Phaser.Scene {
 		// this graphics element is only for visualization,
 		// its not related to our path
 
-		resourceText = this.add.text(345, 508, `Resource: ` + resourcePoints, {
-			fontSize: '24px',
-			fill: 'white',
-		});
+    resourceText = self.add.text(300, 520, `RESOURCE | ` + resourcePoints, { fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
 
-		redText = this.add.text(640, 508, `Red: ` + score, {
-			fontSize: '24px',
-			fill: '#FF0000',
-		});
+    redText = self.add.text(50, 540, `P2 | ` + score, { fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
 
-		blueText = this.add.text(85, 508, `Blue: ` + score, {
-			fontSize: '24px',
-			fill: '#0000FF',
-		});
+    blueText = self.add.text(50, 505, `P1 | ` + score, {fontFamily: 'Arial Black', fontStyle: 'bold', fontSize: '24px', fill: 'white' })
 
 		bullets = this.physics.add.group({
 			classType: Bullet,
