@@ -1,6 +1,17 @@
 import io from "socket.io-client";
+import Zone from '../helpers/zone.js';
 
 var map = [
+  [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1],
+  [-1, 0, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 0, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+  [-1, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1],
+  [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
+];
+
+var map2 = [
   [-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
   [-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
   [-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
@@ -312,6 +323,11 @@ export default class Game extends Phaser.Scene {
 
     //sets the default to "you are not Player A"
     this.isPlayerA = false;
+
+    // this.zone = new Zone(this);
+    // this.dropZone = this.zone.renderZone();
+    // this.outline = this.zone.renderOutline(this.dropZone);
+
 
     //saving our game instance as "self"
     let self = this;
