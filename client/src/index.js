@@ -4,7 +4,7 @@ import SceneTwo from "./scenes/gameOver"
 
 const config = {
   type: Phaser.AUTO,
-  parent: "phaser-example",
+  parent: "game",
   width: 800,
   height: 600,
   physics: {
