@@ -1,53 +1,55 @@
 //setting up express server
-const server = require("express")();
-const http = require("http").createServer(server);
+const server = require('express')();
+const http = require('http').createServer(server);
 //setting up socket that works with CORS
-const io = require("socket.io")(http, {
-  cors: {
-    origin: "http://localhost:8080",
-    methods: ["GET", "POST"],
-  },
+const io = require('socket.io')(http, {
+	cors: {
+		origin: 'http://localhost:8080',
+		methods: ['GET', 'POST'],
+	},
 });
 
 //our players array
 let players = [];
 
 //socket logic
-io.on("connection", function (socket) {
-  console.log("A user connected: " + socket.id);
+io.on('connection', function (socket) {
+	console.log('A user connected: ' + socket.id);
 
-  //push new players' socket ID into players array
-  players.push(socket.id);
+	//push new players' socket ID into players array
+	players.push(socket.id);
+	//determine and emit "Player A"
+	if (players.length === 1) {
+		io.emit('isPlayerA');
+	}
+	if (players.length === 2) {
+		io.emit('isPlayerB');
+	}
 
-  //determine and emit "Player A"
-  if (players.length === 1) {
-    io.emit("isPlayerA");
-  }
+	//emit spawnEnemy
 
-  //emit spawnEnemy
-  socket.on("spawnEnemy", function () {
-    io.emit("spawnEnemy");
-  });
+	socket.on('spawnEnemy', function (event) {
+		io.emit('spawnEnemy', event);
+	});
 
-  //emit setPath
-  socket.on("choosePath", function () {
-    console.log("CHOOSING PATH");
-    io.emit("choosePath");
-  });
+	//emit setPath
+	socket.on('choosePath', function (event) {
+		io.emit('choosePath', event);
+	});
 
-  // //emit cardPlayed
-  // socket.on("cardPlayed", function (gameObject, isPlayerA) {
-  //   io.emit("cardPlayed", gameObject, isPlayerA);
-  // });
+	// //emit cardPlayed
+	// socket.on("cardPlayed", function (gameObject, isPlayerA) {
+	//   io.emit("cardPlayed", gameObject, isPlayerA);
+	// });
 
-  //when a user disconnects, log and take player out of players array
-  socket.on("disconnect", function () {
-    console.log("A user disconnected: " + socket.id);
-    players = players.filter((player) => player !== socket.id);
-  });
+	//when a user disconnects, log and take player out of players array
+	socket.on('disconnect', function () {
+		console.log('A user disconnected: ' + socket.id);
+		players = players.filter((player) => player !== socket.id);
+	});
 });
 
 //setting up our server on localhost:3000
 http.listen(3000, function () {
-  console.log("Server started!");
+	console.log('Server started!');
 });
