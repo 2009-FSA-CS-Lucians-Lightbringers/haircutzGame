@@ -37,10 +37,10 @@ var enemyNumber = -1;
 var ENEMY_SPEED = 1 / 10000;
 
 var Enemy = new Phaser.Class({
-  Extends: Phaser.GameObjects.Image,
+  Extends: Phaser.GameObjects.Sprite,
 
   initialize: function Enemy(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 85, 224, "p1attackers");
+    Phaser.GameObjects.Sprite.call(this, scene, 85, 224, "p1attackers", 0);
     this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
     enemyNumber++;
     this.number = enemyNumber;
@@ -111,7 +111,7 @@ var Turret = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Turret(scene) {
-    Phaser.GameObjects.Image.call(this, scene, 0, 0, "p2turret");
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "p1turret");
     this.nextTic = 0;
   },
   // we will place the turret according to the grid
@@ -178,6 +178,7 @@ var Bullet = new Phaser.Class({
     }
   },
 });
+
 
 var EnemyBase = new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
@@ -295,7 +296,7 @@ export default class Game extends Phaser.Scene {
     // load the game assets –
     this.load.image('background', "src/assets/background.png")
     this.load.spritesheet('p1attackers', "src/assets/player1_attackers.png", { frameWidth: 70, frameHeight: 45 })
-    this.load.image('p2turret', "src/assets/player2_turret.png")
+    this.load.image('p1turret', "src/assets/player1_turret.png")
     this.load.image("bullet", "src/assets/bullet.png");
   }
 
@@ -329,20 +330,21 @@ export default class Game extends Phaser.Scene {
 
     // the path for our enemies
     // parameters are the start x and y of our path
-    path1 = self.add.path(85, 224);
-    path1.lineTo(715, 224);
 
-    path2 = self.add.path(85, 224);
-    path2.lineTo(240, 96);
-    path2.lineTo(400, 32);
-    path2.lineTo(560, 96);
-    path2.lineTo(715, 224);
+    path1 = self.add.path(125, 240);
+    path1.lineTo(655, 240);
 
-    path3 = self.add.path(85, 224);
-    path3.lineTo(240, 352);
-    path3.lineTo(400, 416);
-    path3.lineTo(560, 352);
-    path3.lineTo(715, 224);
+    path2 = self.add.path(125, 240);
+    // path2.lineTo(315, 112);
+    path2.lineTo(400, 48);
+    // path2.lineTo(495, 112);
+    path2.lineTo(655, 240);
+
+    path3 = self.add.path(125, 240);
+    // path3.lineTo(315, 368);
+    path3.lineTo(400, 432);
+    // path3.lineTo(495, 368);
+    path3.lineTo(655, 240);
 
     graphics.lineStyle(3, 0xffffff, 1);
     // visualize the path
@@ -384,9 +386,6 @@ export default class Game extends Phaser.Scene {
       self.physics.add.overlap(enemies, bullets, damageEnemy);
 
       self.physics.add.collider(enemies, enemyBase, touchBase, decrementRedScore, self);
-    });
-
-
 
     self.socket.on("spawnEnemy", spawnEnemy);
 
