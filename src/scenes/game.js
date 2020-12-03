@@ -426,16 +426,6 @@ export default class Game extends Phaser.Scene {
 
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
 
-    this.physics.add.collider(
-      this.enemies,
-      this.enemyBase,
-      this.touchBase,
-      this.decrementRedScore,
-      self
-    );
-    //change origin of player B enemies
-    //change color of player B enemies
-
     this.socket.on("spawnEnemy", (event) => {
       self.event = event;
       self.spawnEnemy(event);
