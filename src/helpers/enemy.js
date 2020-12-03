@@ -1,6 +1,5 @@
 export default new Phaser.Class({
 	Extends: Phaser.GameObjects.Sprite,
-
 	initialize: function Enemy(scene) {
 		this.createdByPlayerA = scene.event;
 		if (this.createdByPlayerA) {
@@ -65,14 +64,19 @@ export default new Phaser.Class({
         if (this.follower.t >= 1) {
           // this.setActive(false);
           // this.setVisible(false);
+          this.scene.decrementRedScore();
           this.destroy();
+
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
         if (this.follower.t <= 0) {
           // this.setActive(false);
           // this.setVisible(false);
+          this.scene.decrementBlueScore();
           this.destroy();
+
+
         }
       }
     }

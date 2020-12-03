@@ -3,7 +3,6 @@
 //ENEMY_SPEED => SCISSOR_SPEED
 export default new Phaser.Class({
   Extends: Phaser.GameObjects.Sprite,
-
   initialize: function Attacker(scene) {
     this.createdByPlayerA = scene.event;
     if (this.createdByPlayerA) {
@@ -47,7 +46,6 @@ export default new Phaser.Class({
 
 	receiveDamage: function (damage) {
 		this.hp -= damage;
-
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
       // this.setActive(false);
@@ -65,9 +63,11 @@ export default new Phaser.Class({
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
+
         if (this.follower.t >= 1) {
           // this.setActive(false);
           // this.setVisible(false);
+          this.scene.decrementRedScore();
           this.destroy();
         }
       } else {
@@ -76,6 +76,7 @@ export default new Phaser.Class({
         if (this.follower.t <= 0) {
           // this.setActive(false);
           // this.setVisible(false);
+          	this.scene.decrementBlueScore();
           this.destroy();
         }
       }
