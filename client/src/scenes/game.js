@@ -314,10 +314,6 @@ export default class Game extends Phaser.Scene {
       fill: "black",
     });
 
-    // console.log(this.time);
-    // timer = this.time.create(false);
-    // timer.loop(1000, this.resourceTimer, self);
-    // timer.start();
     this.timer = this.time.addEvent({ delay: 1000, callback: this.resourceTimer, callbackScope: this, loop: true });
 
     this.redText = self.add.text(50, 540, `P2 | ` + this.score, {
