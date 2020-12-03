@@ -29,6 +29,9 @@ export default class Game extends Phaser.Scene {
     this.redText;
     this.resourcePoints = 12;
     this.resourceText;
+    this.counter = 10;
+    this.clock;
+    this.timer;
     this.gameOver = false;
     this.map = [
       [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
@@ -58,17 +61,22 @@ export default class Game extends Phaser.Scene {
     this.getEnemy = this.getEnemy.bind(this);
     this.decrementBlueScore = this.decrementBlueScore.bind(this);
     this.decrementRedScore = this.decrementRedScore.bind(this);
+    this.resourceTimer = this.resourceTimer.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
   }
 
   //Game methods
   //Enemy methods
   spawnEnemy() {
+    if(this.resourcePoints > 1){
     var enemy = this.enemies.get();
     if (enemy) {
-      enemy.setActive(true);
-      enemy.setVisible(true);
-      this.myEnemies.push(enemy);
+        this.resourcePoints -= 2;
+        this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+        enemy.setActive(true);
+        enemy.setVisible(true);
+        this.myEnemies.push(enemy);
+      }
     }
   }
 
@@ -102,7 +110,7 @@ export default class Game extends Phaser.Scene {
     var i = Math.floor(pointer.y / 64);
     var j = Math.floor(pointer.x / 64);
     if (this.canPlaceTurret(i, j)) {
-      if (this.resourcePoints) {
+      if (this.resourcePoints > 2) {
         var turret = this.turrets.get();
         this.resourcePoints -= 3;
         this.resourceText.setText("RESOURCE | " + this.resourcePoints);
@@ -166,6 +174,18 @@ export default class Game extends Phaser.Scene {
     return null;
   }
 
+  resourceTimer(){
+    this.counter--;
+    console.log(this.counter);
+    this.clock.setText(` ${this.counter}`);
+    if(this.counter <= 0){
+      this.resourcePoints += 1;
+      this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+      this.counter += 10;
+      this.clock.setText(`${this.counter}`);
+    }
+  }
+
   //grid methods
   drawGrid(graphics) {
     graphics.lineStyle(1, 0x0000ff, 0.8);
@@ -199,12 +219,15 @@ export default class Game extends Phaser.Scene {
       frameWidth: 70,
       frameHeight: 85,
     });
+    this.load.image("clock", "src/assets/clock.png");
   }
 
   create() {
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
+
+    this.add.image(700,520, "clock");
 
     this.anims.create({
       key: 'walk',
@@ -305,6 +328,15 @@ export default class Game extends Phaser.Scene {
       }
     );
 
+    this.clock = self.add.text(678, 515, `${this.counter}`, {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "35px",
+      fill: "black",
+    });
+
+    this.timer = this.time.addEvent({ delay: 1000, callback: this.resourceTimer, callbackScope: this, loop: true });
+
     this.redText = self.add.text(50, 540, `P2 | ` + this.score, {
       fontFamily: "Arial Black",
       fontStyle: "bold",
@@ -381,5 +413,7 @@ export default class Game extends Phaser.Scene {
     });
   }
 
-  update(time, delta) {}
+  update(time, delta) {
+
+  }
 }
