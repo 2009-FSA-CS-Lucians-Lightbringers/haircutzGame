@@ -28,6 +28,7 @@ export default class Game extends Phaser.Scene {
     this.blueText;
     this.redText;
     this.resourcePoints = 12;
+    this.oppResourcePoints = 12;
     this.resourceText;
     this.counter = 10;
     this.clock;
@@ -36,23 +37,23 @@ export default class Game extends Phaser.Scene {
     this.map = [
       [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
       [-1, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1],
-      [-1, 0, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+      [-1, 0, -1, 0, 0, 0, -1, -1, -1, -1, -1, -1],
       [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-      [-1, 0, -1, 0, 0, 0, 0, -1, -1, -1, -1, -1],
+      [-1, 0, -1, 0, 0, 0, -1, -1, -1, -1, -1, -1],
       [-1, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1],
       [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
     ];
     this.map2 = [
-      [-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
-      [-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
-      [-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
+      [-1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1],
+      [-1, -1, -1, -1, -1, -1, 0, -1, -1, 0, 0, -1],
+      [-1, -1, -1, -1, -1, -1, 0, 0, 0, -1, 0, -1],
       [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-      [-1, 0, -1, 0, 0, 0, 0, 0, 0, -1, 0, -1],
-      [-1, 0, 0, -1, -1, 0, 0, -1, -1, 0, 0, -1],
-      [-1, 0, 0, 0, 0, -1, -1, 0, 0, 0, 0, -1],
+      [-1, -1, -1, -1, -1, -1, 0, 0, 0, -1, 0, -1],
+      [-1, -1, -1, -1, -1, -1, 0, -1, -1, 0, 0, -1],
+      [-1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1],
     ];
     this.spawnEnemy = this.spawnEnemy.bind(this);
-    this.touchBase = this.touchBase.bind(this);
+    //this.touchBase = this.touchBase.bind(this);
     this.choosePath = this.choosePath.bind(this);
     this.damageEnemy = this.damageEnemy.bind(this);
     this.placeTurret = this.placeTurret.bind(this);
@@ -80,12 +81,12 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  touchBase(enemyBase, enemy) {
-    // enemy.setActive(false);
-    // enemy.setVisible(false);
-    enemy.destroy();
-    // }
-  }
+  // touchBase(enemyBase, enemy) {
+  //   // enemy.setActive(false);
+  //   // enemy.setVisible(false);
+  //   enemy.destroy();
+  //   // }
+  // }
 
   choosePath(enemy, path) {
     enemy.startOnPath(path);
@@ -106,15 +107,27 @@ export default class Game extends Phaser.Scene {
   }
 
   //Turret methods
-  placeTurret(pointer) {
-    var i = Math.floor(pointer.y / 64);
-    var j = Math.floor(pointer.x / 64);
-    if (this.canPlaceTurret(i, j)) {
-      if (this.resourcePoints > 2) {
+  placeTurret(isPlayerA, x, y) {
+    var i = Math.floor(y / 64);
+    var j = Math.floor(x / 64);
+    if (this.canPlaceTurret(isPlayerA, i, j)) {
+      if (isPlayerA === this.isPlayerA) {
+        if (this.resourcePoints > 2) {
+          var turret = this.turrets.get();
+          this.resourcePoints -= 3;
+          this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+          if (turret) {
+            //console.log("placing turret");
+            turret.setActive(true);
+            turret.setVisible(true);
+            turret.place(i, j);
+          }
+        }
+      } else if (this.oppResourcePoints > 2) {
         var turret = this.turrets.get();
-        this.resourcePoints -= 3;
-        this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+        this.oppResourcePoints -= 3;
         if (turret) {
+          //console.log("placing turret");
           turret.setActive(true);
           turret.setVisible(true);
           turret.place(i, j);
@@ -123,8 +136,8 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  canPlaceTurret(i, j) {
-    return this.map[i][j] === 0;
+  canPlaceTurret(isPlayerA, i, j) {
+    return isPlayerA ? this.map[i][j] === 0 : this.map2[i][j] === 0;
   }
 
   addBullet(x, y, angle) {
@@ -212,6 +225,7 @@ export default class Game extends Phaser.Scene {
       frameHeight: 45,
     });
     this.load.image("p2turret", "src/assets/player2_turret.png");
+    this.load.image("p1turret", "src/assets/player1_turret.png");
     this.load.image("bullet", "src/assets/bullet.png");
     this.load.image("scoreboard", "src/assets/scoreboard.png");
     this.load.image("blackboard", "src/assets/blackboard.png");
@@ -250,6 +264,15 @@ export default class Game extends Phaser.Scene {
     //sets the default to "you are not Player A"
     let self = this;
 
+    var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
+    redArc1.setStrokeStyle(3, 0xffffff);
+    var redArc2 = this.add.arc(450, 200, 230, 13, 97, false, 0xf4cccc);
+    redArc2.setStrokeStyle(3, 0xffffff);
+    var blueArc1 = this.add.arc(350, 200, 230, 83, 167, false, 0x9fc5e8);
+    blueArc1.setStrokeStyle(3, 0xffffff);
+    var blueArc2 = this.add.arc(350, 280, 230, 193, 277, false, 0x9fc5e8);
+    blueArc2.setStrokeStyle(3, 0xffffff);
+
     // this.zone = new Zone(this);
     // this.dropZone = this.zone.renderZone();
     // this.outline = this.zone.renderOutline(this.dropZone);
@@ -272,7 +295,7 @@ export default class Game extends Phaser.Scene {
     this.socket.on("isPlayerB", function () {
       if (!self.isPlayerA) {
         self.isPlayerB = true;
-        console.log("Welcome Player B");
+        console.log("Welcome Player B!");
       }
     });
 
@@ -284,15 +307,15 @@ export default class Game extends Phaser.Scene {
     // the path for our enemies
     // parameters are the start x and y of our path
     this.path1 = this.add.path(125, 240);
-    this.path1.lineTo(655, 240);
+    this.path1.lineTo(675, 240);
 
     this.path2 = this.add.path(125, 240);
     this.path2.lineTo(400, 48);
-    this.path2.lineTo(655, 240);
+    this.path2.lineTo(675, 240);
 
     this.path3 = this.add.path(125, 240);
     this.path3.lineTo(400, 432);
-    this.path3.lineTo(655, 240);
+    this.path3.lineTo(675, 240);
 
     graphics.lineStyle(3, 0xffffff, 1);
 
@@ -311,10 +334,6 @@ export default class Game extends Phaser.Scene {
       classType: Turret,
       runChildUpdate: true,
     });
-    this.input.on("pointerdown", self.placeTurret);
-
-    // this graphics element is only for visualization,
-    // its not related to our path
 
     this.resourceText = self.add.text(
       300,
@@ -356,22 +375,22 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
 
-    this.enemyBase = this.physics.add
-      .group({
-        classType: EnemyBase,
-        runChildUpdate: true,
-      })
-      .create();
+    // this.enemyBase = this.physics.add
+    //   .group({
+    //     classType: EnemyBase,
+    //     runChildUpdate: true,
+    //   })
+    //   .create();
 
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
 
-    this.physics.add.collider(
-      this.enemies,
-      this.enemyBase,
-      this.touchBase,
-      this.decrementRedScore,
-      self
-    );
+    // this.physics.add.collider(
+    //   this.enemies,
+    //   this.enemyBase,
+    //   this.touchBase,
+    //   this.decrementRedScore,
+    //   self
+    // );
     //change origin of player B enemies
     //change color of player B enemies
 
@@ -381,12 +400,6 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.keyboard.on("keydown-A", function (event) {
-      // if (self.isPlayerA) {
-      // 	self.socket.emit('spawnEnemy', { isPlayerA: true });
-      // }
-      // if (self.isPlayerB) {
-      // 	self.socket.emit('spawnEnemy', { isPlayerB: true });
-      // }
       self.socket.emit("spawnEnemy", self.isPlayerA);
     });
 
@@ -405,11 +418,24 @@ export default class Game extends Phaser.Scene {
     this.input.keyboard.on("keydown-D", function (event) {
       self.socket.emit("choosePath", { key: 1 });
     });
+
     this.input.keyboard.on("keydown-S", function (event) {
       self.socket.emit("choosePath", { key: 2 });
     });
+
     this.input.keyboard.on("keydown-F", function (event) {
       self.socket.emit("choosePath", { key: 3 });
+    });
+
+    this.input.on("pointerdown", function (event) {
+      console.log("pointer down");
+      self.socket.emit("placeTurret", self.isPlayerA, event.x, event.y);
+    });
+
+    this.socket.on("placeTurret", function (isPlayerA, x, y) {
+      //console.log(isPlayerA, x, y);
+      self.turretPlacer = isPlayerA;
+      self.placeTurret(isPlayerA, x, y);
     });
   }
 
