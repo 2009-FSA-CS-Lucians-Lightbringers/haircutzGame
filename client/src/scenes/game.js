@@ -153,6 +153,7 @@ export default class Game extends Phaser.Scene {
 
   decrementRedScore() {
     this.score -= 1;
+    // this.anims.anims.entries.startingpoint.frames[0].frame.name--
     this.redText.setText("P2 | " + this.score);
     if (this.score <= 0) {
       this.gameOver = true;
@@ -214,6 +215,13 @@ export default class Game extends Phaser.Scene {
       ],
       frameRate: 10,
       repeat: -1
+    })
+
+    this.anims.create({
+      key: 'startingpoint',
+      frames: [
+        { key: 'p2base', frame: 5 },
+      ],
     })
 
     //sets the default to "you are not Player A"
@@ -362,10 +370,10 @@ export default class Game extends Phaser.Scene {
       }
     });
 
-    this.input.keyboard.on("keydown-S", function (event) {
+    this.input.keyboard.on("keydown-D", function (event) {
       self.socket.emit("choosePath", { key: 1 });
     });
-    this.input.keyboard.on("keydown-D", function (event) {
+    this.input.keyboard.on("keydown-S", function (event) {
       self.socket.emit("choosePath", { key: 2 });
     });
     this.input.keyboard.on("keydown-F", function (event) {
