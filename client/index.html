@@ -50,6 +50,31 @@
           </div>
         </div>
       </div>
-      <div id="game"></div>
+    </div>
+    <div id="game"></div>
+    <button type="button" color="black" id="darkmode">Dark Mode</button>
+        <script>
+            let button = document.getElementById('darkmode');
+            button.addEventListener('click', () => {
+                if (button.innerText === 'Dark Mode') {
+                    button.innerText = 'Light Mode';
+                    document.body.style.backgroundImage =
+                        "url('/src/assets/page_background2.png')";
+
+                    document.getElementsByClassName('containerOne')[0].style.color =
+                        'blue';
+                    document.getElementsByClassName('containerTwo')[0].style.color =
+                        'blue';
+                } else {
+                    button.innerText = 'Dark Mode';
+                    document.body.style.backgroundImage =
+                        "url('/src/assets/page_background3.png')";
+                    document.getElementsByClassName('containerOne')[0].style.color =
+                        'black';
+                    document.getElementsByClassName('containerTwo')[0].style.color =
+                        'black';
+                }
+            });
+        </script>
   </body>
 </html>

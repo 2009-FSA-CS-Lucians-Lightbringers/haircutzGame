@@ -1,11 +1,11 @@
 export default new Phaser.Class({
-  Extends: Phaser.GameObjects.Sprite,
+	Extends: Phaser.GameObjects.Sprite,
 
-  initialize: function Enemy(scene) {
-    this.createdByPlayerA = scene.event;
-    if (scene.event) {
-      //if playerA hit the keyboard - create a p1 attacker
-
+	initialize: function Enemy(scene) {
+		console.log('starting initialization of enemy...');
+		this.createdByPlayerA = scene.event;
+		if (this.createdByPlayerA) {
+			//if playerA hit the keyboard - create a p1 attacker
       Phaser.GameObjects.Sprite.call(this, scene, 125, 240, "p1attackers");
       this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
       scene.enemyNumber++;
@@ -17,9 +17,10 @@ export default new Phaser.Class({
       this.number = scene.enemyNumber;
     }
   },
+  
   //differentiate player attacks based on class
   //if playerA then create a playera attacker else create a playerb attacker
-  //
+  
   startOnPath: function (path) {
     if (this.createdByPlayerA) {
       this.path = path;
@@ -59,27 +60,27 @@ export default new Phaser.Class({
     }
   },
 
-  update: function (time, delta) {
-    if (this.path) {
-      this.path.getPoint(this.follower.t, this.follower.vec);
+	update: function (time, delta) {
+		if (this.path) {
+			this.path.getPoint(this.follower.t, this.follower.vec);
 
-      this.setPosition(this.follower.vec.x, this.follower.vec.y);
+			this.setPosition(this.follower.vec.x, this.follower.vec.y);
 
-      if (this.createdByPlayerA) {
-        this.follower.t += this.scene.ENEMY_SPEED * delta;
+			if (this.createdByPlayerA) {
+				this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
-        if (this.follower.t >= 1) {
-          this.setActive(false);
-          this.setVisible(false);
-        }
-      } else {
-        this.follower.t -= this.scene.ENEMY_SPEED * delta;
+				if (this.follower.t >= 1) {
+					this.setActive(false);
+					this.setVisible(false);
+				}
+			} else {
+				this.follower.t -= this.scene.SCISSOR_SPEED * delta;
 
-        if (this.follower.t <= 0) {
-          this.setActive(false);
-          this.setVisible(false);
-        }
-      }
-    }
-  },
+				if (this.follower.t <= 0) {
+					this.setActive(false);
+					this.setVisible(false);
+				}
+			}
+		}
+	},
 });

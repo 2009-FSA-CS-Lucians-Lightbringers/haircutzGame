@@ -1,9 +1,10 @@
-import io from "socket.io-client";
-import Zone from "../helpers/zone.js";
-import Enemy from "../helpers/enemy.js";
-import Turret from "../helpers/turret.js";
-import Bullet from "../helpers/bullet.js";
-import EnemyBase from "../helpers/enemyBase.js";
+import io from 'socket.io-client';
+import Zone from '../helpers/zone.js';
+import Enemy from '../helpers/enemy.js';
+import Attacker from '../helpers/attacker.js';
+import Turret from '../helpers/turret.js';
+import Bullet from '../helpers/bullet.js';
+import EnemyBase from '../helpers/enemyBase.js';
 export default class Game extends Phaser.Scene {
   constructor() {
     super({
@@ -13,14 +14,17 @@ export default class Game extends Phaser.Scene {
     this.isPlayerA = false;
     this.isPlayerB = false;
     this.myEnemies = [];
-    this.enemyNumber = -1;
-    this.ENEMY_SPEED = 1 / 10000;
+    this.myAttackers = [];
+		this.enemyNumber = -1;
+		this.attackerNumber = -1;
+		this.SCISSOR_SPEED = 1 / 10000;
     this.BULLET_DAMAGE = 20;
     this.path1;
     this.path2;
     this.path3;
     this.path4;
     this.enemies;
+    this.attackers;
     this.turrets;
     this.bullets;
     this.enemyBase;
@@ -53,6 +57,7 @@ export default class Game extends Phaser.Scene {
       [-1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1],
     ];
     this.spawnEnemy = this.spawnEnemy.bind(this);
+    this.spawnScissor = this.spawnScissor.bind(this)
     //this.touchBase = this.touchBase.bind(this);
     this.choosePath = this.choosePath.bind(this);
     this.damageEnemy = this.damageEnemy.bind(this);
@@ -105,6 +110,27 @@ export default class Game extends Phaser.Scene {
       enemy.receiveDamage(bulletDamage);
     }
   }
+
+  spawnScissor() {
+		//if this client instance contains this.isPlayerA === true, compare the event to this.isPlayerA to determine
+		//if enemy or attacker is generated
+		if (this.event === this.isPlayerA) {
+			//if this is playerA create an attacker
+			var attacker = this.attackers.get();
+			if (attacker) {
+				attacker.setActive(true);
+				attacker.setVisible(true);
+				this.myAttackers.push(attacker);
+			}
+		} else {
+			var enemy = this.enemies.get();
+			if (enemy) {
+				enemy.setActive(true);
+				enemy.setVisible(true);
+				this.myEnemies.push(enemy);
+			}
+		}
+	}
 
   //Turret methods
   placeTurret(isPlayerA, x, y) {
@@ -399,33 +425,32 @@ export default class Game extends Phaser.Scene {
       self.spawnEnemy(event);
     });
 
-    this.input.keyboard.on("keydown-A", function (event) {
-      self.socket.emit("spawnEnemy", self.isPlayerA);
-    });
+		this.input.keyboard.on('keydown', function (event) {
+			// if (self.isPlayerA) {
+			// 	self.socket.emit('spawnEnemy', { isPlayerA: true });
+			// }
+			// if (self.isPlayerB) {
+			// 	self.socket.emit('spawnEnemy', { isPlayerB: true });
+			// }
+			if (event.key === 'a') {
+				self.socket.emit('spawnEnemy', self.isPlayerA);
+			}
+			if (event.key === '1' || event.key === '2' || event.key === '3') {
+				self.socket.emit('choosePath', { key: event.key });
+			}
+		});
 
-    this.socket.on("choosePath", function (event) {
-      if (event.key === 1) {
-        self.choosePath(self.myEnemies[self.enemyNumber], self.path1);
-      }
-      if (event.key === 2) {
-        self.choosePath(self.myEnemies[self.enemyNumber], self.path2);
-      }
-      if (event.key === 3) {
-        self.choosePath(self.myEnemies[self.enemyNumber], self.path3);
-      }
-    });
-
-    this.input.keyboard.on("keydown-D", function (event) {
-      self.socket.emit("choosePath", { key: 1 });
-    });
-
-    this.input.keyboard.on("keydown-S", function (event) {
-      self.socket.emit("choosePath", { key: 2 });
-    });
-
-    this.input.keyboard.on("keydown-F", function (event) {
-      self.socket.emit("choosePath", { key: 3 });
-    });
+		this.socket.on('choosePath', function (event) {
+			if (event.key === '1') {
+				self.choosePath(self.myEnemies[self.enemyNumber], self.path1);
+			}
+			if (event.key === '2') {
+				self.choosePath(self.myEnemies[self.enemyNumber], self.path2);
+			}
+			if (event.key === '3') {
+				self.choosePath(self.myEnemies[self.enemyNumber], self.path3);
+			}
+		});
 
     this.input.on("pointerdown", function (event) {
       console.log("pointer down");
