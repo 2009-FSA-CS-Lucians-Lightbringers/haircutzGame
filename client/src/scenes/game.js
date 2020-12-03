@@ -222,6 +222,15 @@ export default class Game extends Phaser.Scene {
     //sets the default to "you are not Player A"
     let self = this;
 
+    var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
+    redArc1.setStrokeStyle(3, 0xffffff);
+    var redArc2 = this.add.arc(450, 200, 230, 13, 97, false, 0xf4cccc);
+    redArc2.setStrokeStyle(3, 0xffffff);
+    var blueArc1 = this.add.arc(350, 200, 230, 83, 167, false, 0x9fc5e8);
+    blueArc1.setStrokeStyle(3, 0xffffff);
+    var blueArc2 = this.add.arc(350, 280, 230, 193, 277, false, 0x9fc5e8);
+    blueArc2.setStrokeStyle(3, 0xffffff);
+
     // this.zone = new Zone(this);
     // this.dropZone = this.zone.renderZone();
     // this.outline = this.zone.renderOutline(this.dropZone);
@@ -256,15 +265,15 @@ export default class Game extends Phaser.Scene {
     // the path for our enemies
     // parameters are the start x and y of our path
     this.path1 = this.add.path(125, 240);
-    this.path1.lineTo(655, 240);
+    this.path1.lineTo(675, 240);
 
     this.path2 = this.add.path(125, 240);
     this.path2.lineTo(400, 48);
-    this.path2.lineTo(655, 240);
+    this.path2.lineTo(675, 240);
 
     this.path3 = this.add.path(125, 240);
     this.path3.lineTo(400, 432);
-    this.path3.lineTo(655, 240);
+    this.path3.lineTo(675, 240);
 
     graphics.lineStyle(3, 0xffffff, 1);
 
