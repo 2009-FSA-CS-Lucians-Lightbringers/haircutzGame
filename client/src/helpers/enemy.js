@@ -25,9 +25,9 @@ export default new Phaser.Class({
       this.path = path;
       // set the t parameter at the start of the path
       this.follower.t = 0;
+      this.anims.play('walk')
       // get x and y of the given t point
       // console.log(this.path.getPoint(this.follower.t, this.follower.vec));
-
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
@@ -36,6 +36,8 @@ export default new Phaser.Class({
     } else {
       this.path = path;
       this.follower.t = 1;
+      this.anims.play('walk')
+
 
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
