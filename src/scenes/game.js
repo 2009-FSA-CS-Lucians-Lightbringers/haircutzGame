@@ -9,7 +9,7 @@ import EnemyBase from "../helpers/enemyBase.js";
 export default class Game extends Phaser.Scene {
   constructor() {
     super({
-      key: "Game",
+      key: "game",
     });
     //game properties
     this.isPlayerA = false;
