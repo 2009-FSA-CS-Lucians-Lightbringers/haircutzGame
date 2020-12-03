@@ -1,46 +1,54 @@
 body {
-  background-image: url("src/assets/page_background3.png")
+	background-image: url('src/assets/page_background3.png');
 }
-
+button {
+	background-color: black;
+	color: white;
+}
+button:hover {
+	background-color: white;
+	color: black;
+	box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+		0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
 #game {
-  position: left;
-  width: 50%;
-  height: 512px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 5em;
-  right: 0;
-  margin: auto;
+	position: left;
+	width: 50%;
+	height: 512px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 5em;
+	right: 0;
+	margin: auto;
 }
 
 #left {
-  float: left;
-  width: 25%;
-  height: 100vh;
-  margin: 0;
-  background-image: url("src/assets/hanging_sign.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
+	float: left;
+	width: 25%;
+	height: 100vh;
+	margin: 0;
+	background-image: url('src/assets/hanging_sign.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
 }
 
-
 #left div {
-  display: block;
+	display: block;
 }
 
 #right {
-  float: right;
-  width: 25%;
-  height: 100vh;
-  margin: 0;
-  background-image: url("src/assets/hanging_sign.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
+	float: right;
+	width: 25%;
+	height: 100vh;
+	margin: 0;
+	background-image: url('src/assets/hanging_sign.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
 }
 
 #right div {
-  display: block;
+	display: block;
 }

@@ -1,21 +1,23 @@
+//changed
+//enemyNumber => attackerNumber
+//ENEMY_SPEED => SCISSOR_SPEED
 export default new Phaser.Class({
 	Extends: Phaser.GameObjects.Sprite,
 
-	initialize: function Enemy(scene) {
-		console.log('starting initialization of enemy...');
+	initialize: function Attacker(scene) {
 		this.createdByPlayerA = scene.event;
-		if (scene.event) {
+		if (this.createdByPlayerA) {
 			//if playerA hit the keyboard - create a p1 attacker
 
 			Phaser.GameObjects.Sprite.call(this, scene, 85, 224, 'p1attackers');
 			this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
-			scene.enemyNumber++;
-			this.number = scene.enemyNumber;
+			scene.attackerNumber++;
+			this.number = scene.attackerNumber;
 		} else {
 			Phaser.GameObjects.Sprite.call(this, scene, 650, 224, 'p2attackers');
 			this.follower = { t: 0.8, vec: new Phaser.Math.Vector2() };
-			scene.enemyNumber++;
-			this.number = scene.enemyNumber;
+			scene.attackerNumber++;
+			this.number = scene.attackerNumber;
 		}
 	},
 	//differentiate player attacks based on class
@@ -83,3 +85,20 @@ export default new Phaser.Class({
 		}
 	},
 });
+
+//player A hits a key
+//client sends info to server saying created by A
+//server sends info to both client instances saying created by A
+//each client has the same info except one of them is not player A
+//if the person who is not player A receives player A true, create an enemy
+//if the person who is player A receives player A true, create an attacker
+
+//Creating a new Phaser Class
+//export default class
+//import class
+//initialize this.blank in constructor
+//connect this.blank with class
+//create spawn class function
+//spawn class function should get an instance from this.blank (class)
+//if instance exists, make instance active and visible
+//push instance into array of my instances
