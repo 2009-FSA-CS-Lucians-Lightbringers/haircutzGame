@@ -5,6 +5,7 @@ import Attacker from "../helpers/attacker.js";
 import Turret from "../helpers/turret.js";
 import Bullet from "../helpers/bullet.js";
 import EnemyBase from "../helpers/enemyBase.js";
+
 export default class Game extends Phaser.Scene {
   constructor() {
     super({
@@ -58,7 +59,7 @@ export default class Game extends Phaser.Scene {
     ];
     this.spawnEnemy = this.spawnEnemy.bind(this);
     this.spawnScissor = this.spawnScissor.bind(this);
-    //this.touchBase = this.touchBase.bind(this);
+    this.touchBase = this.touchBase.bind(this);
     this.choosePath = this.choosePath.bind(this);
     this.damageEnemy = this.damageEnemy.bind(this);
     this.placeTurret = this.placeTurret.bind(this);
@@ -82,8 +83,8 @@ export default class Game extends Phaser.Scene {
         enemy.setActive(true);
         enemy.setVisible(true);
         this.myEnemies.push(enemy);
-        console.log("Enemy:", enemy);
-        console.log("myEnemies", this.myEnemies);
+        // console.log("Enemy:", enemy);
+        // console.log("myEnemies", this.myEnemies);
       }
     }
   }
@@ -242,25 +243,25 @@ export default class Game extends Phaser.Scene {
 
   preload() {
     // load the game assets –
-    this.load.image("background", "src/assets/background.png");
-    this.load.spritesheet("p1attackers", "src/assets/player1_attackers.png", {
+    this.load.image("background", "/assets/background.png");
+    this.load.spritesheet("p1attackers", "/assets/player1_attackers.png", {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.spritesheet("p2attackers", "src/assets/player2_attackers.png", {
+    this.load.spritesheet("p2attackers", "/assets/player2_attackers.png", {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.image("p2turret", "src/assets/player2_turret.png");
-    this.load.image("p1turret", "src/assets/player1_turret.png");
-    this.load.image("bullet", "src/assets/bullet.png");
-    this.load.image("scoreboard", "src/assets/scoreboard.png");
-    this.load.image("blackboard", "src/assets/blackboard.png");
-    this.load.spritesheet("p2base", "src/assets/player2_base2.png", {
+    this.load.image("p2turret", "/assets/player2_turret.png");
+    this.load.image("p1turret", "/assets/player1_turret.png");
+    this.load.image("bullet", "/assets/bullet.png");
+    this.load.image("scoreboard", "/assets/scoreboard.png");
+    this.load.image("blackboard", "/assets/blackboard.png");
+    this.load.spritesheet("p2base", "/assets/player2_base2.png", {
       frameWidth: 70,
       frameHeight: 85,
     });
-    this.load.image("clock", "src/assets/clock.png");
+    this.load.image("clock", "/assets/clock.png");
   }
 
   create() {
@@ -314,7 +315,7 @@ export default class Game extends Phaser.Scene {
     // this.outline = this.zone.renderOutline(this.dropZone);
 
     //connecting to our socket on the client-side
-    this.socket = io("http://localhost:3000");
+    this.socket = io();
 
     this.socket.on("connect", function () {
       console.log("Connected!");

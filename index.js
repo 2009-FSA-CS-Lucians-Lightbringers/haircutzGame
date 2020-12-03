@@ -1,16 +1,31 @@
 //setting up express server
-const server = require("express")();
+const express = require("express");
+const server = express();
 const http = require("http").createServer(server);
+const path = require("path");
+const PORT = process.env.PORT || 8080;
+const morgan = require("morgan");
 //setting up socket that works with CORS
-const io = require("socket.io")(http, {
-  cors: {
-    origin: "http://localhost:8080",
-    methods: ["GET", "POST"],
-  },
-});
+const io = require("socket.io")(http);
+
+// logging middleware
+server.use(morgan("dev"));
+
+// static file-serving middleware
+server.use(express.static(path.join(__dirname, "public")));
+
+////get route to serve up entry point***
+////combine our package.json files
+////similar to boilermaker - webpack build then run server
+////look at boilermaker webpack config
+////add src/index.js script to html
 
 //our players array
 let players = [];
+
+server.use("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
 
 //socket logic
 io.on("connection", function (socket) {
@@ -50,6 +65,6 @@ io.on("connection", function (socket) {
 });
 
 //setting up our server on localhost:3000
-http.listen(3000, function () {
+http.listen(PORT, function () {
   console.log("Server started!");
 });
