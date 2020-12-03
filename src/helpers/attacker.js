@@ -35,7 +35,6 @@ export default new Phaser.Class({
 			// set the x and y of our enemy to the received from the previous step
 			this.setPosition(this.follower.vec.x, this.follower.vec.y);
 			this.hp = 100;
-			console.log(this.hp);
 		} else {
 			this.path = path;
 			this.follower.t = 0.8;
@@ -44,15 +43,11 @@ export default new Phaser.Class({
 			// set the x and y of our enemy to the received from the previous step
 			this.setPosition(this.follower.vec.x, this.follower.vec.y);
 			this.hp = 100;
-			console.log(this.hp);
 		}
 	},
 
 	receiveDamage: function (damage) {
-		console.log('before damage:', this.hp);
-		console.log('damage:', damage);
 		this.hp -= damage;
-		console.log('after damage:', this.hp);
 
 		// if hp drops below 0 we deactivate this enemy
 		if (this.hp <= 0) {
