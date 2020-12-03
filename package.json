@@ -1,18 +1,50 @@
 {
-  "name": "card-game",
+  "name": "haircutz",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev-start": "nodemon server.js"
+    "build": "webpack",
+    "build-watch": "webpack -w",
+    "start": "node server",
+    "start-dev": "NODE_ENV='development' npm run build-watch & NODE_ENV='development' npm run start-server",
+    "start-server": "nodemon server -e html,js,scss --ignore public --ignore client"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/2009-FSA-CS-Lucians-Lightbringers/haircutzGame.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Richard Davey <rdavey@gmail.com> (http://www.photonstorm.com)",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+  "bugs": {
+    "url": "https://github.com/photonstorm/phaser3-project-template/issues"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/polyfill": "^7.12.1",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^5.0.1",
+    "file-loader": "^4.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^3.1.0",
+    "terser-webpack-plugin": "^2.2.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "webpack-merge": "^4.2.2"
+  },
   "dependencies": {
     "express": "^4.17.1",
+    "css-loader": "^5.0.1",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.6",
-    "socket.io": "^3.0.3"
+    "phaser": "^3.20.1",
+    "socket.io": "^3.0.3",
+    "socket.io-client": "^3.0.3",
+    "style-loader": "^2.0.0"
   }
 }

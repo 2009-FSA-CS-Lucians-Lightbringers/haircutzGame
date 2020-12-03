@@ -12,7 +12,7 @@ export default new Phaser.Class({
       this.number = scene.enemyNumber;
     } else {
       Phaser.GameObjects.Sprite.call(this, scene, 500, 240, "p2attackers");
-      this.follower = { t: 0.5, vec: new Phaser.Math.Vector2() };
+      this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
       scene.enemyNumber++;
       this.number = scene.enemyNumber;
     }
@@ -36,7 +36,7 @@ export default new Phaser.Class({
       console.log(this.hp);
     } else {
       this.path = path;
-      this.follower.t = 0.5;
+      this.follower.t = 1;
       this.anims.play("redWalk");
 
       this.path.getPoint(this.follower.t, this.follower.vec);
@@ -54,8 +54,9 @@ export default new Phaser.Class({
     //console.log(">>>after bullet", this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
-      this.setActive(false);
-      this.setVisible(false);
+      // this.setActive(false);
+      // this.setVisible(false);
+      this.destroy();
     }
   },
 
