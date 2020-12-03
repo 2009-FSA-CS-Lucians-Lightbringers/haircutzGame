@@ -1,10 +1,10 @@
-import io from 'socket.io-client';
-import Zone from '../helpers/zone.js';
-import Enemy from '../helpers/enemy.js';
-import Attacker from '../helpers/attacker.js';
-import Turret from '../helpers/turret.js';
-import Bullet from '../helpers/bullet.js';
-import EnemyBase from '../helpers/enemyBase.js';
+import io from "socket.io-client";
+import Zone from "../helpers/zone.js";
+import Enemy from "../helpers/enemy.js";
+import Attacker from "../helpers/attacker.js";
+import Turret from "../helpers/turret.js";
+import Bullet from "../helpers/bullet.js";
+import EnemyBase from "../helpers/enemyBase.js";
 export default class Game extends Phaser.Scene {
   constructor() {
     super({
@@ -15,9 +15,9 @@ export default class Game extends Phaser.Scene {
     this.isPlayerB = false;
     this.myEnemies = [];
     this.myAttackers = [];
-		this.enemyNumber = -1;
-		this.attackerNumber = -1;
-		this.SCISSOR_SPEED = 1 / 10000;
+    this.enemyNumber = -1;
+    this.attackerNumber = -1;
+    this.SCISSOR_SPEED = 1 / 10000;
     this.BULLET_DAMAGE = 20;
     this.path1;
     this.path2;
@@ -57,7 +57,7 @@ export default class Game extends Phaser.Scene {
       [-1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1],
     ];
     this.spawnEnemy = this.spawnEnemy.bind(this);
-    this.spawnScissor = this.spawnScissor.bind(this)
+    this.spawnScissor = this.spawnScissor.bind(this);
     //this.touchBase = this.touchBase.bind(this);
     this.choosePath = this.choosePath.bind(this);
     this.damageEnemy = this.damageEnemy.bind(this);
@@ -74,24 +74,26 @@ export default class Game extends Phaser.Scene {
   //Game methods
   //Enemy methods
   spawnEnemy() {
-    if(this.resourcePoints > 1){
-    var enemy = this.enemies.get();
-    if (enemy) {
+    if (this.resourcePoints > 1) {
+      var enemy = this.enemies.get();
+      if (enemy) {
         this.resourcePoints -= 2;
         this.resourceText.setText("RESOURCE | " + this.resourcePoints);
         enemy.setActive(true);
         enemy.setVisible(true);
         this.myEnemies.push(enemy);
+        console.log("Enemy:", enemy);
+        console.log("myEnemies", this.myEnemies);
       }
     }
   }
 
-  // touchBase(enemyBase, enemy) {
-  //   // enemy.setActive(false);
-  //   // enemy.setVisible(false);
-  //   enemy.destroy();
-  //   // }
-  // }
+  touchBase(enemyBase, enemy) {
+    // enemy.setActive(false);
+    // enemy.setVisible(false);
+    enemy.destroy();
+    // }
+  }
 
   choosePath(enemy, path) {
     enemy.startOnPath(path);
@@ -112,25 +114,25 @@ export default class Game extends Phaser.Scene {
   }
 
   spawnScissor() {
-		//if this client instance contains this.isPlayerA === true, compare the event to this.isPlayerA to determine
-		//if enemy or attacker is generated
-		if (this.event === this.isPlayerA) {
-			//if this is playerA create an attacker
-			var attacker = this.attackers.get();
-			if (attacker) {
-				attacker.setActive(true);
-				attacker.setVisible(true);
-				this.myAttackers.push(attacker);
-			}
-		} else {
-			var enemy = this.enemies.get();
-			if (enemy) {
-				enemy.setActive(true);
-				enemy.setVisible(true);
-				this.myEnemies.push(enemy);
-			}
-		}
-	}
+    //if this client instance contains this.isPlayerA === true, compare the event to this.isPlayerA to determine
+    //if enemy or attacker is generated
+    if (this.event === this.isPlayerA) {
+      //if this is playerA create an attacker
+      var attacker = this.attackers.get();
+      if (attacker) {
+        attacker.setActive(true);
+        attacker.setVisible(true);
+        this.myAttackers.push(attacker);
+      }
+    } else {
+      var enemy = this.enemies.get();
+      if (enemy) {
+        enemy.setActive(true);
+        enemy.setVisible(true);
+        this.myEnemies.push(enemy);
+      }
+    }
+  }
 
   //Turret methods
   placeTurret(isPlayerA, x, y) {
@@ -213,11 +215,10 @@ export default class Game extends Phaser.Scene {
     return null;
   }
 
-  resourceTimer(){
+  resourceTimer() {
     this.counter--;
-    console.log(this.counter);
     this.clock.setText(` ${this.counter}`);
-    if(this.counter <= 0){
+    if (this.counter <= 0) {
       this.resourcePoints += 1;
       this.resourceText.setText("RESOURCE | " + this.resourcePoints);
       this.counter += 10;
@@ -267,25 +268,34 @@ export default class Game extends Phaser.Scene {
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
 
-    this.add.image(700,520, "clock");
+    this.add.image(700, 520, "clock");
 
     this.anims.create({
-      key: 'walk',
+      key: "blueWalk",
       frames: [
-        { key: 'p1attackers', frame: 1 },
-        { key: 'p1attackers', frame: 2 },
-        { key: 'p1attackers', frame: 3 }
+        { key: "p1attackers", frame: 1 },
+        { key: "p1attackers", frame: 2 },
+        { key: "p1attackers", frame: 3 },
       ],
       frameRate: 10,
-      repeat: -1
-    })
+      repeat: -1,
+    });
 
     this.anims.create({
-      key: 'startingpoint',
+      key: "redWalk",
       frames: [
-        { key: 'p2base', frame: 5 },
+        { key: "p2attackers", frame: 1 },
+        { key: "p2attackers", frame: 2 },
+        { key: "p2attackers", frame: 3 },
       ],
-    })
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "startingpoint",
+      frames: [{ key: "p2base", frame: 5 }],
+    });
 
     //sets the default to "you are not Player A"
     let self = this;
@@ -380,7 +390,12 @@ export default class Game extends Phaser.Scene {
       fill: "black",
     });
 
-    this.timer = this.time.addEvent({ delay: 1000, callback: this.resourceTimer, callbackScope: this, loop: true });
+    this.timer = this.time.addEvent({
+      delay: 1000,
+      callback: this.resourceTimer,
+      callbackScope: this,
+      loop: true,
+    });
 
     this.redText = self.add.text(50, 540, `P2 | ` + this.score, {
       fontFamily: "Arial Black",
@@ -401,22 +416,22 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
 
-    // this.enemyBase = this.physics.add
-    //   .group({
-    //     classType: EnemyBase,
-    //     runChildUpdate: true,
-    //   })
-    //   .create();
+    this.enemyBase = this.physics.add
+      .group({
+        classType: EnemyBase,
+        runChildUpdate: true,
+      })
+      .create();
 
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
 
-    // this.physics.add.collider(
-    //   this.enemies,
-    //   this.enemyBase,
-    //   this.touchBase,
-    //   this.decrementRedScore,
-    //   self
-    // );
+    this.physics.add.collider(
+      this.enemies,
+      this.enemyBase,
+      this.touchBase,
+      this.decrementRedScore,
+      self
+    );
     //change origin of player B enemies
     //change color of player B enemies
 
@@ -425,32 +440,27 @@ export default class Game extends Phaser.Scene {
       self.spawnEnemy(event);
     });
 
-		this.input.keyboard.on('keydown', function (event) {
-			// if (self.isPlayerA) {
-			// 	self.socket.emit('spawnEnemy', { isPlayerA: true });
-			// }
-			// if (self.isPlayerB) {
-			// 	self.socket.emit('spawnEnemy', { isPlayerB: true });
-			// }
-			if (event.key === 'a') {
-				self.socket.emit('spawnEnemy', self.isPlayerA);
-			}
-			if (event.key === '1' || event.key === '2' || event.key === '3') {
-				self.socket.emit('choosePath', { key: event.key });
-			}
-		});
+    this.input.keyboard.on("keydown", function (event) {
+      if (event.key === "a") {
+        console.log("a has been pressed");
+        self.socket.emit("spawnEnemy", self.isPlayerA);
+      }
+      if (event.key === "1" || event.key === "2" || event.key === "3") {
+        self.socket.emit("choosePath", { key: event.key });
+      }
+    });
 
-		this.socket.on('choosePath', function (event) {
-			if (event.key === '1') {
-				self.choosePath(self.myEnemies[self.enemyNumber], self.path1);
-			}
-			if (event.key === '2') {
-				self.choosePath(self.myEnemies[self.enemyNumber], self.path2);
-			}
-			if (event.key === '3') {
-				self.choosePath(self.myEnemies[self.enemyNumber], self.path3);
-			}
-		});
+    this.socket.on("choosePath", function (event) {
+      if (event.key === "1") {
+        self.choosePath(self.myEnemies[self.enemyNumber], self.path1);
+      }
+      if (event.key === "2") {
+        self.choosePath(self.myEnemies[self.enemyNumber], self.path2);
+      }
+      if (event.key === "3") {
+        self.choosePath(self.myEnemies[self.enemyNumber], self.path3);
+      }
+    });
 
     this.input.on("pointerdown", function (event) {
       console.log("pointer down");
@@ -464,7 +474,5 @@ export default class Game extends Phaser.Scene {
     });
   }
 
-  update(time, delta) {
-
-  }
+  update(time, delta) {}
 }
