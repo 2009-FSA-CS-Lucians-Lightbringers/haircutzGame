@@ -183,11 +183,11 @@ export default class Game extends Phaser.Scene {
     // load the game assets –
     this.load.image("background", "src/assets/background.png");
     this.load.spritesheet("p1attackers", "src/assets/player1_attackers.png", {
-      frameWidth: 70,
+      frameWidth: 68,
       frameHeight: 45,
     });
     this.load.spritesheet("p2attackers", "src/assets/player2_attackers.png", {
-      frameWidth: 70,
+      frameWidth: 68,
       frameHeight: 45,
     });
     this.load.image("p2turret", "src/assets/player2_turret.png");
@@ -204,6 +204,17 @@ export default class Game extends Phaser.Scene {
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
+
+    this.anims.create({
+      key: 'walk',
+      frames: [
+        { key: 'p1attackers', frame: 1 },
+        { key: 'p1attackers', frame: 2 },
+        { key: 'p1attackers', frame: 3 }
+      ],
+      frameRate: 10,
+      repeat: -1
+    })
 
     //sets the default to "you are not Player A"
     let self = this;
