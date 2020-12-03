@@ -24,6 +24,7 @@ export default new Phaser.Class({
   startOnPath: function (path) {
     if (this.createdByPlayerA) {
       this.path = path;
+      console.log(this.path);
       // set the t parameter at the start of the path
       this.follower.t = 0;
       this.anims.play("blueWalk");
@@ -36,6 +37,7 @@ export default new Phaser.Class({
       console.log(this.hp);
     } else {
       this.path = path;
+      console.log(this.path);
       this.follower.t = 1;
       this.anims.play("redWalk");
 

@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Haircutz</title>
     <link rel="stylesheet" href="style.css"></link>
+    <script defer src="/bundle.js"></script>
   </head>
   <body>
       <div id="left">
@@ -66,7 +67,7 @@
                 if (button.innerText === 'Dark Mode') {
                     button.innerText = 'Light Mode';
                     document.body.style.backgroundImage =
-                        "url('/src/assets/page_background2.png')";
+                        "url('/assets/page_background2.png')";
 
                     document.getElementsByClassName('containerOne')[0].style.color =
                         'blue';
@@ -75,7 +76,7 @@
                 } else {
                     button.innerText = 'Dark Mode';
                     document.body.style.backgroundImage =
-                        "url('/src/assets/page_background3.png')";
+                        "url('/assets/page_background3.png')";
                     document.getElementsByClassName('containerOne')[0].style.color =
                         'black';
                     document.getElementsByClassName('containerTwo')[0].style.color =
