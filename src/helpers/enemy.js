@@ -10,13 +10,12 @@ export default new Phaser.Class({
 			scene.enemyNumber++;
 			this.number = scene.enemyNumber;
 		} else {
-			Phaser.GameObjects.Sprite.call(this, scene, 650, 224, 'p2attackers');
-			this.follower = { t: 0.5, vec: new Phaser.Math.Vector2() };
+			Phaser.GameObjects.Sprite.call(this, scene, 675, 224, 'p2attackers');
+			this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
 			scene.enemyNumber++;
 			this.number = scene.enemyNumber;
 		}
 	},
-
 	//differentiate player attacks based on class
 	//if playerA then create a playera attacker else create a playerb attacker
 
@@ -36,7 +35,6 @@ export default new Phaser.Class({
 			this.path = path;
 			this.follower.t = 0.5;
 			this.anims.play('redWalk');
-
 			this.path.getPoint(this.follower.t, this.follower.vec);
 			// set the x and y of our enemy to the received from the previous step
 			this.setPosition(this.follower.vec.x, this.follower.vec.y);
@@ -61,24 +59,22 @@ export default new Phaser.Class({
 	update: function (time, delta) {
 		if (this.path) {
 			this.path.getPoint(this.follower.t, this.follower.vec);
-
 			this.setPosition(this.follower.vec.x, this.follower.vec.y);
-
 			if (this.createdByPlayerA) {
 				this.follower.t += this.scene.SCISSOR_SPEED * delta;
-
-				if (this.follower.t >= 1) {
-					this.setActive(false);
-					this.setVisible(false);
-				}
-			} else {
-				this.follower.t -= this.scene.SCISSOR_SPEED * delta;
-
-				if (this.follower.t <= 0) {
-					this.setActive(false);
-					this.setVisible(false);
-				}
-			}
-		}
-	},
+        if (this.follower.t >= 1) {
+          // this.setActive(false);
+          // this.setVisible(false);
+          this.destroy();
+        }
+      } else {
+        this.follower.t -= this.scene.SCISSOR_SPEED * delta;
+        if (this.follower.t <= 0) {
+          // this.setActive(false);
+          // this.setVisible(false);
+          this.destroy();
+        }
+      }
+    }
+  },
 });
