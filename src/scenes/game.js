@@ -4,6 +4,7 @@ import Enemy from "../helpers/enemy.js";
 import Attacker from "../helpers/attacker.js";
 import Turret from "../helpers/turret.js";
 import Bullet from "../helpers/bullet.js";
+import HomeBase from "../helpers/homeBase.js";
 import EnemyBase from "../helpers/enemyBase.js";
 
 export default class Game extends Phaser.Scene {
@@ -29,7 +30,8 @@ export default class Game extends Phaser.Scene {
     this.turrets;
     this.bullets;
     this.enemyBase;
-    this.score = 5;
+    this.blueScore = 5;
+    this.redScore = 5;
     this.blueText;
     this.redText;
     this.resourcePoints = 12;
@@ -191,9 +193,9 @@ export default class Game extends Phaser.Scene {
 
   //Score methods
   decrementBlueScore() {
-    this.score -= 1;
-    this.blueText.setText("P1 | " + this.score);
-    if (this.score <= 0) {
+    this.blueScore -= 1;
+    this.blueText.setText("P1 | " + this.blueScore);
+    if (this.blueScore <= 0) {
       this.gameOver = true;
       this.blueText.setText("P1 | 0");
       return true;
@@ -202,10 +204,10 @@ export default class Game extends Phaser.Scene {
   }
 
   decrementRedScore() {
-    this.score -= 1;
+    this.redScore -= 1;
     // this.anims.anims.entries.startingpoint.frames[0].frame.name--
-    this.redText.setText("P2 | " + this.score);
-    if (this.score <= 0) {
+    this.redText.setText("P2 | " + this.redScore);
+    if (this.redScore <= 0) {
       this.gameOver = true;
       this.redText.setText("P2 | 0");
       this.scene.start("SceneTwo", {
@@ -257,6 +259,10 @@ export default class Game extends Phaser.Scene {
     this.load.image("bullet", "/assets/bullet.png");
     this.load.image("scoreboard", "/assets/scoreboard.png");
     this.load.image("blackboard", "/assets/blackboard.png");
+    this.load.spritesheet("p1base", "/assets/player1_base2.png", {
+      frameWidth: 70,
+      frameHeight: 85,
+    });
     this.load.spritesheet("p2base", "/assets/player2_base2.png", {
       frameWidth: 70,
       frameHeight: 85,
@@ -398,14 +404,14 @@ export default class Game extends Phaser.Scene {
       loop: true,
     });
 
-    this.redText = self.add.text(50, 540, `P2 | ` + this.score, {
+    this.redText = self.add.text(50, 540, `P2 | ` + this.redScore, {
       fontFamily: "Arial Black",
       fontStyle: "bold",
       fontSize: "24px",
       fill: "white",
     });
 
-    this.blueText = self.add.text(50, 505, `P1 | ` + this.score, {
+    this.blueText = self.add.text(50, 505, `P1 | ` + this.blueScore, {
       fontFamily: "Arial Black",
       fontStyle: "bold",
       fontSize: "24px",
@@ -417,6 +423,13 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
 
+    this.homeBase = this.physics.add
+    .group({
+      classType: HomeBase,
+      runChildUpdate: true,
+    })
+    .create();
+
     this.enemyBase = this.physics.add
       .group({
         classType: EnemyBase,
@@ -425,16 +438,6 @@ export default class Game extends Phaser.Scene {
       .create();
 
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
-
-    this.physics.add.collider(
-      this.enemies,
-      this.enemyBase,
-      this.touchBase,
-      this.decrementRedScore,
-      self
-    );
-    //change origin of player B enemies
-    //change color of player B enemies
 
     this.socket.on("spawnEnemy", (event) => {
       self.event = event;

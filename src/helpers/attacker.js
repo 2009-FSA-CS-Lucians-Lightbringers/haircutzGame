@@ -14,8 +14,8 @@ export default new Phaser.Class({
 			scene.attackerNumber++;
 			this.number = scene.attackerNumber;
 		} else {
-			Phaser.GameObjects.Sprite.call(this, scene, 650, 224, 'p2attackers');
-			this.follower = { t: 0.8, vec: new Phaser.Math.Vector2() };
+			Phaser.GameObjects.Sprite.call(this, scene, 675, 224, 'p2attackers');
+			this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
 			scene.attackerNumber++;
 			this.number = scene.attackerNumber;
 		}
@@ -38,7 +38,7 @@ export default new Phaser.Class({
 			console.log(this.hp);
 		} else {
 			this.path = path;
-			this.follower.t = 0.8;
+			this.follower.t = 1;
 
 			this.path.getPoint(this.follower.t, this.follower.vec);
 			// set the x and y of our enemy to the received from the previous step
@@ -56,8 +56,9 @@ export default new Phaser.Class({
 
 		// if hp drops below 0 we deactivate this enemy
 		if (this.hp <= 0) {
-			this.setActive(false);
-			this.setVisible(false);
+			// this.setActive(false);
+			// this.setVisible(false);
+			this.destroy();
 		}
 	},
 
@@ -71,15 +72,19 @@ export default new Phaser.Class({
 				this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
 				if (this.follower.t >= 1) {
-					this.setActive(false);
-					this.setVisible(false);
+					// this.setActive(false);
+					// this.setVisible(false);
+					this.scene.decrementRedScore();
+					this.destroy();
 				}
 			} else {
 				this.follower.t -= this.scene.SCISSOR_SPEED * delta;
 
 				if (this.follower.t <= 0) {
-					this.setActive(false);
-					this.setVisible(false);
+					// this.setActive(false);
+					// this.setVisible(false);
+					this.scene.decrementBlueScore();
+					this.destroy();
 				}
 			}
 		}

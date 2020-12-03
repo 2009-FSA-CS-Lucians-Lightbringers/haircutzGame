@@ -11,7 +11,7 @@ export default new Phaser.Class({
       scene.enemyNumber++;
       this.number = scene.enemyNumber;
     } else {
-      Phaser.GameObjects.Sprite.call(this, scene, 500, 240, "p2attackers");
+      Phaser.GameObjects.Sprite.call(this, scene, 675, 240, "p2attackers");
       this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
       scene.enemyNumber++;
       this.number = scene.enemyNumber;
@@ -58,7 +58,9 @@ export default new Phaser.Class({
     if (this.hp <= 0) {
       // this.setActive(false);
       // this.setVisible(false);
+
       this.destroy();
+
     }
   },
 
@@ -72,15 +74,22 @@ export default new Phaser.Class({
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
         if (this.follower.t >= 1) {
-          this.setActive(false);
-          this.setVisible(false);
+          // this.setActive(false);
+          // this.setVisible(false);
+          this.scene.decrementRedScore();
+          this.destroy();
+
+
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
 
         if (this.follower.t <= 0) {
-          this.setActive(false);
-          this.setVisible(false);
+          // this.setActive(false);
+          // this.setVisible(false);
+          this.scene.decrementBlueScore();
+          this.destroy();
+
         }
       }
     }
