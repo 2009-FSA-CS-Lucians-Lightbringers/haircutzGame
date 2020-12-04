@@ -19,6 +19,7 @@ export default new Phaser.Class({
 	//if playerA then create a playera attacker else create a playerb attacker
 
 	startOnPath: function (path) {
+		this.path = path;
 		if (this.createdByPlayerA) {
 			this.path = path;
 			// set the t parameter at the start of the path
@@ -62,24 +63,21 @@ export default new Phaser.Class({
 			if (this.createdByPlayerA) {
 				this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
-        if (this.follower.t >= 1) {
-          // this.setActive(false);
-          // this.setVisible(false);
-          this.scene.decrementRedScore();
-          this.destroy();
-
-        }
-      } else {
-        this.follower.t -= this.scene.SCISSOR_SPEED * delta;
-        if (this.follower.t <= 0) {
-          // this.setActive(false);
-          // this.setVisible(false);
-          this.scene.decrementBlueScore();
-          this.destroy();
-
-
-        }
-      }
-    }
-  },
+				if (this.follower.t >= 1) {
+					// this.setActive(false);
+					// this.setVisible(false);
+					this.scene.decrementRedScore();
+					this.destroy();
+				}
+			} else {
+				this.follower.t -= this.scene.SCISSOR_SPEED * delta;
+				if (this.follower.t <= 0) {
+					// this.setActive(false);
+					// this.setVisible(false);
+					this.scene.decrementBlueScore();
+					this.destroy();
+				}
+			}
+		}
+	},
 });
