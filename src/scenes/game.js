@@ -1,11 +1,11 @@
-import io from "socket.io-client";
-import Zone from "../helpers/zone.js";
-import Enemy from "../helpers/enemy.js";
-import Attacker from "../helpers/attacker.js";
-import Turret from "../helpers/turret.js";
-import Bullet from "../helpers/bullet.js";
-import HomeBase from "../helpers/homeBase.js";
-import EnemyBase from "../helpers/enemyBase.js";
+import io from 'socket.io-client';
+import Zone from '../helpers/zone.js';
+import Enemy from '../helpers/enemy.js';
+import Attacker from '../helpers/attacker.js';
+import Turret from '../helpers/turret.js';
+import Bullet from '../helpers/bullet.js';
+import HomeBase from '../helpers/homeBase.js';
+import EnemyBase from '../helpers/enemyBase.js';
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -141,7 +141,7 @@ export default class Game extends Phaser.Scene {
     } else {
       if (this.oppResourcePoints > 1) {
         this.oppResourcePoints -= 2;
-        this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
+        //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
         var enemy = this.enemies.get();
         if (enemy) {
           enemy.setActive(true);
@@ -265,6 +265,7 @@ export default class Game extends Phaser.Scene {
       graphics.moveTo(80 + j * 64, 0);
       graphics.lineTo(80 + j * 64, 450);
     }
+    graphics.visible = false;
     graphics.strokePath();
   }
 
