@@ -318,6 +318,7 @@ export default class Game extends Phaser.Scene {
 		//an event that tells the client that it will be Player A.  The client
 		//socket receives that event and turns our "isPlayerA" boolean from
 		//false to true.
+
 		this.socket.on('isPlayerA', function () {
 			self.isPlayerA = true;
 			console.log('Welcome Player A!');
@@ -413,14 +414,14 @@ export default class Game extends Phaser.Scene {
 			classType: Bullet,
 			runChildUpdate: true,
 		});
-  
+
     this.homeBase = this.physics.add
     .group({
       classType: HomeBase,
       runChildUpdate: true,
     })
     .create();
-    
+
 		this.enemyBase = this.physics.add
 			.group({
 				classType: EnemyBase,
