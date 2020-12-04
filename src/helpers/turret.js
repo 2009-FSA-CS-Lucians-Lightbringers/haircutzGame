@@ -2,6 +2,8 @@ export default new Phaser.Class({
   Extends: Phaser.GameObjects.Image,
 
   initialize: function Turret(scene) {
+    this.timeCreated = scene.time.now;
+    console.log(this.timeCreated);
     this.createdByPlayerA = scene.turretPlacer;
     if (scene.turretPlacer)
       Phaser.GameObjects.Image.call(this, scene, 0, 0, "p1turret");
@@ -14,6 +16,8 @@ export default new Phaser.Class({
     this.x = j * 64 + 64 / 2 + 14;
     this.scene.map[i][j] = 1;
     this.scene.map2[i][j] = 1;
+    this.i = i;
+    this.j = j;
   },
   update: function (time, delta) {
     // time to shoot
@@ -21,6 +25,9 @@ export default new Phaser.Class({
       this.fire();
       this.nextTic = time + 1000;
     }
+    this.scene.map[this.i][this.j] = 0;
+    this.scene.map2[this.i][this.j] = 0;
+    if (this.timeCreated + 20000 < this.scene.time.now) this.destroy();
   },
   fire: function () {
     if (this.createdByPlayerA === this.scene.isPlayerA) {

@@ -1,11 +1,11 @@
-import io from 'socket.io-client';
-import Zone from '../helpers/zone.js';
-import Enemy from '../helpers/enemy.js';
-import Attacker from '../helpers/attacker.js';
-import Turret from '../helpers/turret.js';
-import Bullet from '../helpers/bullet.js';
-import HomeBase from '../helpers/homeBase.js';
-import EnemyBase from '../helpers/enemyBase.js';
+import io from "socket.io-client";
+import Zone from "../helpers/zone.js";
+import Enemy from "../helpers/enemy.js";
+import Attacker from "../helpers/attacker.js";
+import Turret from "../helpers/turret.js";
+import Bullet from "../helpers/bullet.js";
+import HomeBase from "../helpers/homeBase.js";
+import EnemyBase from "../helpers/enemyBase.js";
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -41,6 +41,7 @@ export default class Game extends Phaser.Scene {
     this.clock;
     this.timer;
     this.gameOver = false;
+    this.attackerReleased = -2000;
     this.map = [
       [-1, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1],
       [-1, 0, 0, -1, -1, 0, -1, -1, -1, -1, -1, -1],
@@ -247,7 +248,8 @@ export default class Game extends Phaser.Scene {
     this.counter--;
     this.clock.setText(` ${this.counter}`);
     if (this.counter <= 0) {
-      this.resourcePoints += 1;
+      this.resourcePoints += 3;
+      this.oppResourcePoints += 3;
       this.resourceText.setText("RESOURCE | " + this.resourcePoints);
       this.counter += 10;
       this.clock.setText(`${this.counter}`);
@@ -328,12 +330,36 @@ export default class Game extends Phaser.Scene {
 
     this.anims.create({
       key: "enemyStartingpoint",
-      frames: [{ key: "p2base", frame: 5 }],
+      frames: [
+        // { key: "p2base", frame: 0 },
+        // { key: "p2base", frame: 1 },
+        // { key: "p2base", frame: 2 },
+        // { key: "p2base", frame: 3 },
+        // { key: "p2base", frame: 4 },
+        { key: "p2base", frame: 5 },
+        // { key: "p2base", frame: 6 },
+        // { key: "p2base", frame: 7 },
+        // { key: "p2base", frame: 8 },
+        // { key: "p2base", frame: 9 },
+        //{ key: "p2base", frame: 10 },
+      ],
     });
 
     this.anims.create({
       key: "homeStartingpoint",
-      frames: [{ key: "p1base", frame: 5 }],
+      frames: [
+        // { key: "p1base", frame: 0 },
+        // { key: "p1base", frame: 1 },
+        // { key: "p1base", frame: 2 },
+        // { key: "p1base", frame: 3 },
+        // { key: "p1base", frame: 4 },
+        { key: "p1base", frame: 5 },
+        // { key: "p1base", frame: 6 },
+        // { key: "p1base", frame: 7 },
+        // { key: "p1base", frame: 8 },
+        // { key: "p1base", frame: 9 },
+        //{ key: "p1base", frame: 10 },
+      ],
     });
 
     //sets the default to "you are not Player A"
@@ -510,23 +536,28 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.keyboard.on("keydown", function (event) {
-      if (event.key === "1") {
-        self.socket.emit("spawnScissor", {
-          isPlayerA: self.isPlayerA,
-          path: 1,
-        });
-      }
-      if (event.key === "2") {
-        self.socket.emit("spawnScissor", {
-          isPlayerA: self.isPlayerA,
-          path: 2,
-        });
-      }
-      if (event.key === "3") {
-        self.socket.emit("spawnScissor", {
-          isPlayerA: self.isPlayerA,
-          path: 3,
-        });
+      if (self.time.now > self.attackerReleased + 2000) {
+        if (event.key === "1") {
+          self.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 1,
+          });
+          self.attackerReleased = self.time.now;
+        }
+        if (event.key === "2") {
+          self.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 2,
+          });
+          self.attackerReleased = self.time.now;
+        }
+        if (event.key === "3") {
+          self.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 3,
+          });
+          self.attackerReleased = self.time.now;
+        }
       }
     });
 
