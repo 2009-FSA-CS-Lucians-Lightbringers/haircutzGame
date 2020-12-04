@@ -19,8 +19,8 @@ export default new Phaser.Class({
   //if playerA then create a playera attacker else create a playerb attacker
 
   startOnPath: function (path) {
+    this.path = path
     if (this.createdByPlayerA) {
-      this.path = path;
       // set the t parameter at the start of the path
       this.follower.t = 0;
       this.anims.play("blueWalk");
@@ -31,7 +31,6 @@ export default new Phaser.Class({
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
       this.hp = 100;
     } else {
-      this.path = path;
       this.follower.t = 1;
       this.anims.play("redWalk");
       this.path.getPoint(this.follower.t, this.follower.vec);
@@ -61,6 +60,7 @@ export default new Phaser.Class({
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
+
 
         if (this.follower.t >= 1) {
           // this.setActive(false);
