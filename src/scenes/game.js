@@ -250,6 +250,7 @@ export default class Game extends Phaser.Scene {
       frameWidth: 70,
       frameHeight: 85,
     });
+
     this.load.spritesheet("p2base", "/assets/player2_base2.png", {
       frameWidth: 70,
       frameHeight: 85,

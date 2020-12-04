@@ -59,8 +59,8 @@ class IntroScene extends Phaser.Scene {
       },
     });
 
-    joinGame.setInteractive({ useHandCursor: true });
-    joinGame.on("pointerdown", () => this.clickButton());
+    createGame.setInteractive({ useHandCursor: true });
+    createGame.on("pointerdown", () => this.clickButton());
   }
 
   clickButton() {

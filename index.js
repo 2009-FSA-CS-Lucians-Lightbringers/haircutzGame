@@ -23,6 +23,9 @@ server.use(express.static(path.join(__dirname, 'public')));
 //our players array
 let players = [];
 
+//socket rooms
+var rooms = 0;
+
 server.use('*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'public/index.html'));
 });
@@ -30,6 +33,41 @@ server.use('*', (req, res) => {
 //socket logic
 io.on('connection', function (socket) {
 	console.log('A user connected: ' + socket.id);
+
+	//when you want to create a socket room
+	// socket.on('createGame', function(data){
+	// 	socket.join('room-' + ++rooms);
+	// 	socket.emit('newGame', {name: data.name, room: 'room-'+rooms});
+	// });
+
+	/**
+ * Connect the Player 2 to the room he requested. Show error if room full.
+ */
+// socket.on('joinGame', function(data){
+//   var room = io.nsps['/'].adapter.rooms[data.room];
+//   if( room && room.length == 1){
+//     socket.join(data.room);
+//     socket.broadcast.to(data.room).emit('player1', {});
+// 		socket.emit('player2', {name: data.name, room: data.room })
+// 		console.log('connected to socket room')
+//   }
+//   else {
+//     socket.emit('err', {message: 'Sorry, The room is full!'});
+//   }
+// });
+
+// 	socket.on("spawnScissor", function(event){
+// 		socket.broadcast.to(data.room).emit('spawnScissor', event);
+// 	});
+
+// 	socket.on("choosePath", function(event){
+// 		socket.broadcast.to(data.room).emit('choosePath', event);
+// 	});
+
+// 	socket.on("placeTurret", function(event){
+// 		socket.broadcast.to(data.room).emit('placeTurret', event);
+// 	});
+
 
 	//push new players' socket ID into players array
 	players.push(socket.id);
