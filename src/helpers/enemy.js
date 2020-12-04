@@ -19,7 +19,7 @@ export default new Phaser.Class({
   //if playerA then create a playera attacker else create a playerb attacker
 
   startOnPath: function (path) {
-    this.path = path
+    this.path = path;
     if (this.createdByPlayerA) {
       // set the t parameter at the start of the path
       this.follower.t = 0;
@@ -45,6 +45,7 @@ export default new Phaser.Class({
     //console.log("ENEMY NUMBER:", this.number);
     //console.log(">>>before bullet", this.hp);
     this.hp -= damage;
+    console.log(`enemy ${this.number} took damage`, this.hp);
     //console.log(">>>after bullet", this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
@@ -60,7 +61,6 @@ export default new Phaser.Class({
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
-
 
         if (this.follower.t >= 1) {
           // this.setActive(false);
