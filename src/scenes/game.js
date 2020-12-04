@@ -228,12 +228,7 @@ export default class Game extends Phaser.Scene {
     this.blueScore -= 1;
     this.blueText.setText("P1 | " + this.blueScore);
     if (this.blueScore <= 0) {
-      this.gameOver = true;
-      this.blueText.setText("P1 | 0");
-      this.scene.switch("gameOver", {
-        message: "Game Over, Player Two wins!",
-      });
-      return true;
+      this.scene.switch("p2Wins");
     }
     return null;
   }
@@ -243,12 +238,7 @@ export default class Game extends Phaser.Scene {
     // this.anims.anims.entries.startingpoint.frames[0].frame.name--
     this.redText.setText("P2 | " + this.redScore);
     if (this.redScore <= 0) {
-      this.gameOver = true;
-      this.redText.setText("P2 | 0");
-      this.scene.switch("gameOver", {
-        message: "Game Over, Player One wins!",
-      });
-      return true;
+      this.scene.switch("p1Wins");
     }
     return null;
   }
