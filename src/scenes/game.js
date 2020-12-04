@@ -4,6 +4,7 @@ import Enemy from '../helpers/enemy.js';
 import Attacker from '../helpers/attacker.js';
 import Turret from '../helpers/turret.js';
 import Bullet from '../helpers/bullet.js';
+import HomeBase from "../helpers/homeBase.js";
 import EnemyBase from '../helpers/enemyBase.js';
 
 export default class Game extends Phaser.Scene {
@@ -29,7 +30,8 @@ export default class Game extends Phaser.Scene {
 		this.turrets;
 		this.bullets;
 		this.enemyBase;
-		this.score = 5;
+		this.blueScore = 5;
+    this.redScore = 5;
 		this.blueText;
 		this.redText;
 		this.resourcePoints = 12;
@@ -178,30 +180,30 @@ export default class Game extends Phaser.Scene {
 
 	//Score methods
 	decrementBlueScore() {
-		this.score -= 1;
-		this.blueText.setText('P1 | ' + this.score);
-		if (this.score <= 0) {
-			this.gameOver = true;
-			this.blueText.setText('P1 | 0');
-			return true;
-		}
-		return null;
-	}
+    this.blueScore -= 1;
+    this.blueText.setText("P1 | " + this.blueScore);
+    if (this.blueScore <= 0) {
+      this.gameOver = true;
+      this.blueText.setText("P1 | 0");
+      return true;
+    }
+    return null;
+  }
 
-	decrementRedScore() {
-		this.score -= 1;
-		// this.anims.anims.entries.startingpoint.frames[0].frame.name--
-		this.redText.setText('P2 | ' + this.score);
-		if (this.score <= 0) {
-			this.gameOver = true;
-			this.redText.setText('P2 | 0');
-			this.scene.start('SceneTwo', {
-				message: 'Game Over, Player One wins!',
-			});
-			return true;
-		}
-		return null;
-	}
+  decrementRedScore() {
+    this.redScore -= 1;
+    // this.anims.anims.entries.startingpoint.frames[0].frame.name--
+    this.redText.setText("P2 | " + this.redScore);
+    if (this.redScore <= 0) {
+      this.gameOver = true;
+      this.redText.setText("P2 | 0");
+      this.scene.start("SceneTwo", {
+        message: "Game Over, Player One wins!",
+      });
+      return true;
+    }
+    return null;
+  }
 
 	resourceTimer() {
 		this.counter--;
@@ -244,6 +246,10 @@ export default class Game extends Phaser.Scene {
 		this.load.image('bullet', '/assets/bullet.png');
 		this.load.image('scoreboard', '/assets/scoreboard.png');
 		this.load.image('blackboard', '/assets/blackboard.png');
+    this.load.spritesheet("p1base", "/assets/player1_base2.png", {
+      frameWidth: 70,
+      frameHeight: 85,
+    });
 		this.load.spritesheet('p2base', '/assets/player2_base2.png', {
 			frameWidth: 70,
 			frameHeight: 85,
@@ -389,25 +395,32 @@ export default class Game extends Phaser.Scene {
 			loop: true,
 		});
 
-		this.redText = self.add.text(50, 540, `P2 | ` + this.score, {
-			fontFamily: 'Arial Black',
-			fontStyle: 'bold',
-			fontSize: '24px',
-			fill: 'white',
-		});
+		 this.redText = self.add.text(50, 540, `P2 | ` + this.redScore, {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "24px",
+      fill: "white",
+    });
 
-		this.blueText = self.add.text(50, 505, `P1 | ` + this.score, {
-			fontFamily: 'Arial Black',
-			fontStyle: 'bold',
-			fontSize: '24px',
-			fill: 'white',
-		});
+    this.blueText = self.add.text(50, 505, `P1 | ` + this.blueScore, {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "24px",
+      fill: "white",
+    });
 
 		this.bullets = this.physics.add.group({
 			classType: Bullet,
 			runChildUpdate: true,
 		});
-
+  
+    this.homeBase = this.physics.add
+    .group({
+      classType: HomeBase,
+      runChildUpdate: true,
+    })
+    .create();
+    
 		this.enemyBase = this.physics.add
 			.group({
 				classType: EnemyBase,
@@ -480,4 +493,5 @@ export default class Game extends Phaser.Scene {
 	}
 
 	update(time, delta) {}
+
 }
