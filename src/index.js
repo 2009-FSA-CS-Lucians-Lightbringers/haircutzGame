@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import Game from "./scenes/game";
-import SceneTwo from "./scenes/gameOver"
-import IntroScene from "./scenes/intro"
+import GameOver from "./scenes/gameOver";
+import IntroScene from "./scenes/intro";
 
 const config = {
   type: Phaser.AUTO,
@@ -16,8 +16,9 @@ const config = {
 const game = new Phaser.Game(config);
 
 //load scenes
-game.scene.add('introScene', IntroScene)
-game.scene.add("game", Game)
+game.scene.add("introScene", IntroScene);
+game.scene.add("game", Game);
+game.scene.add("gameOver", GameOver);
 
 //start title
-game.scene.start('introScene')
+game.scene.start("introScene");

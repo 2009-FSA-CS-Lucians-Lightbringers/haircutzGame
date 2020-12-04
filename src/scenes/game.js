@@ -63,10 +63,12 @@ export default class Game extends Phaser.Scene {
     this.touchBase = this.touchBase.bind(this);
     this.choosePath = this.choosePath.bind(this);
     this.damageEnemy = this.damageEnemy.bind(this);
+    this.damageAttacker = this.damageAttacker.bind(this);
     this.placeTurret = this.placeTurret.bind(this);
     this.canPlaceTurret = this.canPlaceTurret.bind(this);
     this.addBullet = this.addBullet.bind(this);
     this.getEnemy = this.getEnemy.bind(this);
+    this.getAttacker = this.getAttacker.bind(this);
     this.decrementBlueScore = this.decrementBlueScore.bind(this);
     this.decrementRedScore = this.decrementRedScore.bind(this);
     this.resourceTimer = this.resourceTimer.bind(this);
@@ -88,16 +90,34 @@ export default class Game extends Phaser.Scene {
   }
 
   damageEnemy(enemy, bullet) {
-    // only if both enemy and bullet are alive
-    if (enemy.active === true && bullet.active === true) {
-      // we remove the bullet right away
-      bullet.setActive(false);
-      bullet.setVisible(false);
+    if (bullet.createdByPlayerA === this.isPlayerA) {
+      // only if both enemy and bullet are alive
+      if (enemy.active === true && bullet.active === true) {
+        // we remove the bullet right away
+        bullet.setActive(false);
+        bullet.setVisible(false);
 
-      // decrease the enemy hp with BULLET_DAMAGE
-      let bulletDamage = this.BULLET_DAMAGE;
-      //onsole.log(this.scene.BULLET_DAMAGE);
-      enemy.receiveDamage(bulletDamage);
+        // decrease the enemy hp with BULLET_DAMAGE
+        let bulletDamage = this.BULLET_DAMAGE;
+        //onsole.log(this.scene.BULLET_DAMAGE);
+        enemy.receiveDamage(bulletDamage);
+      }
+    }
+  }
+
+  damageAttacker(attacker, bullet) {
+    if (bullet.createdByPlayerA !== this.isPlayerA) {
+      // only if both enemy and bullet are alive
+      if (attacker.active === true && bullet.active === true) {
+        // we remove the bullet right away
+        bullet.setActive(false);
+        bullet.setVisible(false);
+
+        // decrease the enemy hp with BULLET_DAMAGE
+        let bulletDamage = this.BULLET_DAMAGE;
+        //onsole.log(this.scene.BULLET_DAMAGE);
+        attacker.receiveDamage(bulletDamage);
+      }
     }
   }
 
@@ -107,21 +127,28 @@ export default class Game extends Phaser.Scene {
     if (event.path === 2) path = this.path2;
     if (event.path === 3) path = this.path3;
     if (event.isPlayerA === this.isPlayerA) {
-      var attacker = this.attackers.get();
-      if (attacker) {
-        attacker.setActive(true);
-        attacker.setVisible(true);
-        attacker.startOnPath(path);
-        this.myAttackers.push(attacker);
+      if (this.resourcePoints > 1) {
+        var attacker = this.attackers.get();
+        this.resourcePoints -= 2;
+        this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+        if (attacker) {
+          attacker.setActive(true);
+          attacker.setVisible(true);
+          attacker.startOnPath(path);
+          this.myAttackers.push(attacker);
+        }
       }
     } else {
-      var enemy = this.enemies.get();
-      if (enemy) {
-        enemy.setActive(true);
-        enemy.setVisible(true);
-
-        enemy.startOnPath(path);
-        this.myEnemies.push(enemy);
+      if (this.oppResourcePoints > 1) {
+        this.oppResourcePoints -= 2;
+        this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
+        var enemy = this.enemies.get();
+        if (enemy) {
+          enemy.setActive(true);
+          enemy.setVisible(true);
+          enemy.startOnPath(path);
+          this.myEnemies.push(enemy);
+        }
       }
     }
   }
@@ -158,8 +185,9 @@ export default class Game extends Phaser.Scene {
     return isPlayerA ? this.map[i][j] === 0 : this.map2[i][j] === 0;
   }
 
-  addBullet(x, y, angle) {
+  addBullet(x, y, angle, createdByPlayerA) {
     var bullet = this.bullets.get();
+    bullet.createdByPlayerA = createdByPlayerA;
     if (bullet) {
       bullet.fire(x, y, angle);
     }
@@ -178,6 +206,23 @@ export default class Game extends Phaser.Scene {
     return false;
   }
 
+  getAttacker(x, y, distance) {
+    var attackerUnits = this.attackers.getChildren();
+    for (var i = 0; i < attackerUnits.length; i++) {
+      if (
+        attackerUnits[i].active &&
+        Phaser.Math.Distance.Between(
+          x,
+          y,
+          attackerUnits[i].x,
+          attackerUnits[i].y
+        ) <= distance
+      )
+        return attackerUnits[i];
+    }
+    return false;
+  }
+
   //Score methods
   decrementBlueScore() {
     this.blueScore -= 1;
@@ -185,6 +230,9 @@ export default class Game extends Phaser.Scene {
     if (this.blueScore <= 0) {
       this.gameOver = true;
       this.blueText.setText("P1 | 0");
+      this.scene.switch("gameOver", {
+        message: "Game Over, Player Two wins!",
+      });
       return true;
     }
     return null;
@@ -197,7 +245,7 @@ export default class Game extends Phaser.Scene {
     if (this.redScore <= 0) {
       this.gameOver = true;
       this.redText.setText("P2 | 0");
-      this.scene.start("SceneTwo", {
+      this.scene.switch("gameOver", {
         message: "Game Over, Player One wins!",
       });
       return true;
@@ -288,8 +336,13 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
-      key: "startingpoint",
+      key: "enemyStartingpoint",
       frames: [{ key: "p2base", frame: 5 }],
+    });
+
+    this.anims.create({
+      key: "homeStartingpoint",
+      frames: [{ key: "p1base", frame: 5 }],
     });
 
     //sets the default to "you are not Player A"
@@ -349,12 +402,12 @@ export default class Game extends Phaser.Scene {
     //false to true.
     this.socket.on("isPlayerA", function () {
       self.isPlayerA = true;
-      console.log("Welcome Player A!");
+      console.log("Welcome Blue Player A!");
     });
     this.socket.on("isPlayerB", function () {
       if (!self.isPlayerA) {
         self.isPlayerB = true;
-        console.log("Welcome Player B!");
+        console.log("Welcome Red Player B!");
       }
     });
 
@@ -458,52 +511,27 @@ export default class Game extends Phaser.Scene {
       .create();
 
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
+    this.physics.add.overlap(this.attackers, this.bullets, this.damageAttacker);
 
     this.socket.on("spawnScissor", (event) => {
       self.event = event.isPlayerA;
       self.spawnScissor(event);
     });
-    this.input.keyboard.createCombo("a1", {
-      resetOnWrongKey: true,
-      maxKeyDelay: 0,
-      resetOnMatch: true,
-      deleteOnMatch: false,
-    });
-    this.input.keyboard.createCombo("a2", {
-      resetOnWrongKey: true,
-      maxKeyDelay: 0,
-      resetOnMatch: true,
-      deleteOnMatch: false,
-    });
-    this.input.keyboard.createCombo("a3", {
-      resetOnWrongKey: true,
-      maxKeyDelay: 0,
-      resetOnMatch: true,
-      deleteOnMatch: false,
-    });
-    this.input.keyboard.on("keycombomatch", function (keyboardEvent) {
-      if (
-        keyboardEvent.keyCodes[0] === 65 &&
-        keyboardEvent.keyCodes[1] === 49
-      ) {
+
+    this.input.keyboard.on("keydown", function (event) {
+      if (event.key === "1") {
         self.socket.emit("spawnScissor", {
           isPlayerA: self.isPlayerA,
           path: 1,
         });
       }
-      if (
-        keyboardEvent.keyCodes[0] === 65 &&
-        keyboardEvent.keyCodes[1] === 50
-      ) {
+      if (event.key === "2") {
         self.socket.emit("spawnScissor", {
           isPlayerA: self.isPlayerA,
           path: 2,
         });
       }
-      if (
-        keyboardEvent.keyCodes[0] === 65 &&
-        keyboardEvent.keyCodes[1] === 51
-      ) {
+      if (event.key === "3") {
         self.socket.emit("spawnScissor", {
           isPlayerA: self.isPlayerA,
           path: 3,

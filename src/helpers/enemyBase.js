@@ -3,6 +3,6 @@ export default new Phaser.Class({
 
   initialize: function EnemyBase(scene) {
     Phaser.GameObjects.Sprite.call(this, scene, 715, 224, "p2base");
-    this.anims.play('startingpoint')
+    this.anims.play("enemyStartingpoint");
   },
 });

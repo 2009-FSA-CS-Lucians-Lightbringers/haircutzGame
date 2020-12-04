@@ -23,13 +23,23 @@ export default new Phaser.Class({
     }
   },
   fire: function () {
-    var enemy = this.scene.getEnemy(this.x, this.y, 100);
-    if (enemy) {
-      // console.log(enemy.createdByPlayerA);
-      // console.log(this.createdByPlayerA);
-      if (enemy.createdByPlayerA !== this.createdByPlayerA) {
+    if (this.createdByPlayerA === this.scene.isPlayerA) {
+      var enemy = this.scene.getEnemy(this.x, this.y, 100);
+      if (enemy) {
         var angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y);
-        this.scene.addBullet(this.x, this.y, angle);
+        this.scene.addBullet(this.x, this.y, angle, this.createdByPlayerA);
+        this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
+      }
+    } else {
+      var attacker = this.scene.getAttacker(this.x, this.y, 100);
+      if (attacker) {
+        var angle = Phaser.Math.Angle.Between(
+          this.x,
+          this.y,
+          attacker.x,
+          attacker.y
+        );
+        this.scene.addBullet(this.x, this.y, angle, this.createdByPlayerA);
         this.angle = (angle + Math.PI / 2) * Phaser.Math.RAD_TO_DEG;
       }
     }
