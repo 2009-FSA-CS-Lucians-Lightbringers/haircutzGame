@@ -3,8 +3,10 @@ export default new Phaser.Class({
 
   initialize: function EnemyBase(scene) {
     Phaser.GameObjects.Sprite.call(this, scene, 715, 224, "p2base");
-    this.anims.play("enemyStartingpoint");
-    console.log(this.anims.play("enemyStartingpoint"));
+
+    var redBase = this.anims.play("enemyStartingpoint");
+    // redBase.anims.frame = 5
+    // console.log(redBase)
   },
 
   // update: function (time, delta) {
