@@ -4,8 +4,8 @@ import Enemy from "../helpers/enemy.js";
 import Attacker from "../helpers/attacker.js";
 import Turret from "../helpers/turret.js";
 import Bullet from "../helpers/bullet.js";
-import HomeBase from "../helpers/homeBase.js";
-import EnemyBase from "../helpers/enemyBase.js";
+// import HomeBase from "../helpers/homeBase.js";
+// import EnemyBase from "../helpers/enemyBase.js";
 
 export default class Game extends Phaser.Scene {
   constructor() {
@@ -38,6 +38,7 @@ export default class Game extends Phaser.Scene {
     this.turrets;
     this.bullets;
     this.enemyBase;
+    this.homeBase;
     this.blueScore = 5;
     this.redScore = 5;
     this.blueText;
@@ -241,6 +242,7 @@ export default class Game extends Phaser.Scene {
   decrementBlueScore() {
     this.ouch.play();
     this.blueScore -= 1;
+    this.homeBase.setFrame(this.blueScore)
     this.blueText.setText("P1 | " + this.blueScore);
     if (this.blueScore <= 0) {
       this.snips.stop()
@@ -253,7 +255,7 @@ export default class Game extends Phaser.Scene {
   decrementRedScore() {
     this.ouch.play();
     this.redScore -= 1;
-    // this.anims.anims.entries.startingpoint.frames[0].frame.name--
+    this.enemyBase.setFrame(this.redScore)
     this.redText.setText("P2 | " + this.redScore);
     if (this.redScore <= 0) {
       this.snips.stop()
@@ -360,43 +362,11 @@ export default class Game extends Phaser.Scene {
       repeat: -1,
     });
 
-    this.anims.create({
-      key: "enemyStartingpoint",
-      frames: [
-        // { key: "p2base", frame: 0 },
-        // { key: "p2base", frame: 1 },
-        // { key: "p2base", frame: 2 },
-        // { key: "p2base", frame: 3 },
-        // { key: "p2base", frame: 4 },
-        { key: "p2base", frame: 5 },
-        // { key: "p2base", frame: 6 },
-        // { key: "p2base", frame: 7 },
-        // { key: "p2base", frame: 8 },
-        // { key: "p2base", frame: 9 },
-        // { key: "p2base", frame: 10 },
-      ],
-      repeat: -1,
-      frameRate: 5,
-    });
-
-    this.anims.create({
-      key: "homeStartingpoint",
-      frames: [
-        // { key: "p1base", frame: 0 },
-        // { key: "p1base", frame: 1 },
-        // { key: "p1base", frame: 2 },
-        // { key: "p1base", frame: 3 },
-        // { key: "p1base", frame: 4 },
-        { key: "p1base", frame: 5 },
-        // { key: "p1base", frame: 6 },
-        // { key: "p1base", frame: 7 },
-        // { key: "p1base", frame: 8 },
-        // { key: "p1base", frame: 9 },
-        // { key: "p1base", frame: 10 },
-      ],
-      repeat: -1,
-      frameRate: 5,
-    });
+    this.enemyBase = this.add.image(715, 224, 'p2base')
+    this.homeBase = this.add.image(95, 224, 'p1base')
+2
+    this.enemyBase.setFrame(5)
+    this.homeBase.setFrame(5)
 
     //sounds
     this.gameTheme = this.sound.add("gameTheme", { loop: true });
@@ -567,19 +537,19 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
 
-    this.homeBase = this.physics.add
-      .group({
-        classType: HomeBase,
-        runChildUpdate: true,
-      })
-      .create();
+    // this.homeBase = this.physics.add
+    //   .group({
+    //     classType: HomeBase,
+    //     runChildUpdate: true,
+    //   })
+    //   .create();
 
-    this.enemyBase = this.physics.add
-      .group({
-        classType: EnemyBase,
-        runChildUpdate: true,
-      })
-      .create();
+    // this.enemyBase = this.physics.add
+    //   .group({
+    //     classType: EnemyBase,
+    //     runChildUpdate: true,
+    //   })
+    //   .create();
 
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
     this.physics.add.overlap(this.attackers, this.bullets, this.damageAttacker);
