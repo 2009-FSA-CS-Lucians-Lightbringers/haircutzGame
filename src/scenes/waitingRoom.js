@@ -14,8 +14,19 @@ class WaitingRoom extends Phaser.Scene {
   }
 
   create() {
+    this.game.socket.emit('createGame');
     var bg = this.add.sprite(0, 0, "waitingRoom");
     bg.setOrigin(0, 0);
+    let self = this
+
+    this.game.socket.on('roomCode', function(roomCode){
+      self.game.roomCode = roomCode
+      waitingRoomCode.text = `ROOM CODE: ${self.game.roomCode}`
+    })
+
+    this.game.socket.on("preStart", function() {
+      this.scene.switch("preStart")
+    })
 
     var play = this.add.image(70, 70, "play" )
     var pause = this.add.image(125, 70, "pause" )
@@ -44,7 +55,7 @@ class WaitingRoom extends Phaser.Scene {
       },
     });
 
-    var waiting = this.make.text({
+    var waitingRoomCode = this.make.text({
       x: 172,
       y: 125,
       text: "ROOM CODE:",
@@ -71,6 +82,8 @@ class WaitingRoom extends Phaser.Scene {
     this.theme.stop()
     this.scene.switch("preStart");
   }
+
+
 }
 
 export default WaitingRoom;

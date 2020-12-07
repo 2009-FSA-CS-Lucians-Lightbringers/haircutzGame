@@ -431,11 +431,11 @@ export default class Game extends Phaser.Scene {
     // this.outline = this.zone.renderOutline(this.dropZone);
 
     //connecting to our socket on the client-side
-    this.socket = io();
+    // this.socket = io();
 
-    this.socket.on("connect", function () {
-      console.log("Connected!");
-    });
+    // this.socket.on("connect", function () {
+    //   console.log("Connected!");
+    // });
 
     //If our client is the first to connect to the server, the server will emit
     //an event that tells the client that it will be Player A.  The client

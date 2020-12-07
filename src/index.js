@@ -5,7 +5,7 @@ import PlayerOneWins from "./scenes/p1wins"
 import PlayerTwoWins from "./scenes/p2wins"
 import WaitingRoom from "./scenes/waitingRoom"
 import PreStart from "./scenes/preStart"
-
+import io from "socket.io-client";
 
 const config = {
   type: Phaser.AUTO,
@@ -32,3 +32,12 @@ game.scene.add('preStart', PreStart)
 
 //start title
 game.scene.start("introScene");
+
+//socket connected
+game.socket = io()
+game.socket.on("connect", function () {
+    console.log("Connected!");
+  })
+
+
+
