@@ -10,7 +10,7 @@ export default new Phaser.Class({
 
       Phaser.GameObjects.Sprite.call(this, scene, 85, 224, "p1attackers");
       this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
-      this.anims.play("blueWalk");
+      this.anims.play("reverseBlueWalk");
       scene.attackerNumber++;
       this.number = scene.attackerNumber;
     } else {
@@ -50,9 +50,14 @@ export default new Phaser.Class({
     this.hp -= damage;
     console.log(`attacker ${this.number} took damage`, this.hp);
     // if hp drops below 0 we deactivate this enemy
+    console.log(this.scene);
+    console.log(this);
+    // console.log(scene);
     if (this.hp <= 0) {
       // this.setActive(false);
       // this.setVisible(false);
+      // console.log(this)
+      this.scene.oppResourcePoints += 1;
       this.destroy();
     }
   },
@@ -65,12 +70,19 @@ export default new Phaser.Class({
 
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
-
+        // console.log(this.follower.t);
         if (this.follower.t >= 1) {
           // this.setActive(false);
           // this.setVisible(false);
           this.scene.decrementRedScore();
           this.destroy();
+          // console.log(this.follower.t);
+          // this.path.getPoint(this.follower.t, this.follower.vec);
+          // this.setPosition(this.follower.vec.x, this.follower.vec.y);
+          // reverse = 1;
+          // reverse -= this.SCISSOR_SPEED * delta;
+          // this.follower.t -= this.scene.SCISSOR_SPEED * delta;
+          // console.log(this.follower.t);
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;

@@ -51,6 +51,8 @@ export default new Phaser.Class({
     if (this.hp <= 0) {
       // this.setActive(false);
       // this.setVisible(false);
+      this.scene.resourcePoints += 1;
+      this.scene.resourceText.setText("RESOURCE | " + this.scene.resourcePoints);
       this.destroy();
     }
   },
