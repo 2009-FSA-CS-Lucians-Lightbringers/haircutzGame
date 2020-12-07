@@ -21,6 +21,14 @@ export default class Game extends Phaser.Scene {
     this.attackerNumber = -1;
     this.SCISSOR_SPEED = 1 / 10000;
     this.BULLET_DAMAGE = 20;
+    this.gameTheme;
+    this.ouch;
+    this.snips;
+    this.plop;
+    this.bulletSound;
+    this.play;
+    this.pause;
+    this.woohoo;
     this.path1;
     this.path2;
     this.path3;
@@ -82,6 +90,7 @@ export default class Game extends Phaser.Scene {
   touchBase(enemyBase, enemy) {
     // enemy.setActive(false);
     // enemy.setVisible(false);
+    this.snips.stop()
     enemy.destroy();
     // }
   }
@@ -133,6 +142,7 @@ export default class Game extends Phaser.Scene {
         this.resourcePoints -= 2;
         this.resourceText.setText("RESOURCE | " + this.resourcePoints);
         if (attacker) {
+          this.snips.play()
           attacker.setActive(true);
           attacker.setVisible(true);
           attacker.startOnPath(path);
@@ -165,6 +175,7 @@ export default class Game extends Phaser.Scene {
           this.resourcePoints -= 3;
           this.resourceText.setText("RESOURCE | " + this.resourcePoints);
           if (turret) {
+            this.plop.play();
             turret.setActive(true);
             turret.setVisible(true);
             turret.place(i, j);
@@ -174,6 +185,7 @@ export default class Game extends Phaser.Scene {
         var turret = this.turrets.get();
         this.oppResourcePoints -= 3;
         if (turret) {
+          this.plop.play();
           turret.setActive(true);
           turret.setVisible(true);
           turret.place(i, j);
@@ -190,6 +202,7 @@ export default class Game extends Phaser.Scene {
     var bullet = this.bullets.get();
     bullet.createdByPlayerA = createdByPlayerA;
     if (bullet) {
+      this.bulletSound.play();
       bullet.fire(x, y, angle);
     }
   }
@@ -226,19 +239,25 @@ export default class Game extends Phaser.Scene {
 
   //Score methods
   decrementBlueScore() {
+    this.ouch.play();
     this.blueScore -= 1;
     this.blueText.setText("P1 | " + this.blueScore);
     if (this.blueScore <= 0) {
+      this.snips.stop()
+      this.gameTheme.stop()
       this.scene.switch("p2Wins");
     }
     return null;
   }
 
   decrementRedScore() {
+    this.ouch.play();
     this.redScore -= 1;
     // this.anims.anims.entries.startingpoint.frames[0].frame.name--
     this.redText.setText("P2 | " + this.redScore);
     if (this.redScore <= 0) {
+      this.snips.stop()
+      this.gameTheme.stop()
       this.scene.switch("p1Wins");
     }
     return null;
@@ -287,24 +306,37 @@ export default class Game extends Phaser.Scene {
     this.load.image("bullet", "/assets/bullet.png");
     this.load.image("scoreboard", "/assets/scoreboard.png");
     this.load.image("blackboard", "/assets/blackboard.png");
-    this.load.spritesheet("p1base", "/assets/player1_base2.png", {
-      frameWidth: 70,
-      frameHeight: 85,
+    this.load.spritesheet("p1base", "/assets/base1_v2.png", {
+      frameWidth: 75,
+      frameHeight: 89,
     });
 
-    this.load.spritesheet("p2base", "/assets/player2_base2.png", {
-      frameWidth: 70,
-      frameHeight: 85,
+    this.load.spritesheet("p2base", "/assets/p2_base.png", {
+      frameWidth: 75,
+      frameHeight: 89,
     });
+
+    this.load.image("logo", "/assets/logo_underline.png");
+    this.load.image("play", "/assets/play.png");
     this.load.image("clock", "/assets/clock.png");
+    this.load.audio("gameTheme", ["/assets/intro_theme.mp3"]);
+    this.load.audio("snips", ["/assets/snips.mp3"]);
+    this.load.audio("bulletSound", ["/assets/bullet_sound.mp3"]);
+    this.load.audio("ouch", ["/assets/ouch.mp3"]);
+    this.load.audio("woohoo", ["/assets/woohoo.mp3"]);
+    this.load.audio("plop", ["/assets/plop.mp3"]);
+
   }
 
   create() {
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
-
     this.add.image(700, 520, "clock");
+    this.play = this.add.image(50, 50, "play" )
+    this.pause = this.add.image(105, 50, "pause" )
+    this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 1 });
+    // this.gameTheme.play()
 
     this.anims.create({
       key: "blueWalk",
@@ -341,8 +373,10 @@ export default class Game extends Phaser.Scene {
         // { key: "p2base", frame: 7 },
         // { key: "p2base", frame: 8 },
         // { key: "p2base", frame: 9 },
-        //{ key: "p2base", frame: 10 },
+        // { key: "p2base", frame: 10 },
       ],
+      repeat: -1,
+      frameRate: 5,
     });
 
     this.anims.create({
@@ -358,9 +392,29 @@ export default class Game extends Phaser.Scene {
         // { key: "p1base", frame: 7 },
         // { key: "p1base", frame: 8 },
         // { key: "p1base", frame: 9 },
-        //{ key: "p1base", frame: 10 },
+        // { key: "p1base", frame: 10 },
       ],
+      repeat: -1,
+      frameRate: 5,
     });
+
+    //sounds
+    this.gameTheme = this.sound.add("gameTheme", { loop: true });
+    this.snips = this.sound.add("snips", { loop: true, delay: 0, rate: 4, });
+    this.ouch = this.sound.add("ouch", { loop: false });
+    this.woohoo = this.sound.add("woohoo", { loop: false });
+    this.bulletSound = this.sound.add("bulletSound", { loop: false });
+    this.plop = this.sound.add("plop", { loop: false });
+
+
+    this.play.setInteractive({ useHandCursor: true });
+    this.play.on("pointerdown", () => {
+      this.gameTheme.play()
+    })
+    this.pause.setInteractive({ useHandCursor: true });
+    this.pause.on("pointerdown", () => {
+      this.gameTheme.stop()
+    })
 
     //sets the default to "you are not Player A"
     let self = this;
