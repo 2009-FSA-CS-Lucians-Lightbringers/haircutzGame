@@ -48,12 +48,9 @@ io.on("connection", function (socket) {
     let roomCode = randomRoomCodeGenerator();
     console.log("A user created room " + roomCode);
     socket.join(roomCode);
-    // io.emit("roomCode", roomCode)
     io.to(roomCode).emit("isPlayerA");
     io.to(roomCode).emit("roomCode", roomCode);
     rooms[roomCode] = [socket.id];
-    // socket.join('room-' + ++rooms);
-    // socket.emit('newGame', {name: data.name, room: 'room-'+rooms});
   });
 
   socket.on("findRoom", function (roomCode) {
@@ -71,68 +68,30 @@ io.on("connection", function (socket) {
     }
   });
 
-  // //push new players' socket ID into players array
-  // players.push(socket.id);
-  // //determine and emit "Player A"
-  // if (players.length === 1) {
-  // 	io.emit('isPlayerA');
-  // }
-  // if (players.length === 2) {
-  // 	io.emit('isPlayerB');
-  // }
+  socket.on("redPlayerReady", function (roomCode) {
+    io.in(roomCode).emit("redPlayerReady")
+  })
 
-  /**
-   * Connect the Player 2 to the room he requested. Show error if room full.
-   */
-  // socket.on('joinGame', function(data){
-  //   var room = io.nsps['/'].adapter.rooms[data.room];
-  //   if( room && room.length == 1){
-  //     socket.join(data.room);
-  //     socket.broadcast.to(data.room).emit('player1', {});
-  // 		socket.emit('player2', {name: data.name, room: data.room })
-  // 		console.log('connected to socket room')
-  //   }
-  //   else {
-  //     socket.emit('err', {message: 'Sorry, The room is full!'});
-  //   }
-  // });
-
-  // 	socket.on("spawnScissor", function(event){
-  // 		socket.broadcast.to(data.room).emit('spawnScissor', event);
-  // 	});
-
-  // 	socket.on("choosePath", function(event){
-  // 		socket.broadcast.to(data.room).emit('choosePath', event);
-  // 	});
-
-  // 	socket.on("placeTurret", function(event){
-  // 		socket.broadcast.to(data.room).emit('placeTurret', event);
-  // 	});
-
-  // //push new players' socket ID into players array
-  // players.push(socket.id);
-  // //determine and emit "Player A"
-  // if (players.length === 1) {
-  // 	io.emit('isPlayerA');
-  // }
-  // if (players.length === 2) {
-  // 	io.emit('isPlayerB');
-  // }
+  socket.on("bluePlayerReady", function (roomCode) {
+    io.in(roomCode).emit("bluePlayerReady")
+  })
 
   //emit spawnEnemy
   socket.on("spawnScissor", function (event) {
-    io.emit("spawnScissor", event);
+    let roomCode = Array.from(socket.rooms).filter(item => item!=socket.id)[0]
+    io.in(roomCode).emit("spawnScissor", event);
   });
 
   //emit choosePath
   socket.on("choosePath", function (event) {
-    io.emit("choosePath", event);
+    let roomCode = Array.from(socket.rooms).filter(item => item!=socket.id)[0]
+    io.in(roomCode).emit("choosePath", event);
   });
 
   //emit cardPlayed
   socket.on("placeTurret", function (isPlayerA, x, y) {
-    console.log("in socket");
-    io.emit("placeTurret", isPlayerA, x, y);
+    let roomCode = Array.from(socket.rooms).filter(item => item!=socket.id)[0]
+    io.in(roomCode).emit("placeTurret", isPlayerA, x, y);
   });
 
   //when a user disconnects, log and take player out of players array

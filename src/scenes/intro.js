@@ -113,12 +113,8 @@ class IntroScene extends Phaser.Scene {
 
       this.game.socket.on("roomFound", (roomCode) => {
         self.game.roomCode = roomCode
-        if (self.game.isPlayerA) {
-        self.game.switchTime = self.time.now;
-        console.log("self switch time", self.game.switchTime) // Starts game scene if room is found
-        } else {
-          self.game.switchTime = self.time.now;
-          this.scene.switch("redPlayerWaitingRoom")
+        if (!self.game.isPlayerA) {
+        this.scene.switch("redPlayerWaitingRoom")
         }
       });
 

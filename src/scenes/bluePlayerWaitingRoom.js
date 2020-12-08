@@ -24,6 +24,10 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
       waitingRoomCode.text = `ROOM CODE: ${self.game.roomCode}`
     })
 
+    this.game.socket.on('roomFound', function(){
+      self.game.switchTime = self.time.now
+    })
+
     var play = this.add.image(70, 70, "play" )
     var pause = this.add.image(125, 70, "pause" )
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
@@ -77,7 +81,7 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
   update(time, delta) {
 
     if (this.game.switchTime) {
-      if (this.game.switchTime + 20000 < this.time.now) {
+      if (this.game.switchTime + 5000 < this.time.now) {
         this.scene.switch("preStart")
       }
     }
@@ -86,7 +90,6 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
 
   clickButton() {
     this.theme.stop()
-    this.scene.switch("preStart");
   }
 
 

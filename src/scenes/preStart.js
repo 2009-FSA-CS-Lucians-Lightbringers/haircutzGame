@@ -1,7 +1,7 @@
 class PreStart extends Phaser.Scene {
   constructor() {
     super({ key: "preStart" });
-    this.clickButton = this.clickButton.bind(this);
+    // this.clickButton = this.clickButton.bind(this);
     this.theme;
     this.redPlayerReady = false;
     this.bluePlayerReady = false;
@@ -28,6 +28,7 @@ class PreStart extends Phaser.Scene {
     var bg = this.add.sprite(0, 0, "preStart");
     bg.setOrigin(0, 0);
     var self = this;
+    var roomCode = this.game.roomCode
 
     const waitingSprite1 = this.add.sprite(525, 305, "waitingSprite1", 0);
     const waitingSprite2 = this.add.sprite(275, 305, "waitingSprite2", 0);
@@ -83,15 +84,29 @@ class PreStart extends Phaser.Scene {
 
     bluePlayerText.setInteractive({ useHandCursor: true });
     bluePlayerText.on("pointerdown", () => {
-      bluePlayerText.text = "BLUE PLAYER IS READY";
-      self.clickButton();
+      if (this.game.isPlayerA) {
+      self.game.socket.emit("bluePlayerReady", roomCode)
+      }
     });
 
     redPlayerText.setInteractive({ useHandCursor: true });
     redPlayerText.on("pointerdown", () => {
-      redPlayerText.text = "RED PLAYER IS READY";
-      self.clickButton();
+      if (this.game.isPlayerB) {
+      self.game.socket.emit("redPlayerReady", roomCode)
+      }
     });
+
+    this.game.socket.on("redPlayerReady", function () {
+      redPlayerText.text = "RED PLAYER IS READY";
+        self.redPlayerReady = true;
+        self.playersReady()
+     })
+
+     this.game.socket.on("bluePlayerReady", function () {
+       bluePlayerText.text = "BLUE PLAYER IS READY";
+       self.bluePlayerReady = true;
+       self.playersReady()
+     })
 
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
@@ -101,12 +116,22 @@ class PreStart extends Phaser.Scene {
     pause.on("pointerdown", () => {
       this.theme.stop();
     });
+
+
+
   }
 
-  clickButton() {
-    this.theme.stop();
-    this.scene.switch("game");
+  // clickButton() {
+  //   this.theme.stop();
+  //   this.scene.switch("game");
+  // }
+
+  playersReady() {
+    if (this.bluePlayerReady && this.redPlayerReady) {
+      this.scene.switch("game");
+    }
   }
+
 }
 
 export default PreStart;
