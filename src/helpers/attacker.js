@@ -13,6 +13,7 @@ export default new Phaser.Class({
       this.anims.play("blueWalk");
       scene.attackerNumber++;
       this.number = scene.attackerNumber;
+      this.hasSwitched = false;
     } else {
       Phaser.GameObjects.Sprite.call(this, scene, 675, 224, "p2attackers");
       this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
@@ -20,6 +21,7 @@ export default new Phaser.Class({
 
       scene.attackerNumber++;
       this.number = scene.attackerNumber;
+      this.hasSwitched = false;
     }
   },
   //differentiate player attacks based on class
@@ -51,8 +53,14 @@ export default new Phaser.Class({
     console.log(`attacker ${this.number} took damage`, this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
-      // this.setActive(false);
-      // this.setVisible(false);
+      if(this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementRedScore();
+      }
+      if(!this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementBlueScore();
+      }
+      this.scene.snips.stop();
+      this.scene.oppResourcePoints += 1;
       this.destroy();
     }
   },
@@ -60,25 +68,30 @@ export default new Phaser.Class({
   update: function (time, delta) {
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
-
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
 
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
-
-        if (this.follower.t >= 1) {
-          // this.setActive(false);
-          // this.setVisible(false);
+        if(this.follower.t >= .5 && !this.hasSwitched){
+          this.anims.play("reverseBlueWalk")
           this.scene.decrementRedScore();
+          this.hasSwitched = true;
+        }
+        if (this.follower.t >= 1) {
+          this.scene.incrementBlueScore();
           this.destroy();
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
 
-        if (this.follower.t <= 0) {
-          // this.setActive(false);
-          // this.setVisible(false);
+        if(this.follower.t <= .5 && !this.hasSwitched){
+          this.anims.play("reverseRedWalk");
           this.scene.decrementBlueScore();
+          this.hasSwitched = true;
+        }
+
+        if (this.follower.t <= 0) {
+          this.scene.incrementRedScore();
           this.destroy();
         }
       }
