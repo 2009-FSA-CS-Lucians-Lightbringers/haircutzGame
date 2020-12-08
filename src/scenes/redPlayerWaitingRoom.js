@@ -14,10 +14,10 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
   }
 
   create() {
-    this.game.socket.emit('createGame');
     var bg = this.add.sprite(0, 0, "redPlayerWaitingRoom");
     bg.setOrigin(0, 0);
     let self = this
+    this.game.switchTime = this.time.now
 
     var play = this.add.image(70, 70, "play" )
     var pause = this.add.image(125, 70, "pause" )
@@ -60,7 +60,7 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
   update(time, delta) {
 
     if (this.game.switchTime) {
-      if (this.game.switchTime + 9000 < this.time.now) {
+      if (this.game.switchTime + 5000 < this.time.now) {
         this.scene.switch("preStart")
       }
     }
@@ -69,7 +69,6 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
 
   clickButton() {
     this.theme.stop()
-    this.scene.switch("preStart");
   }
 
 }
