@@ -24,7 +24,16 @@ server.use(express.static(path.join(__dirname, 'public')));
 let players = [];
 
 //socket rooms
-var rooms = 0;
+var rooms = {}
+
+//random room code generator
+const randomRoomCodeGenerator = () => {
+	let roomCode = ""
+		for (let i = 0; i < 6; i++) {
+			roomCode += Math.floor(Math.random() * 10)
+		}
+		return roomCode;
+}
 
 server.use('*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'public/index.html'));
@@ -35,10 +44,44 @@ io.on('connection', function (socket) {
 	console.log('A user connected: ' + socket.id);
 
 	//when you want to create a socket room
-	// socket.on('createGame', function(data){
-	// 	socket.join('room-' + ++rooms);
-	// 	socket.emit('newGame', {name: data.name, room: 'room-'+rooms});
-	// });
+	socket.on('createGame', function(){
+		let roomCode = randomRoomCodeGenerator()
+		console.log('A user created room ' + roomCode)
+		socket.join(roomCode);
+		// io.emit("roomCode", roomCode)
+		io.to(roomCode).emit("isPlayerA")
+		io.to(roomCode).emit("roomCode", roomCode)
+		rooms[roomCode] = [socket.id]
+		// socket.join('room-' + ++rooms);
+		// socket.emit('newGame', {name: data.name, room: 'room-'+rooms});
+	});
+
+	socket.on('findRoom', function(roomCode){
+		if (roomCode in rooms){
+			if(rooms[roomCode].length === 1) {
+				socket.join(roomCode)
+				io.to(roomCode).emit("isPlayerB")
+				rooms[roomCode].push(socket.id)
+				io.in(roomCode).emit("roomFound", roomCode)
+			} else {
+				io.to(socket.id).emit("roomNotFound")
+			}
+		} else {
+			io.to(socket.id).emit("roomNotFound")
+			}
+	})
+
+
+
+		// //push new players' socket ID into players array
+	// players.push(socket.id);
+	// //determine and emit "Player A"
+	// if (players.length === 1) {
+	// 	io.emit('isPlayerA');
+	// }
+	// if (players.length === 2) {
+	// 	io.emit('isPlayerB');
+	// }
 
 	/**
  * Connect the Player 2 to the room he requested. Show error if room full.
@@ -69,15 +112,15 @@ io.on('connection', function (socket) {
 // 	});
 
 
-	//push new players' socket ID into players array
-	players.push(socket.id);
-	//determine and emit "Player A"
-	if (players.length === 1) {
-		io.emit('isPlayerA');
-	}
-	if (players.length === 2) {
-		io.emit('isPlayerB');
-	}
+	// //push new players' socket ID into players array
+	// players.push(socket.id);
+	// //determine and emit "Player A"
+	// if (players.length === 1) {
+	// 	io.emit('isPlayerA');
+	// }
+	// if (players.length === 2) {
+	// 	io.emit('isPlayerB');
+	// }
 
 	//emit spawnEnemy
 	socket.on('spawnScissor', function (event) {

@@ -403,6 +403,8 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    this.isPlayerA = this.game.isPlayerA
+    this.isPlayerB = this.game.isPlayerB
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
@@ -412,13 +414,13 @@ export default class Game extends Phaser.Scene {
     this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 1 });
     // this.gameTheme.play()
     
-    // if (this.isPlayerA) {
-		// 	self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
-		// 	self.input.setDraggable(self.scissor);
-		// } else {
-		// 	self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
-		// 	self.input.setDraggable(self.scissor);
-		// }
+    if (this.isPlayerA) {
+			self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
+			self.input.setDraggable(self.scissor);
+		} else {
+			self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
+			self.input.setDraggable(self.scissor);
+		}
 
     this.anims.create({
       key: "blueWalk",
@@ -482,7 +484,7 @@ export default class Game extends Phaser.Scene {
 
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
-      this.gameTheme.play()
+      // this.gameTheme.play()
     })
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
@@ -534,30 +536,30 @@ export default class Game extends Phaser.Scene {
     // this.outline = this.zone.renderOutline(this.dropZone);
 
     //connecting to our socket on the client-side
-    this.socket = io();
+    // this.socket = io();
 
-    this.socket.on("connect", function () {
-      console.log("Connected!");
-    });
+    // this.socket.on("connect", function () {
+    //   console.log("Connected!");
+    // });
 
     //If our client is the first to connect to the server, the server will emit
     //an event that tells the client that it will be Player A.  The client
     //socket receives that event and turns our "isPlayerA" boolean from
     //false to true.
-		this.socket.on('isPlayerA', function () {
-			self.isPlayerA = true;
-			self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
-			self.input.setDraggable(self.scissor);
-			console.log('Welcome Blue Player A!');
-		});
-		this.socket.on('isPlayerB', function () {
-			if (!self.isPlayerA) {
-				self.isPlayerB = true;
-				self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
-				self.input.setDraggable(self.scissor);
-				console.log('Welcome Red Player B!');
-			}
-		});
+		//this.socket.on('isPlayerA', function () {
+			//self.isPlayerA = true;
+			//self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
+			//self.input.setDraggable(self.scissor);
+			//console.log('Welcome Blue Player A!');
+		//});
+		//this.socket.on('isPlayerB', function () {
+			//if (!self.isPlayerA) {
+				//self.isPlayerB = true;
+				//self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
+				//self.input.setDraggable(self.scissor);
+				//console.log('Welcome Red Player B!');
+			//}
+		//});
 
     // this graphics element is only for visualization,
     // its not related to our path

@@ -3,6 +3,8 @@ class PreStart extends Phaser.Scene {
     super({ key: "preStart" });
     this.clickButton = this.clickButton.bind(this);
     this.theme;
+    this.redPlayerReady = false;
+    this.bluePlayerReady = false;
   }
 
   preload() {
@@ -24,7 +26,7 @@ class PreStart extends Phaser.Scene {
     var play = this.add.image(70, 70, "play" )
     var pause = this.add.image(125, 70, "pause" )
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
-    this.theme.play()
+    // this.theme.play()
 
 
    this.anims.create({
@@ -43,35 +45,45 @@ class PreStart extends Phaser.Scene {
     });
     waitingSprite2.play("wait2")
 
-    var start = this.make.text({
+    var redPlayerText = this.make.text({
       x: 125,
       y: 85,
-      text: "START",
+      text: "RED PLAYER READY?",
       style: {
-        font: "bold 80px Marker Felt",
-        fill: "red",
-        wordWrap: { width: 500 },
+        font: "bold 40px Marker Felt",
+        color: "red",
+        wordWrap: { width: 300 },
       },
     });
 
-    var game= this.make.text({
+    var bluePlayerText = this.make.text({
       x: 430,
       y: 85,
-      text: "GAME",
+      text: "BLUE PLAYER READY?",
       style: {
-        font: "bold 80px Marker Felt",
-        fill: "blue",
-        wordWrap: { width: 500 },
+        font: "bold 40px Marker Felt",
+        color: "blue",
+        wordWrap: { width: 300 },
       },
     });
 
-    start.setInteractive({ useHandCursor: true });
-    start.on("pointerdown", () => this.clickButton());
-    game.setInteractive({ useHandCursor: true });
-    game.on("pointerdown", () => this.clickButton());
+    bluePlayerText.setInteractive({ useHandCursor: true });
+    bluePlayerText.on("pointerdown", () => {
+      bluePlayerText.text = "BLUE PLAYER IS READY"
+    });
+
+
+    redPlayerText.setInteractive({ useHandCursor: true });
+    redPlayerText.on("pointerdown", () => {
+      redPlayerText.text = "RED PLAYER IS READY"
+    });
+
+
+
+
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
-      this.theme.play()
+      // this.theme.play()
     })
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
