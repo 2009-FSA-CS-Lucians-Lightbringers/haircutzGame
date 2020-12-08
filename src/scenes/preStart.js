@@ -28,7 +28,7 @@ class PreStart extends Phaser.Scene {
     var bg = this.add.sprite(0, 0, "preStart");
     bg.setOrigin(0, 0);
     var self = this;
-    var roomCode = this.game.roomCode
+    var roomCode = this.game.roomCode;
 
     const waitingSprite1 = this.add.sprite(525, 305, "waitingSprite1", 0);
     const waitingSprite2 = this.add.sprite(275, 305, "waitingSprite2", 0);
@@ -36,7 +36,6 @@ class PreStart extends Phaser.Scene {
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(125, 70, "pause");
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
-    // this.theme.play()
 
     this.anims.create({
       key: "wait1",
@@ -85,53 +84,45 @@ class PreStart extends Phaser.Scene {
     bluePlayerText.setInteractive({ useHandCursor: true });
     bluePlayerText.on("pointerdown", () => {
       if (this.game.isPlayerA) {
-      self.game.socket.emit("bluePlayerReady", roomCode)
+        self.game.socket.emit("bluePlayerReady", roomCode);
       }
     });
 
     redPlayerText.setInteractive({ useHandCursor: true });
     redPlayerText.on("pointerdown", () => {
       if (this.game.isPlayerB) {
-      self.game.socket.emit("redPlayerReady", roomCode)
+        self.game.socket.emit("redPlayerReady", roomCode);
       }
     });
 
     this.game.socket.on("redPlayerReady", function () {
       redPlayerText.text = "RED PLAYER IS READY";
-        self.redPlayerReady = true;
-        self.playersReady()
-     })
+      self.redPlayerReady = true;
+      self.playersReady();
+    });
 
-     this.game.socket.on("bluePlayerReady", function () {
-       bluePlayerText.text = "BLUE PLAYER IS READY";
-       self.bluePlayerReady = true;
-       self.playersReady()
-     })
+    this.game.socket.on("bluePlayerReady", function () {
+      bluePlayerText.text = "BLUE PLAYER IS READY";
+      self.bluePlayerReady = true;
+      self.playersReady();
+    });
 
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
-      // this.theme.play()
+      self.game.sound.mute = false;
     });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
-      this.theme.stop();
+      self.game.sound.mute = true;
     });
-
-
-
   }
-
-  // clickButton() {
-  //   this.theme.stop();
-  //   this.scene.switch("game");
-  // }
 
   playersReady() {
     if (this.bluePlayerReady && this.redPlayerReady) {
+      this.theme.stop();
       this.scene.switch("game");
     }
   }
-
 }
 
 export default PreStart;

@@ -69,29 +69,42 @@ io.on("connection", function (socket) {
   });
 
   socket.on("redPlayerReady", function (roomCode) {
-    io.in(roomCode).emit("redPlayerReady")
-  })
+    io.in(roomCode).emit("redPlayerReady");
+  });
 
   socket.on("bluePlayerReady", function (roomCode) {
-    io.in(roomCode).emit("bluePlayerReady")
-  })
+    io.in(roomCode).emit("bluePlayerReady");
+  });
 
   //emit spawnEnemy
   socket.on("spawnScissor", function (event) {
-    let roomCode = Array.from(socket.rooms).filter(item => item!=socket.id)[0]
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
     io.in(roomCode).emit("spawnScissor", event);
   });
 
   //emit choosePath
   socket.on("choosePath", function (event) {
-    let roomCode = Array.from(socket.rooms).filter(item => item!=socket.id)[0]
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
     io.in(roomCode).emit("choosePath", event);
   });
 
   //emit cardPlayed
   socket.on("placeTurret", function (isPlayerA, x, y) {
-    let roomCode = Array.from(socket.rooms).filter(item => item!=socket.id)[0]
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
     io.in(roomCode).emit("placeTurret", isPlayerA, x, y);
+  });
+
+  socket.on("stopTheme", function () {
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
+    io.in(roomCode).emit("stopTheme");
   });
 
   //when a user disconnects, log and take player out of players array
