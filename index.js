@@ -49,6 +49,7 @@ io.on('connection', function (socket) {
 		console.log('A user created room ' + roomCode)
 		socket.join(roomCode);
 		// io.emit("roomCode", roomCode)
+		io.to(roomCode).emit("isPlayerA")
 		io.to(roomCode).emit("roomCode", roomCode)
 		rooms[roomCode] = [socket.id]
 		// socket.join('room-' + ++rooms);
@@ -56,25 +57,31 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on('findRoom', function(roomCode){
-		console.log('inside find Room')
-		console.log('room code:', roomCode)
-		console.log('rooms', rooms)
 		if (roomCode in rooms){
-			console.log('inside of our object search')
 			if(rooms[roomCode].length === 1) {
-				console.log('room length === 1')
 				socket.join(roomCode)
+				io.to(roomCode).emit("isPlayerB")
 				rooms[roomCode].push(socket.id)
 				io.in(roomCode).emit("roomFound", roomCode)
 			} else {
-				io.in(roomCode).emit("roomFound")
-				console.log('Room is full')
+				io.to(socket.id).emit("roomNotFound")
 			}
 		} else {
-			io.in(roomCode).emit("roomFound")
-			console.log('Room is not found')
+			io.to(socket.id).emit("roomNotFound")
 			}
 	})
+
+
+
+		// //push new players' socket ID into players array
+	// players.push(socket.id);
+	// //determine and emit "Player A"
+	// if (players.length === 1) {
+	// 	io.emit('isPlayerA');
+	// }
+	// if (players.length === 2) {
+	// 	io.emit('isPlayerB');
+	// }
 
 	/**
  * Connect the Player 2 to the room he requested. Show error if room full.

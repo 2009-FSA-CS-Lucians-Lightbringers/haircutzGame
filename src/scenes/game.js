@@ -331,6 +331,8 @@ export default class Game extends Phaser.Scene {
   }
 
   create() {
+    this.isPlayerA = this.game.isPlayerA
+    this.isPlayerB = this.game.isPlayerB
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
@@ -379,7 +381,7 @@ export default class Game extends Phaser.Scene {
 
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
-      this.gameTheme.play()
+      // this.gameTheme.play()
     })
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
@@ -441,16 +443,19 @@ export default class Game extends Phaser.Scene {
     //an event that tells the client that it will be Player A.  The client
     //socket receives that event and turns our "isPlayerA" boolean from
     //false to true.
-    this.socket.on("isPlayerA", function () {
-      self.isPlayerA = true;
-      console.log("Welcome Blue Player A!");
-    });
-    this.socket.on("isPlayerB", function () {
-      if (!self.isPlayerA) {
-        self.isPlayerB = true;
-        console.log("Welcome Red Player B!");
-      }
-    });
+    // this.socket.on("isPlayerA", function () {
+    //   self.isPlayerA = true;
+    //   console.log("Welcome Blue Player A!");
+    // });
+    // this.socket.on("isPlayerB", function () {
+    //   if (!self.isPlayerA) {
+    //     self.isPlayerB = true;
+    //     console.log("Welcome Red Player B!");
+    //   }
+    // });
+
+
+
 
     // this graphics element is only for visualization,
     // its not related to our path

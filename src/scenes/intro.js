@@ -23,7 +23,7 @@ class IntroScene extends Phaser.Scene {
     var play = this.add.image(70, 70, "play" )
     var pause = this.add.image(135, 70, "pause" )
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
-    this.theme.play()
+    // this.theme.play()
     let self = this
 
 
@@ -78,7 +78,7 @@ class IntroScene extends Phaser.Scene {
     //Play button
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
-      this.theme.play()
+      // this.theme.play()
     })
     //Pause button
     pause.setInteractive({ useHandCursor: true });
@@ -90,7 +90,7 @@ class IntroScene extends Phaser.Scene {
     createGame.setInteractive({ useHandCursor: true });
     createGame.on("pointerdown", () => {
       this.theme.stop();
-      this.scene.switch("waitingRoom");
+      this.scene.switch("bluePlayerWaitingRoom");
     });
 
     //Join Game
@@ -112,15 +112,22 @@ class IntroScene extends Phaser.Scene {
       });
 
       this.game.socket.on("roomFound", (roomCode) => {
-        console.log('inside room found')
-        if (roomCode) {
         self.game.roomCode = roomCode
-        this.scene.switch("preStart"); // Starts game scene if room is found
-        self.game.socket.in(roomCode).emit("preStart")
-        } else console.log('Room Code is NO GOOD')
+        if (self.game.isPlayerA) {
+        self.game.switchTime = self.time.now;
+        console.log("self switch time", self.game.switchTime) // Starts game scene if room is found
+        } else {
+          self.game.switchTime = self.time.now;
+          this.scene.switch("redPlayerWaitingRoom")
+        }
+      });
+
+      this.game.socket.on("roomNotFound", () => {
+        console.log('ROOM NOT FOUND!')
       });
 
   }
+
 }
 
 export default IntroScene;
