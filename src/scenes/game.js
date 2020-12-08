@@ -81,8 +81,8 @@ export default class Game extends Phaser.Scene {
     this.addBullet = this.addBullet.bind(this);
     this.getEnemy = this.getEnemy.bind(this);
     this.getAttacker = this.getAttacker.bind(this);
-    this.incrementBlueScore = this.incrementBlueScore(this);
-    this.incrementRedScore = this.incrementRedScore(this);
+    this.incrementBlueScore = this.incrementBlueScore.bind(this);
+    this.incrementRedScore = this.incrementRedScore.bind(this);
     this.decrementBlueScore = this.decrementBlueScore.bind(this);
     this.decrementRedScore = this.decrementRedScore.bind(this);
     this.resourceTimer = this.resourceTimer.bind(this);
@@ -290,46 +290,38 @@ export default class Game extends Phaser.Scene {
     this.blueScore += 1;
     this.homeBase.setFrame(this.blueScore)
     this.blueText.setText("P1 | " + this.blueScore)
+    if (this.blueScore >= 10) {
+      this.snips.stop()
+      this.gameTheme.stop()
+      this.scene.switch("p1Wins");
+    }
   }
 
   incrementRedScore() {
     this.redScore += 1;
     this.enemyBase.setFrame(this.redScore)
     this.redText.setText("P2 | " + this.redScore)
+    if (this.redScore >= 10) {
+      this.snips.stop()
+      this.gameTheme.stop()
+      this.scene.switch("p2Wins");
+    }
   }
 
   decrementBlueScore() {
     this.snips.stop();
     this.ouch.play();
     this.blueScore -= 1;
-    // this.redScore += 1;
     this.homeBase.setFrame(this.blueScore)
-    // this.enemyBase.setFrame(this.redScore);
     this.blueText.setText("P1 | " + this.blueScore);
-    // this.redText.setText("P2 | " + this.redScore);
-    if (this.blueScore <= 0) {
-      this.snips.stop()
-      this.gameTheme.stop()
-      this.scene.switch("p2Wins");
-    }
-    return null;
   }
 
   decrementRedScore() {
     this.snips.stop();
     this.ouch.play();
     this.redScore -= 1;
-    // this.blueScore += 1;
     this.enemyBase.setFrame(this.redScore)
-    // this.homeBase.setFrame(this.blueScore);
     this.redText.setText("P2 | " + this.redScore);
-    // this.blueText.setText("P1 | " + this.blueScore);
-    if (this.redScore <= 0) {
-      this.snips.stop()
-      this.gameTheme.stop()
-      this.scene.switch("p1Wins");
-    }
-    return null;
   }
 
   resourceTimer() {
