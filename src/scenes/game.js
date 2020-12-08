@@ -81,6 +81,8 @@ export default class Game extends Phaser.Scene {
     this.addBullet = this.addBullet.bind(this);
     this.getEnemy = this.getEnemy.bind(this);
     this.getAttacker = this.getAttacker.bind(this);
+    this.incrementBlueScore = this.incrementBlueScore(this);
+    this.incrementRedScore = this.incrementRedScore(this);
     this.decrementBlueScore = this.decrementBlueScore.bind(this);
     this.decrementRedScore = this.decrementRedScore.bind(this);
     this.resourceTimer = this.resourceTimer.bind(this);

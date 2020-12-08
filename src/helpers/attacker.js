@@ -52,9 +52,6 @@ export default new Phaser.Class({
     this.hp -= damage;
     console.log(`attacker ${this.number} took damage`, this.hp);
     // if hp drops below 0 we deactivate this enemy
-    console.log(this.scene);
-    console.log(this);
-    // console.log(scene);
     if (this.hp <= 0) {
       if(this.scene.isPlayerA && this.hasSwitched){
         this.scene.incrementRedScore();
@@ -62,9 +59,6 @@ export default new Phaser.Class({
       if(!this.scene.isPlayerA && this.hasSwitched){
         this.scene.incrementBlueScore();
       }
-      // this.setActive(false);
-      // this.setVisible(false);
-      // console.log(this)
       this.scene.snips.stop();
       this.scene.oppResourcePoints += 1;
       this.destroy();
@@ -74,32 +68,18 @@ export default new Phaser.Class({
   update: function (time, delta) {
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
-
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
 
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
-        // console.log(this.follower.t);
-
         if(this.follower.t >= .5 && !this.hasSwitched){
-          // while(this.count >= 1){
           this.anims.play("reverseBlueWalk")
           this.scene.decrementRedScore();
           this.hasSwitched = true;
         }
-        // this.setActive(true);
         if (this.follower.t >= 1) {
-          // this.setActive(false);
-          // this.setVisible(false);
           this.scene.incrementBlueScore();
           this.destroy();
-          // console.log(this.follower.t);
-          // this.path.getPoint(this.follower.t, this.follower.vec);
-          // this.setPosition(this.follower.vec.x, this.follower.vec.y);
-          // reverse = 1;
-          // reverse -= this.SCISSOR_SPEED * delta;
-          // this.follower.t -= this.scene.SCISSOR_SPEED * delta;
-          // console.log(this.follower.t);
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
@@ -111,8 +91,6 @@ export default new Phaser.Class({
         }
 
         if (this.follower.t <= 0) {
-          // this.setActive(false);
-          // this.setVisible(false);
           this.scene.incrementRedScore();
           this.destroy();
         }

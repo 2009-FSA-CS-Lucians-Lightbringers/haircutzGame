@@ -44,8 +44,7 @@ export default new Phaser.Class({
 
   receiveDamage: function (damage) {
     // decrement health points
-    //console.log("ENEMY NUMBER:", this.number);
-    //console.log(">>>before bullet", this.hp);
+
     this.hp -= damage;
     console.log(`enemy ${this.number} took damage`, this.hp);
     //console.log(">>>after bullet", this.hp);
@@ -57,8 +56,6 @@ export default new Phaser.Class({
       if(!this.scene.isPlayerA && this.hasSwitched){
         this.scene.incrementRedScore();
       }
-      // this.setActive(false);
-      // this.setVisible(false);
       this.scene.resourcePoints += 1;
       this.scene.resourceText.setText("RESOURCE | " + this.scene.resourcePoints);
       this.destroy();
@@ -79,8 +76,6 @@ export default new Phaser.Class({
         }
 
         if (this.follower.t >= 1) {
-          // this.setActive(false);
-          // this.setVisible(false);
           this.scene.incrementBlueScore();
           this.destroy();
         }
@@ -93,8 +88,6 @@ export default new Phaser.Class({
         }
 
         if (this.follower.t <= 0) {
-          // this.setActive(false);
-          // this.setVisible(false);
           this.scene.incrementRedScore();
           this.destroy();
         }
