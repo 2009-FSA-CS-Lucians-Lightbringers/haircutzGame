@@ -34,10 +34,10 @@ export default class Game extends Phaser.Scene {
     this.path2;
     this.path3;
     this.path1Zone;
-		this.path2ZoneL;
-		this.path2ZoneR;
-		this.path3ZoneL;
-		this.path3ZoneR;
+    this.path2ZoneL;
+    this.path2ZoneR;
+    this.path3ZoneL;
+    this.path3ZoneR;
     this.path4;
     this.path5;
     this.path6;
@@ -101,7 +101,7 @@ export default class Game extends Phaser.Scene {
   touchBase(enemyBase, enemy) {
     // enemy.setActive(false);
     // enemy.setVisible(false);
-    this.snips.stop()
+    this.snips.stop();
     enemy.destroy();
     // }
   }
@@ -145,46 +145,10 @@ export default class Game extends Phaser.Scene {
   spawnScissor(event) {
     let path;
 
-    if(this.isPlayerA){
-    if (event.path === 1) path = this.path1;
-    if (event.path === 2) path = this.path2;
-    if (event.path === 3) path = this.path3;
-
-    if (event.isPlayerA === this.isPlayerA) {
-      if (this.resourcePoints > 1) {
-        var attacker = this.attackers.get();
-        this.resourcePoints -= 2;
-        this.resourceText.setText("RESOURCE | " + this.resourcePoints);
-        if (attacker) {
-          this.snips.play()
-          attacker.setActive(true);
-          attacker.setVisible(true);
-          attacker.startOnPath(path);
-          this.myAttackers.push(attacker);
-        }
-      }
-    } else {
-      if (this.oppResourcePoints > 1) {
-        this.oppResourcePoints -= 2;
-        //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
-        var enemy = this.enemies.get();
-        if (enemy) {
-          if(event.path === 1) path = this.path4;
-          if(event.path === 2) path = this.path5;
-          if(event.path === 3) path = this.path6;
-          this.snips.play();
-          enemy.setActive(true);
-          enemy.setVisible(true);
-          enemy.startOnPath(path);
-          this.myEnemies.push(enemy);
-        }
-      }
-    }
-   }
-    else{
-      if (event.path === 1) path = this.path4;
-      if (event.path === 2) path = this.path5;
-      if (event.path === 3) path = this.path6;
+    if (this.isPlayerA) {
+      if (event.path === 1) path = this.path1;
+      if (event.path === 2) path = this.path2;
+      if (event.path === 3) path = this.path3;
 
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
@@ -192,7 +156,7 @@ export default class Game extends Phaser.Scene {
           this.resourcePoints -= 2;
           this.resourceText.setText("RESOURCE | " + this.resourcePoints);
           if (attacker) {
-            this.snips.play()
+            this.snips.play();
             attacker.setActive(true);
             attacker.setVisible(true);
             attacker.startOnPath(path);
@@ -205,9 +169,10 @@ export default class Game extends Phaser.Scene {
           //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
           if (enemy) {
-            if(event.path === 1) path = this.path1;
-            if(event.path === 2) path = this.path2;
-            if(event.path === 3) path = this.path3;
+            if (event.path === 1) path = this.path4;
+            if (event.path === 2) path = this.path5;
+            if (event.path === 3) path = this.path6;
+            this.snips.play();
             enemy.setActive(true);
             enemy.setVisible(true);
             enemy.startOnPath(path);
@@ -215,7 +180,41 @@ export default class Game extends Phaser.Scene {
           }
         }
       }
-  }
+    } else {
+      if (event.path === 1) path = this.path4;
+      if (event.path === 2) path = this.path5;
+      if (event.path === 3) path = this.path6;
+
+      if (event.isPlayerA === this.isPlayerA) {
+        if (this.resourcePoints > 1) {
+          var attacker = this.attackers.get();
+          this.resourcePoints -= 2;
+          this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+          if (attacker) {
+            this.snips.play();
+            attacker.setActive(true);
+            attacker.setVisible(true);
+            attacker.startOnPath(path);
+            this.myAttackers.push(attacker);
+          }
+        }
+      } else {
+        if (this.oppResourcePoints > 1) {
+          this.oppResourcePoints -= 2;
+          //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
+          var enemy = this.enemies.get();
+          if (enemy) {
+            if (event.path === 1) path = this.path1;
+            if (event.path === 2) path = this.path2;
+            if (event.path === 3) path = this.path3;
+            enemy.setActive(true);
+            enemy.setVisible(true);
+            enemy.startOnPath(path);
+            this.myEnemies.push(enemy);
+          }
+        }
+      }
+    }
   }
 
   //Turret methods
@@ -294,22 +293,22 @@ export default class Game extends Phaser.Scene {
   //Score methods
   incrementBlueScore() {
     this.blueScore += 1;
-    this.homeBase.setFrame(this.blueScore)
-    this.blueText.setText("P1 | " + this.blueScore)
+    this.homeBase.setFrame(this.blueScore);
+    this.blueText.setText("P1 | " + this.blueScore);
     if (this.blueScore >= 10) {
-      this.snips.stop()
-      this.gameTheme.stop()
+      this.snips.stop();
+      this.gameTheme.stop();
       this.scene.switch("p1Wins");
     }
   }
 
   incrementRedScore() {
     this.redScore += 1;
-    this.enemyBase.setFrame(this.redScore)
-    this.redText.setText("P2 | " + this.redScore)
+    this.enemyBase.setFrame(this.redScore);
+    this.redText.setText("P2 | " + this.redScore);
     if (this.redScore >= 10) {
-      this.snips.stop()
-      this.gameTheme.stop()
+      this.snips.stop();
+      this.gameTheme.stop();
       this.scene.switch("p2Wins");
     }
   }
@@ -318,7 +317,7 @@ export default class Game extends Phaser.Scene {
     this.snips.stop();
     this.ouch.play();
     this.blueScore -= 1;
-    this.homeBase.setFrame(this.blueScore)
+    this.homeBase.setFrame(this.blueScore);
     this.blueText.setText("P1 | " + this.blueScore);
   }
 
@@ -326,7 +325,7 @@ export default class Game extends Phaser.Scene {
     this.snips.stop();
     this.ouch.play();
     this.redScore -= 1;
-    this.enemyBase.setFrame(this.redScore)
+    this.enemyBase.setFrame(this.redScore);
     this.redText.setText("P2 | " + this.redScore);
   }
 
@@ -363,18 +362,26 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.spritesheet("p1return", "/assets/player1_returning_attackers.png", {
-      frameWidth: 68,
-      frameHeight: 65,
-    });
+    this.load.spritesheet(
+      "p1return",
+      "/assets/player1_returning_attackers.png",
+      {
+        frameWidth: 68,
+        frameHeight: 65,
+      }
+    );
     this.load.spritesheet("p2attackers", "/assets/player2_attackers.png", {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.spritesheet("p2return", "/assets/player2_returning_attackers.png", {
-      frameWidth: 68,
-      frameHeight: 65,
-    });
+    this.load.spritesheet(
+      "p2return",
+      "/assets/player2_returning_attackers.png",
+      {
+        frameWidth: 68,
+        frameHeight: 65,
+      }
+    );
     this.load.image("p2turret", "/assets/player2_turret.png");
     this.load.image("p1turret", "/assets/player1_turret.png");
     this.load.image("bullet", "/assets/bullet.png");
@@ -399,28 +406,28 @@ export default class Game extends Phaser.Scene {
     this.load.audio("ouch", ["/assets/ouch.mp3"]);
     this.load.audio("woohoo", ["/assets/woohoo.mp3"]);
     this.load.audio("plop", ["/assets/plop.mp3"]);
-
   }
 
   create() {
-    this.isPlayerA = this.game.isPlayerA
-    this.isPlayerB = this.game.isPlayerB
+    this.isPlayerA = this.game.isPlayerA;
+    this.isPlayerB = this.game.isPlayerB;
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
     this.add.image(700, 520, "clock");
-    this.play = this.add.image(50, 50, "play" )
-    this.pause = this.add.image(105, 50, "pause" )
+    this.play = this.add.image(50, 50, "play");
+    this.pause = this.add.image(105, 50, "pause");
     this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 1 });
+    let self = this;
     // this.gameTheme.play()
-    
+
     if (this.isPlayerA) {
-			self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
-			self.input.setDraggable(self.scissor);
-		} else {
-			self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
-			self.input.setDraggable(self.scissor);
-		}
+      self.scissor = self.add.sprite(85, 450, "p1attackers").setInteractive();
+      self.input.setDraggable(self.scissor);
+    } else {
+      self.scissor = self.add.sprite(85, 450, "p2attackers").setInteractive();
+      self.input.setDraggable(self.scissor);
+    }
 
     this.anims.create({
       key: "blueWalk",
@@ -466,33 +473,28 @@ export default class Game extends Phaser.Scene {
       repeat: -1,
     });
 
-
-    this.enemyBase = this.add.image(715, 224, 'p2base')
-    this.homeBase = this.add.image(95, 224, 'p1base')
-2
-    this.enemyBase.setFrame(5)
-    this.homeBase.setFrame(5)
+    this.enemyBase = this.add.image(715, 224, "p2base");
+    this.homeBase = this.add.image(95, 224, "p1base");
+    2;
+    this.enemyBase.setFrame(5);
+    this.homeBase.setFrame(5);
 
     //sounds
     this.gameTheme = this.sound.add("gameTheme", { loop: true });
-    this.snips = this.sound.add("snips", { loop: true, delay: 0, rate: 4, });
+    this.snips = this.sound.add("snips", { loop: true, delay: 0, rate: 4 });
     this.ouch = this.sound.add("ouch", { loop: false });
     this.woohoo = this.sound.add("woohoo", { loop: false });
     this.bulletSound = this.sound.add("bulletSound", { loop: false });
     this.plop = this.sound.add("plop", { loop: false });
 
-
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
       // this.gameTheme.play()
-    })
+    });
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
-      this.gameTheme.stop()
-    })
-
-    //sets the default to "you are not Player A"
-    let self = this;
+      this.gameTheme.stop();
+    });
 
     var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
     redArc1.setStrokeStyle(3, 0xffffff);
@@ -546,20 +548,20 @@ export default class Game extends Phaser.Scene {
     //an event that tells the client that it will be Player A.  The client
     //socket receives that event and turns our "isPlayerA" boolean from
     //false to true.
-		//this.socket.on('isPlayerA', function () {
-			//self.isPlayerA = true;
-			//self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
-			//self.input.setDraggable(self.scissor);
-			//console.log('Welcome Blue Player A!');
-		//});
-		//this.socket.on('isPlayerB', function () {
-			//if (!self.isPlayerA) {
-				//self.isPlayerB = true;
-				//self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
-				//self.input.setDraggable(self.scissor);
-				//console.log('Welcome Red Player B!');
-			//}
-		//});
+    //this.socket.on('isPlayerA', function () {
+    //self.isPlayerA = true;
+    //self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
+    //self.input.setDraggable(self.scissor);
+    //console.log('Welcome Blue Player A!');
+    //});
+    //this.socket.on('isPlayerB', function () {
+    //if (!self.isPlayerA) {
+    //self.isPlayerB = true;
+    //self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
+    //self.input.setDraggable(self.scissor);
+    //console.log('Welcome Red Player B!');
+    //}
+    //});
 
     // this graphics element is only for visualization,
     // its not related to our path
@@ -570,93 +572,93 @@ export default class Game extends Phaser.Scene {
     // parameters are the start x and y of our path
     this.path1 = this.add.path(125, 240);
     this.path1.lineTo(675, 240);
-    this.path1.lineTo(125,240);
+    this.path1.lineTo(125, 240);
 
     this.path2 = this.add.path(125, 240);
     this.path2.lineTo(400, 48);
     this.path2.lineTo(675, 240);
     this.path2.lineTo(400, 48);
-    this.path2.lineTo(125,240);
+    this.path2.lineTo(125, 240);
 
     this.path3 = this.add.path(125, 240);
     this.path3.lineTo(400, 432);
     this.path3.lineTo(675, 240);
     this.path3.lineTo(400, 432);
-    this.path3.lineTo(125,240)
+    this.path3.lineTo(125, 240);
 
     //Player B path
-    this.path4 = this.add.path(675,240);
-    this.path4.lineTo(125,240);
-    this.path4.lineTo(675,240);
+    this.path4 = this.add.path(675, 240);
+    this.path4.lineTo(125, 240);
+    this.path4.lineTo(675, 240);
 
     this.path5 = this.add.path(675, 240);
     this.path5.lineTo(400, 48);
     this.path5.lineTo(125, 240);
     this.path5.lineTo(400, 48);
-    this.path5.lineTo(675,240);
+    this.path5.lineTo(675, 240);
 
-    this.path6= this.add.path(675, 240);
+    this.path6 = this.add.path(675, 240);
     this.path6.lineTo(400, 432);
     this.path6.lineTo(125, 240);
     this.path6.lineTo(400, 432);
-    this.path6.lineTo(675,240)
+    this.path6.lineTo(675, 240);
 
     //  A drop zone
-		var path1Points = [132, 253, 673, 252, 673, 226, 132, 227];
-		this.path1Zone = this.add.polygon(275, 13, path1Points, 0x00ff00, 0);
-		this.path1Zone.setInteractive(
-			new Phaser.Geom.Polygon(path1Points),
-			Phaser.Geom.Polygon.Contains,
-			true
-		);
-		//An array of paired numbers that represent point coordinates: [x1,y1, x2,y2, ...]
-		var pointsFSlash = [132, 228, 153, 228, 389, 65, 379, 51];
-		var pointsBSlash = [638, 227, 673, 227, 424, 53, 411, 71];
-		var groupPoly = this.add.group();
-		this.path2ZoneL = this.add.polygon(
-			self.path2.startPoint.x,
-			90,
-			pointsFSlash,
-			0x00ff00,
-			0
-		);
-		this.path2ZoneL.setInteractive(
-			new Phaser.Geom.Polygon(pointsFSlash),
-			Phaser.Geom.Polygon.Contains,
-			true
-		);
-		this.path2ZoneR = this.add.polygon(128, 90, pointsBSlash, 0x00ff00, 0);
-		this.path2ZoneR.setInteractive(
-			new Phaser.Geom.Polygon(pointsBSlash),
-			Phaser.Geom.Polygon.Contains,
-			true
-		);
+    var path1Points = [132, 253, 673, 252, 673, 226, 132, 227];
+    this.path1Zone = this.add.polygon(275, 13, path1Points, 0x00ff00, 0);
+    this.path1Zone.setInteractive(
+      new Phaser.Geom.Polygon(path1Points),
+      Phaser.Geom.Polygon.Contains,
+      true
+    );
+    //An array of paired numbers that represent point coordinates: [x1,y1, x2,y2, ...]
+    var pointsFSlash = [132, 228, 153, 228, 389, 65, 379, 51];
+    var pointsBSlash = [638, 227, 673, 227, 424, 53, 411, 71];
+    var groupPoly = this.add.group();
+    this.path2ZoneL = this.add.polygon(
+      self.path2.startPoint.x,
+      90,
+      pointsFSlash,
+      0x00ff00,
+      0
+    );
+    this.path2ZoneL.setInteractive(
+      new Phaser.Geom.Polygon(pointsFSlash),
+      Phaser.Geom.Polygon.Contains,
+      true
+    );
+    this.path2ZoneR = this.add.polygon(128, 90, pointsBSlash, 0x00ff00, 0);
+    this.path2ZoneR.setInteractive(
+      new Phaser.Geom.Polygon(pointsBSlash),
+      Phaser.Geom.Polygon.Contains,
+      true
+    );
 
-		this.path3ZoneL = this.add.polygon(-150, 274, pointsBSlash, 0x00ff00, 0);
-		this.path3ZoneL.setInteractive(
-			new Phaser.Geom.Polygon(pointsBSlash),
-			Phaser.Geom.Polygon.Contains,
-			true
-		);
-		this.path3ZoneL.name = 3;
-		this.path3ZoneR = this.add.polygon(406, 284, pointsFSlash, 0x00ff00, 0);
-		this.path3ZoneR.setInteractive(
-			new Phaser.Geom.Polygon(pointsFSlash),
-			Phaser.Geom.Polygon.Contains,
-			true
-		);
-		this.path1Zone.name = 'path1';
-		this.path2ZoneL.name = 'path2';
-		this.path2ZoneR.name = 'path2';
-		this.path3ZoneL.name = 'path3';
-		this.path3ZoneR.name = 'path3';
+    this.path3ZoneL = this.add.polygon(-150, 274, pointsBSlash, 0x00ff00, 0);
+    this.path3ZoneL.setInteractive(
+      new Phaser.Geom.Polygon(pointsBSlash),
+      Phaser.Geom.Polygon.Contains,
+      true
+    );
+    this.path3ZoneL.name = 3;
+    this.path3ZoneR = this.add.polygon(406, 284, pointsFSlash, 0x00ff00, 0);
+    this.path3ZoneR.setInteractive(
+      new Phaser.Geom.Polygon(pointsFSlash),
+      Phaser.Geom.Polygon.Contains,
+      true
+    );
+    this.path1Zone.name = "path1";
+    this.path2ZoneL.name = "path2";
+    this.path2ZoneR.name = "path2";
+    this.path3ZoneL.name = "path3";
+    this.path3ZoneR.name = "path3";
 
-		var groupZone2 = this.add.group();
-		var groupZone3 = this.add.group();
-		groupZone2.add(this.path2ZoneL);
-		groupZone2.add(this.path2ZoneR);
-		groupZone3.add(this.path3ZoneL);
-		groupZone3.add(this.path3ZoneR);
+    var groupZone2 = this.add.group();
+    var groupZone3 = this.add.group();
+    groupZone2.add(this.path2ZoneL);
+    groupZone2.add(this.path2ZoneR);
+    groupZone3.add(this.path3ZoneL);
+    groupZone3.add(this.path3ZoneR);
 
     this.enemies = this.physics.add.group({
       classType: Enemy,
@@ -735,7 +737,7 @@ export default class Game extends Phaser.Scene {
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
     this.physics.add.overlap(this.attackers, this.bullets, this.damageAttacker);
 
-    this.socket.on("spawnScissor", (event) => {
+    this.game.socket.on("spawnScissor", (event) => {
       self.event = event.isPlayerA;
       self.spawnScissor(event);
     });
@@ -743,21 +745,21 @@ export default class Game extends Phaser.Scene {
     this.input.keyboard.on("keydown", function (event) {
       if (self.time.now > self.attackerReleased + 2000) {
         if (event.key === "1") {
-          self.socket.emit("spawnScissor", {
+          self.game.socket.emit("spawnScissor", {
             isPlayerA: self.isPlayerA,
             path: 1,
           });
           self.attackerReleased = self.time.now;
         }
         if (event.key === "2") {
-          self.socket.emit("spawnScissor", {
+          self.game.socket.emit("spawnScissor", {
             isPlayerA: self.isPlayerA,
             path: 2,
           });
           self.attackerReleased = self.time.now;
         }
         if (event.key === "3") {
-          self.socket.emit("spawnScissor", {
+          self.game.socket.emit("spawnScissor", {
             isPlayerA: self.isPlayerA,
             path: 3,
           });
@@ -767,120 +769,120 @@ export default class Game extends Phaser.Scene {
     });
 
     this.input.on("pointerdown", function (event) {
-      self.socket.emit("placeTurret", self.isPlayerA, event.x, event.y);
+      self.game.socket.emit("placeTurret", self.isPlayerA, event.x, event.y);
     });
 
-    this.socket.on("placeTurret", function (isPlayerA, x, y) {
+    this.game.socket.on("placeTurret", function (isPlayerA, x, y) {
       self.turretPlacer = isPlayerA;
       self.placeTurret(isPlayerA, x, y);
     });
-    
+
     this.input.dragDistanceThreshold = 16;
 
-		this.input.on('dragstart', function (pointer, gameObject) {
-			gameObject.setTint(0xff0000);
-			self.children.bringToTop(gameObject);
-		});
+    this.input.on("dragstart", function (pointer, gameObject) {
+      gameObject.setTint(0xff0000);
+      self.children.bringToTop(gameObject);
+    });
 
-		this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-			gameObject.x = dragX;
-			gameObject.y = dragY;
-		});
-		this.input.on('dragenter', function (pointer, gameObject, dropZone) {
-			if (dropZone.name === 'path2') {
-				for (const child of groupZone2.getChildren()) {
-					child.fillAlpha = 1;
-					child.setStrokeStyle(4, 0xefc53f);
-				}
-			}
-			if (dropZone.name === 'path3') {
-				for (const child of groupZone3.getChildren()) {
-					child.fillAlpha = 1;
-					child.setStrokeStyle(4, 0xefc53f);
-				}
-			} else {
-				dropZone.fillAlpha = 1;
-				dropZone.setStrokeStyle(4, 0xefc53f);
-			}
+    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+    });
+    this.input.on("dragenter", function (pointer, gameObject, dropZone) {
+      if (dropZone.name === "path2") {
+        for (const child of groupZone2.getChildren()) {
+          child.fillAlpha = 1;
+          child.setStrokeStyle(4, 0xefc53f);
+        }
+      }
+      if (dropZone.name === "path3") {
+        for (const child of groupZone3.getChildren()) {
+          child.fillAlpha = 1;
+          child.setStrokeStyle(4, 0xefc53f);
+        }
+      } else {
+        dropZone.fillAlpha = 1;
+        dropZone.setStrokeStyle(4, 0xefc53f);
+      }
 
-			// graphics.lineStyle(2, 0x00ff00, 1);
-			// graphics.strokeRect(
-			// 	zone.x - zone.input.hitArea.width / 2,
-			// 	zone.y,
-			// 	zone.input.hitArea.width,
-			// 	zone.input.hitArea.height
-			// );
+      // graphics.lineStyle(2, 0x00ff00, 1);
+      // graphics.strokeRect(
+      // 	zone.x - zone.input.hitArea.width / 2,
+      // 	zone.y,
+      // 	zone.input.hitArea.width,
+      // 	zone.input.hitArea.height
+      // );
 
-			gameObject.setTint(0x00ff00);
-		});
+      gameObject.setTint(0x00ff00);
+    });
 
-		this.input.on('dragleave', function (pointer, gameObject, dropZone) {
-			if (dropZone.name === 'path2') {
-				for (const child of groupZone2.getChildren()) {
-					child.fillAlpha = 0;
-					child.strokeAlpha = 0;
-				}
-			}
-			if (dropZone.name === 'path3') {
-				for (const child of groupZone3.getChildren()) {
-					child.fillAlpha = 0;
-					child.strokeAlpha = 0;
-				}
-			} else {
-				dropZone.fillAlpha = 0;
-				dropZone.strokeAlpha = 0;
-			}
+    this.input.on("dragleave", function (pointer, gameObject, dropZone) {
+      if (dropZone.name === "path2") {
+        for (const child of groupZone2.getChildren()) {
+          child.fillAlpha = 0;
+          child.strokeAlpha = 0;
+        }
+      }
+      if (dropZone.name === "path3") {
+        for (const child of groupZone3.getChildren()) {
+          child.fillAlpha = 0;
+          child.strokeAlpha = 0;
+        }
+      } else {
+        dropZone.fillAlpha = 0;
+        dropZone.strokeAlpha = 0;
+      }
 
-			gameObject.setTint(0xff0000);
-		});
+      gameObject.setTint(0xff0000);
+    });
 
-		this.input.on('drop', function (pointer, gameObject, dropZone) {
-			if (dropZone.name === 'path1') {
-				dropZone.fillAlpha = 0;
-				dropZone.strokeAlpha = 0;
-				self.socket.emit('spawnScissor', {
-					isPlayerA: self.isPlayerA,
-					path: 1,
-				});
-			}
-			if (dropZone.name === 'path2') {
-				for (const child of groupZone2.getChildren()) {
-					child.fillAlpha = 0;
-					child.strokeAlpha = 0;
-				}
-				self.socket.emit('spawnScissor', {
-					isPlayerA: self.isPlayerA,
-					path: 2,
-				});
-			}
-			if (dropZone.name === 'path3') {
-				for (const child of groupZone3.getChildren()) {
-					child.fillAlpha = 0;
-					child.strokeAlpha = 0;
-				}
-				self.socket.emit('spawnScissor', {
-					isPlayerA: self.isPlayerA,
-					path: 3,
-				});
-			}
+    this.input.on("drop", function (pointer, gameObject, dropZone) {
+      if (dropZone.name === "path1") {
+        dropZone.fillAlpha = 0;
+        dropZone.strokeAlpha = 0;
+        self.game.socket.emit("spawnScissor", {
+          isPlayerA: self.isPlayerA,
+          path: 1,
+        });
+      }
+      if (dropZone.name === "path2") {
+        for (const child of groupZone2.getChildren()) {
+          child.fillAlpha = 0;
+          child.strokeAlpha = 0;
+        }
+        self.game.socket.emit("spawnScissor", {
+          isPlayerA: self.isPlayerA,
+          path: 2,
+        });
+      }
+      if (dropZone.name === "path3") {
+        for (const child of groupZone3.getChildren()) {
+          child.fillAlpha = 0;
+          child.strokeAlpha = 0;
+        }
+        self.game.socket.emit("spawnScissor", {
+          isPlayerA: self.isPlayerA,
+          path: 3,
+        });
+      }
 
-			self.attackerReleased = self.time.now;
+      self.attackerReleased = self.time.now;
 
-			gameObject.clearTint();
-		});
-		this.input.on('dragend', function (pointer, gameObject, dropZone) {
-			gameObject.x = gameObject.input.dragStartX;
-			gameObject.y = gameObject.input.dragStartY;
-		});
+      gameObject.clearTint();
+    });
+    this.input.on("dragend", function (pointer, gameObject, dropZone) {
+      gameObject.x = gameObject.input.dragStartX;
+      gameObject.y = gameObject.input.dragStartY;
+    });
 
-		//graphics.clear();
-		// graphics.lineStyle(2, 0xffff00);
-		// graphics.strokeRect(
-		// 	zone.x - zone.input.hitArea.width / 2,
-		// 	zone.y - zone.input.hitArea.height / 2,
-		// 	zone.input.hitArea.width,
-		// 	zone.input.hitArea.height
-		// );  
+    //graphics.clear();
+    // graphics.lineStyle(2, 0xffff00);
+    // graphics.strokeRect(
+    // 	zone.x - zone.input.hitArea.width / 2,
+    // 	zone.y - zone.input.hitArea.height / 2,
+    // 	zone.input.hitArea.width,
+    // 	zone.input.hitArea.height
+    // );
   }
 
   update(time, delta) {

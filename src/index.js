@@ -1,20 +1,20 @@
 import Phaser from "phaser";
 import Game from "./scenes/game";
 import IntroScene from "./scenes/intro";
-import PlayerOneWins from "./scenes/p1wins"
-import PlayerTwoWins from "./scenes/p2wins"
-import BluePlayerWaitingRoom from "./scenes/bluePlayerWaitingRoom"
-import RedPlayerWaitingRoom from "./scenes/redPlayerWaitingRoom"
+import PlayerOneWins from "./scenes/p1wins";
+import PlayerTwoWins from "./scenes/p2wins";
+import BluePlayerWaitingRoom from "./scenes/bluePlayerWaitingRoom";
+import RedPlayerWaitingRoom from "./scenes/redPlayerWaitingRoom";
 
-import PreStart from "./scenes/preStart"
+import PreStart from "./scenes/preStart";
 import io from "socket.io-client";
 
 const config = {
   type: Phaser.AUTO,
   parent: "game",
   dom: {
-    createContainer: true
- },
+    createContainer: true,
+  },
   width: 800,
   height: 600,
   physics: {
@@ -29,25 +29,27 @@ game.scene.add("introScene", IntroScene);
 game.scene.add("game", Game);
 game.scene.add("p1Wins", PlayerOneWins);
 game.scene.add("p2Wins", PlayerTwoWins);
-game.scene.add('bluePlayerWaitingRoom', BluePlayerWaitingRoom)
-game.scene.add('redPlayerWaitingRoom', RedPlayerWaitingRoom)
-game.scene.add('preStart', PreStart)
+game.scene.add("bluePlayerWaitingRoom", BluePlayerWaitingRoom);
+game.scene.add("redPlayerWaitingRoom", RedPlayerWaitingRoom);
+game.scene.add("preStart", PreStart);
 
 //start title
 game.scene.start("introScene");
 
 //socket connected
-game.socket = io()
+game.socket = io();
 game.socket.on("connect", function () {
-    console.log("Connected!");
-  })
+  console.log("Connected!");
+});
 
-game.isPlayerA = false
-game.isPlayerB = false
+game.isPlayerA = false;
+game.isPlayerB = false;
 
 game.socket.on("isPlayerA", function () {
-  game.isPlayerA = true;
-  console.log("Welcome Blue Player A!");
+  if (!game.isPlayerB) {
+    game.isPlayerA = true;
+    console.log("Welcome Blue Player A!");
+  }
 });
 game.socket.on("isPlayerB", function () {
   if (!game.isPlayerA) {
@@ -55,4 +57,3 @@ game.socket.on("isPlayerB", function () {
     console.log("Welcome Red Player B!");
   }
 });
-
