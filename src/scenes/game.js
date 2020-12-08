@@ -22,6 +22,7 @@ export default class Game extends Phaser.Scene {
     this.SCISSOR_SPEED = 1 / 10000;
     this.BULLET_DAMAGE = 20;
     this.gameTheme;
+    this.scissor;
     this.ouch;
     this.snips;
     this.plop;
@@ -32,6 +33,11 @@ export default class Game extends Phaser.Scene {
     this.path1;
     this.path2;
     this.path3;
+    this.path1Zone;
+		this.path2ZoneL;
+		this.path2ZoneR;
+		this.path3ZoneL;
+		this.path3ZoneR;
     this.path4;
     this.path5;
     this.path6;
@@ -338,7 +344,6 @@ export default class Game extends Phaser.Scene {
 
   //grid methods
   drawGrid(graphics) {
-    graphics.lineStyle(1, 0x0000ff, 0.8);
     for (var i = 1; i < 8; i++) {
       graphics.moveTo(80, i * 64);
       graphics.lineTo(720, i * 64);
@@ -347,7 +352,7 @@ export default class Game extends Phaser.Scene {
       graphics.moveTo(80 + j * 64, 0);
       graphics.lineTo(80 + j * 64, 450);
     }
-    graphics.visible = false;
+    graphics.lineStyle(1, 0x0000ff, 0);
     graphics.strokePath();
   }
 
@@ -406,6 +411,14 @@ export default class Game extends Phaser.Scene {
     this.pause = this.add.image(105, 50, "pause" )
     this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 1 });
     // this.gameTheme.play()
+    
+    // if (this.isPlayerA) {
+		// 	self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
+		// 	self.input.setDraggable(self.scissor);
+		// } else {
+		// 	self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
+		// 	self.input.setDraggable(self.scissor);
+		// }
 
     this.anims.create({
       key: "blueWalk",
@@ -531,16 +544,20 @@ export default class Game extends Phaser.Scene {
     //an event that tells the client that it will be Player A.  The client
     //socket receives that event and turns our "isPlayerA" boolean from
     //false to true.
-    this.socket.on("isPlayerA", function () {
-      self.isPlayerA = true;
-      console.log("Welcome Blue Player A!");
-    });
-    this.socket.on("isPlayerB", function () {
-      if (!self.isPlayerA) {
-        self.isPlayerB = true;
-        console.log("Welcome Red Player B!");
-      }
-    });
+		this.socket.on('isPlayerA', function () {
+			self.isPlayerA = true;
+			self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
+			self.input.setDraggable(self.scissor);
+			console.log('Welcome Blue Player A!');
+		});
+		this.socket.on('isPlayerB', function () {
+			if (!self.isPlayerA) {
+				self.isPlayerB = true;
+				self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
+				self.input.setDraggable(self.scissor);
+				console.log('Welcome Red Player B!');
+			}
+		});
 
     // this graphics element is only for visualization,
     // its not related to our path
@@ -582,13 +599,62 @@ export default class Game extends Phaser.Scene {
     this.path6.lineTo(400, 432);
     this.path6.lineTo(675,240)
 
+    //  A drop zone
+		var path1Points = [132, 253, 673, 252, 673, 226, 132, 227];
+		this.path1Zone = this.add.polygon(275, 13, path1Points, 0x00ff00, 0);
+		this.path1Zone.setInteractive(
+			new Phaser.Geom.Polygon(path1Points),
+			Phaser.Geom.Polygon.Contains,
+			true
+		);
+		//An array of paired numbers that represent point coordinates: [x1,y1, x2,y2, ...]
+		var pointsFSlash = [132, 228, 153, 228, 389, 65, 379, 51];
+		var pointsBSlash = [638, 227, 673, 227, 424, 53, 411, 71];
+		var groupPoly = this.add.group();
+		this.path2ZoneL = this.add.polygon(
+			self.path2.startPoint.x,
+			90,
+			pointsFSlash,
+			0x00ff00,
+			0
+		);
+		this.path2ZoneL.setInteractive(
+			new Phaser.Geom.Polygon(pointsFSlash),
+			Phaser.Geom.Polygon.Contains,
+			true
+		);
+		this.path2ZoneR = this.add.polygon(128, 90, pointsBSlash, 0x00ff00, 0);
+		this.path2ZoneR.setInteractive(
+			new Phaser.Geom.Polygon(pointsBSlash),
+			Phaser.Geom.Polygon.Contains,
+			true
+		);
 
-    graphics.lineStyle(3, 0xffffff, 1);
+		this.path3ZoneL = this.add.polygon(-150, 274, pointsBSlash, 0x00ff00, 0);
+		this.path3ZoneL.setInteractive(
+			new Phaser.Geom.Polygon(pointsBSlash),
+			Phaser.Geom.Polygon.Contains,
+			true
+		);
+		this.path3ZoneL.name = 3;
+		this.path3ZoneR = this.add.polygon(406, 284, pointsFSlash, 0x00ff00, 0);
+		this.path3ZoneR.setInteractive(
+			new Phaser.Geom.Polygon(pointsFSlash),
+			Phaser.Geom.Polygon.Contains,
+			true
+		);
+		this.path1Zone.name = 'path1';
+		this.path2ZoneL.name = 'path2';
+		this.path2ZoneR.name = 'path2';
+		this.path3ZoneL.name = 'path3';
+		this.path3ZoneR.name = 'path3';
 
-    // visualize the path
-    this.path1.draw(graphics);
-    this.path2.draw(graphics);
-    this.path3.draw(graphics);
+		var groupZone2 = this.add.group();
+		var groupZone3 = this.add.group();
+		groupZone2.add(this.path2ZoneL);
+		groupZone2.add(this.path2ZoneR);
+		groupZone3.add(this.path3ZoneL);
+		groupZone3.add(this.path3ZoneR);
 
     this.enemies = this.physics.add.group({
       classType: Enemy,
@@ -706,7 +772,116 @@ export default class Game extends Phaser.Scene {
       self.turretPlacer = isPlayerA;
       self.placeTurret(isPlayerA, x, y);
     });
+    
+    this.input.dragDistanceThreshold = 16;
+
+		this.input.on('dragstart', function (pointer, gameObject) {
+			gameObject.setTint(0xff0000);
+			self.children.bringToTop(gameObject);
+		});
+
+		this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+			gameObject.x = dragX;
+			gameObject.y = dragY;
+		});
+		this.input.on('dragenter', function (pointer, gameObject, dropZone) {
+			if (dropZone.name === 'path2') {
+				for (const child of groupZone2.getChildren()) {
+					child.fillAlpha = 1;
+					child.setStrokeStyle(4, 0xefc53f);
+				}
+			}
+			if (dropZone.name === 'path3') {
+				for (const child of groupZone3.getChildren()) {
+					child.fillAlpha = 1;
+					child.setStrokeStyle(4, 0xefc53f);
+				}
+			} else {
+				dropZone.fillAlpha = 1;
+				dropZone.setStrokeStyle(4, 0xefc53f);
+			}
+
+			// graphics.lineStyle(2, 0x00ff00, 1);
+			// graphics.strokeRect(
+			// 	zone.x - zone.input.hitArea.width / 2,
+			// 	zone.y,
+			// 	zone.input.hitArea.width,
+			// 	zone.input.hitArea.height
+			// );
+
+			gameObject.setTint(0x00ff00);
+		});
+
+		this.input.on('dragleave', function (pointer, gameObject, dropZone) {
+			if (dropZone.name === 'path2') {
+				for (const child of groupZone2.getChildren()) {
+					child.fillAlpha = 0;
+					child.strokeAlpha = 0;
+				}
+			}
+			if (dropZone.name === 'path3') {
+				for (const child of groupZone3.getChildren()) {
+					child.fillAlpha = 0;
+					child.strokeAlpha = 0;
+				}
+			} else {
+				dropZone.fillAlpha = 0;
+				dropZone.strokeAlpha = 0;
+			}
+
+			gameObject.setTint(0xff0000);
+		});
+
+		this.input.on('drop', function (pointer, gameObject, dropZone) {
+			if (dropZone.name === 'path1') {
+				dropZone.fillAlpha = 0;
+				dropZone.strokeAlpha = 0;
+				self.socket.emit('spawnScissor', {
+					isPlayerA: self.isPlayerA,
+					path: 1,
+				});
+			}
+			if (dropZone.name === 'path2') {
+				for (const child of groupZone2.getChildren()) {
+					child.fillAlpha = 0;
+					child.strokeAlpha = 0;
+				}
+				self.socket.emit('spawnScissor', {
+					isPlayerA: self.isPlayerA,
+					path: 2,
+				});
+			}
+			if (dropZone.name === 'path3') {
+				for (const child of groupZone3.getChildren()) {
+					child.fillAlpha = 0;
+					child.strokeAlpha = 0;
+				}
+				self.socket.emit('spawnScissor', {
+					isPlayerA: self.isPlayerA,
+					path: 3,
+				});
+			}
+
+			self.attackerReleased = self.time.now;
+
+			gameObject.clearTint();
+		});
+		this.input.on('dragend', function (pointer, gameObject, dropZone) {
+			gameObject.x = gameObject.input.dragStartX;
+			gameObject.y = gameObject.input.dragStartY;
+		});
+
+		//graphics.clear();
+		// graphics.lineStyle(2, 0xffff00);
+		// graphics.strokeRect(
+		// 	zone.x - zone.input.hitArea.width / 2,
+		// 	zone.y - zone.input.hitArea.height / 2,
+		// 	zone.input.hitArea.width,
+		// 	zone.input.hitArea.height
+		// );  
   }
 
-  update(time, delta) {}
+  update(time, delta) {
+    // console.log(this.input.mousePointer.x, this.input.mousePointer.y);
+  }
 }
