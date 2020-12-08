@@ -369,9 +369,17 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
+    this.load.spritesheet("p1return", "/assets/player1_returning_attackers.png", {
+      frameWidth: 68,
+      frameHeight: 65,
+    });
     this.load.spritesheet("p2attackers", "/assets/player2_attackers.png", {
       frameWidth: 68,
       frameHeight: 45,
+    });
+    this.load.spritesheet("p2return", "/assets/player2_returning_attackers.png", {
+      frameWidth: 68,
+      frameHeight: 65,
     });
     this.load.image("p2turret", "/assets/player2_turret.png");
     this.load.image("p1turret", "/assets/player1_turret.png");
@@ -424,9 +432,9 @@ export default class Game extends Phaser.Scene {
     this.anims.create({
       key: "reverseBlueWalk",
       frames: [
-        { key: "p1attackers", frame: 20 },
-        { key: "p1attackers", frame: 21 },
-        { key: "p1attackers", frame: 22 },
+        { key: "p1return", frame: 1 },
+        { key: "p1return", frame: 2 },
+        { key: "p1return", frame: 3 },
       ],
       frameRate: 10,
       repeat: -1,
@@ -442,6 +450,18 @@ export default class Game extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+
+    this.anims.create({
+      key: "reverseRedWalk",
+      frames: [
+        { key: "p2return", frame: 1 },
+        { key: "p2return", frame: 2 },
+        { key: "p2return", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
 
     this.enemyBase = this.add.image(715, 224, 'p2base')
     this.homeBase = this.add.image(95, 224, 'p1base')

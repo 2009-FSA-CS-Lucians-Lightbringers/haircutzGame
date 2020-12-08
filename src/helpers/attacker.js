@@ -10,9 +10,10 @@ export default new Phaser.Class({
 
       Phaser.GameObjects.Sprite.call(this, scene, 85, 224, "p1attackers");
       this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
-      this.anims.play("reverseBlueWalk");
+      this.anims.play("blueWalk");
       scene.attackerNumber++;
       this.number = scene.attackerNumber;
+      this.hasSwitched = false;
     } else {
       Phaser.GameObjects.Sprite.call(this, scene, 675, 224, "p2attackers");
       this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
@@ -20,6 +21,7 @@ export default new Phaser.Class({
 
       scene.attackerNumber++;
       this.number = scene.attackerNumber;
+      this.hasSwitched = false;
     }
   },
   //differentiate player attacks based on class
@@ -57,6 +59,7 @@ export default new Phaser.Class({
       // this.setActive(false);
       // this.setVisible(false);
       // console.log(this)
+      this.scene.snips.stop();
       this.scene.oppResourcePoints += 1;
       this.destroy();
     }
@@ -71,6 +74,13 @@ export default new Phaser.Class({
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
         // console.log(this.follower.t);
+
+        if(this.follower.t >= .5 && !this.hasSwitched){
+          // while(this.count >= 1){
+          this.anims.play("reverseBlueWalk")
+          this.hasSwitched = true;
+        }
+        // this.setActive(true);
         if (this.follower.t >= 1) {
           // this.setActive(false);
           // this.setVisible(false);
@@ -86,6 +96,11 @@ export default new Phaser.Class({
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
+
+        if(this.follower.t <= .5 && !this.hasSwitched){
+          this.anims.play("reverseRedWalk");
+          this.hasSwitched = true;
+        }
 
         if (this.follower.t <= 0) {
           // this.setActive(false);
