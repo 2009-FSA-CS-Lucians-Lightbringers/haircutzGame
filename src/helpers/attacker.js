@@ -78,13 +78,14 @@ export default new Phaser.Class({
         if(this.follower.t >= .5 && !this.hasSwitched){
           // while(this.count >= 1){
           this.anims.play("reverseBlueWalk")
+          this.scene.decrementRedScore();
           this.hasSwitched = true;
         }
         // this.setActive(true);
         if (this.follower.t >= 1) {
           // this.setActive(false);
           // this.setVisible(false);
-          this.scene.decrementRedScore();
+          this.scene.incrementBlueScore();
           this.destroy();
           // console.log(this.follower.t);
           // this.path.getPoint(this.follower.t, this.follower.vec);
@@ -99,13 +100,14 @@ export default new Phaser.Class({
 
         if(this.follower.t <= .5 && !this.hasSwitched){
           this.anims.play("reverseRedWalk");
+          this.scene.decrementBlueScore();
           this.hasSwitched = true;
         }
 
         if (this.follower.t <= 0) {
           // this.setActive(false);
           // this.setVisible(false);
-          this.scene.decrementBlueScore();
+          this.scene.incrementRedScore();
           this.destroy();
         }
       }

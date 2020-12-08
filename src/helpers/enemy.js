@@ -68,26 +68,28 @@ export default new Phaser.Class({
 
         if(this.follower.t >= .5 && !this.hasSwitched){
           this.anims.play("reverseBlueWalk");
+          this.scene.decrementRedScore();
           this.hasSwitched = true;
         }
 
         if (this.follower.t >= 1) {
           // this.setActive(false);
           // this.setVisible(false);
-          this.scene.decrementRedScore();
+          this.scene.incrementBlueScore();
           this.destroy();
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
         if(this.follower.t <= .5 && !this.hasSwitched){
           this.anims.play("reverseRedWalk");
+          this.scene.decrementBlueScore();
           this.hasSwitched = true;
         }
 
         if (this.follower.t <= 0) {
           // this.setActive(false);
           // this.setVisible(false);
-          this.scene.decrementBlueScore();
+          this.scene.incrementRedScore();
           this.destroy();
         }
       }
