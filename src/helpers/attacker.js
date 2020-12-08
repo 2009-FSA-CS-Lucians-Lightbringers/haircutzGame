@@ -56,6 +56,12 @@ export default new Phaser.Class({
     console.log(this);
     // console.log(scene);
     if (this.hp <= 0) {
+      if(this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementRedScore();
+      }
+      if(!this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementBlueScore();
+      }
       // this.setActive(false);
       // this.setVisible(false);
       // console.log(this)

@@ -51,6 +51,12 @@ export default new Phaser.Class({
     //console.log(">>>after bullet", this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
+      if(this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementBlueScore();
+      }
+      if(!this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementRedScore();
+      }
       // this.setActive(false);
       // this.setVisible(false);
       this.scene.resourcePoints += 1;
