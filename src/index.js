@@ -24,6 +24,9 @@ const config = {
 
 const game = new Phaser.Game(config);
 
+//game sounds
+game.sound.mute = false;
+
 //load scenes
 game.scene.add("introScene", IntroScene);
 game.scene.add("game", Game);

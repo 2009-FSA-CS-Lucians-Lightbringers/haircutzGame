@@ -417,9 +417,8 @@ export default class Game extends Phaser.Scene {
     this.add.image(700, 520, "clock");
     this.play = this.add.image(50, 50, "play");
     this.pause = this.add.image(105, 50, "pause");
-    this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 1 });
+    this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 0.5 });
     let self = this;
-    // this.gameTheme.play()
 
     if (this.isPlayerA) {
       self.scissor = self.add.sprite(85, 450, "p1attackers").setInteractive();
@@ -486,14 +485,15 @@ export default class Game extends Phaser.Scene {
     this.woohoo = this.sound.add("woohoo", { loop: false });
     this.bulletSound = this.sound.add("bulletSound", { loop: false });
     this.plop = this.sound.add("plop", { loop: false });
+    this.gameTheme.play();
 
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
-      // this.gameTheme.play()
+      self.game.sound.mute = false;
     });
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
-      this.gameTheme.stop();
+      self.game.sound.mute = true;
     });
 
     var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
@@ -741,6 +741,8 @@ export default class Game extends Phaser.Scene {
       self.event = event.isPlayerA;
       self.spawnScissor(event);
     });
+
+    this.game.socket.emit("stopTheme");
 
     this.input.keyboard.on("keydown", function (event) {
       if (self.time.now > self.attackerReleased + 2000) {
