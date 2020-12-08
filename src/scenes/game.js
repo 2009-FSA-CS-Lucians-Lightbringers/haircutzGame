@@ -33,6 +33,8 @@ export default class Game extends Phaser.Scene {
     this.path2;
     this.path3;
     this.path4;
+    this.path5;
+    this.path6;
     this.enemies;
     this.attackers;
     this.turrets;
@@ -79,6 +81,8 @@ export default class Game extends Phaser.Scene {
     this.addBullet = this.addBullet.bind(this);
     this.getEnemy = this.getEnemy.bind(this);
     this.getAttacker = this.getAttacker.bind(this);
+    this.incrementBlueScore = this.incrementBlueScore.bind(this);
+    this.incrementRedScore = this.incrementRedScore.bind(this);
     this.decrementBlueScore = this.decrementBlueScore.bind(this);
     this.decrementRedScore = this.decrementRedScore.bind(this);
     this.resourceTimer = this.resourceTimer.bind(this);
@@ -134,9 +138,12 @@ export default class Game extends Phaser.Scene {
 
   spawnScissor(event) {
     let path;
+
+    if(this.isPlayerA){
     if (event.path === 1) path = this.path1;
     if (event.path === 2) path = this.path2;
     if (event.path === 3) path = this.path3;
+
     if (event.isPlayerA === this.isPlayerA) {
       if (this.resourcePoints > 1) {
         var attacker = this.attackers.get();
@@ -156,6 +163,10 @@ export default class Game extends Phaser.Scene {
         //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
         var enemy = this.enemies.get();
         if (enemy) {
+          if(event.path === 1) path = this.path4;
+          if(event.path === 2) path = this.path5;
+          if(event.path === 3) path = this.path6;
+          this.snips.play();
           enemy.setActive(true);
           enemy.setVisible(true);
           enemy.startOnPath(path);
@@ -163,6 +174,42 @@ export default class Game extends Phaser.Scene {
         }
       }
     }
+   }
+    else{
+      if (event.path === 1) path = this.path4;
+      if (event.path === 2) path = this.path5;
+      if (event.path === 3) path = this.path6;
+
+      if (event.isPlayerA === this.isPlayerA) {
+        if (this.resourcePoints > 1) {
+          var attacker = this.attackers.get();
+          this.resourcePoints -= 2;
+          this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+          if (attacker) {
+            this.snips.play()
+            attacker.setActive(true);
+            attacker.setVisible(true);
+            attacker.startOnPath(path);
+            this.myAttackers.push(attacker);
+          }
+        }
+      } else {
+        if (this.oppResourcePoints > 1) {
+          this.oppResourcePoints -= 2;
+          //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
+          var enemy = this.enemies.get();
+          if (enemy) {
+            if(event.path === 1) path = this.path1;
+            if(event.path === 2) path = this.path2;
+            if(event.path === 3) path = this.path3;
+            enemy.setActive(true);
+            enemy.setVisible(true);
+            enemy.startOnPath(path);
+            this.myEnemies.push(enemy);
+          }
+        }
+      }
+  }
   }
 
   //Turret methods
@@ -239,30 +286,42 @@ export default class Game extends Phaser.Scene {
   }
 
   //Score methods
-  decrementBlueScore() {
-    this.ouch.play();
-    this.blueScore -= 1;
+  incrementBlueScore() {
+    this.blueScore += 1;
     this.homeBase.setFrame(this.blueScore)
-    this.blueText.setText("P1 | " + this.blueScore);
-    if (this.blueScore <= 0) {
-      this.snips.stop()
-      this.gameTheme.stop()
-      this.scene.switch("p2Wins");
-    }
-    return null;
-  }
-
-  decrementRedScore() {
-    this.ouch.play();
-    this.redScore -= 1;
-    this.enemyBase.setFrame(this.redScore)
-    this.redText.setText("P2 | " + this.redScore);
-    if (this.redScore <= 0) {
+    this.blueText.setText("P1 | " + this.blueScore)
+    if (this.blueScore >= 10) {
       this.snips.stop()
       this.gameTheme.stop()
       this.scene.switch("p1Wins");
     }
-    return null;
+  }
+
+  incrementRedScore() {
+    this.redScore += 1;
+    this.enemyBase.setFrame(this.redScore)
+    this.redText.setText("P2 | " + this.redScore)
+    if (this.redScore >= 10) {
+      this.snips.stop()
+      this.gameTheme.stop()
+      this.scene.switch("p2Wins");
+    }
+  }
+
+  decrementBlueScore() {
+    this.snips.stop();
+    this.ouch.play();
+    this.blueScore -= 1;
+    this.homeBase.setFrame(this.blueScore)
+    this.blueText.setText("P1 | " + this.blueScore);
+  }
+
+  decrementRedScore() {
+    this.snips.stop();
+    this.ouch.play();
+    this.redScore -= 1;
+    this.enemyBase.setFrame(this.redScore)
+    this.redText.setText("P2 | " + this.redScore);
   }
 
   resourceTimer() {
@@ -299,9 +358,17 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
+    this.load.spritesheet("p1return", "/assets/player1_returning_attackers.png", {
+      frameWidth: 68,
+      frameHeight: 65,
+    });
     this.load.spritesheet("p2attackers", "/assets/player2_attackers.png", {
       frameWidth: 68,
       frameHeight: 45,
+    });
+    this.load.spritesheet("p2return", "/assets/player2_returning_attackers.png", {
+      frameWidth: 68,
+      frameHeight: 65,
     });
     this.load.image("p2turret", "/assets/player2_turret.png");
     this.load.image("p1turret", "/assets/player1_turret.png");
@@ -352,6 +419,17 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
+      key: "reverseBlueWalk",
+      frames: [
+        { key: "p1return", frame: 1 },
+        { key: "p1return", frame: 2 },
+        { key: "p1return", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
       key: "redWalk",
       frames: [
         { key: "p2attackers", frame: 1 },
@@ -361,6 +439,18 @@ export default class Game extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+
+    this.anims.create({
+      key: "reverseRedWalk",
+      frames: [
+        { key: "p2return", frame: 1 },
+        { key: "p2return", frame: 2 },
+        { key: "p2return", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
 
     this.enemyBase = this.add.image(715, 224, 'p2base')
     this.homeBase = this.add.image(95, 224, 'p1base')
@@ -461,14 +551,37 @@ export default class Game extends Phaser.Scene {
     // parameters are the start x and y of our path
     this.path1 = this.add.path(125, 240);
     this.path1.lineTo(675, 240);
+    this.path1.lineTo(125,240);
 
     this.path2 = this.add.path(125, 240);
     this.path2.lineTo(400, 48);
     this.path2.lineTo(675, 240);
+    this.path2.lineTo(400, 48);
+    this.path2.lineTo(125,240);
 
     this.path3 = this.add.path(125, 240);
     this.path3.lineTo(400, 432);
     this.path3.lineTo(675, 240);
+    this.path3.lineTo(400, 432);
+    this.path3.lineTo(125,240)
+
+    //Player B path
+    this.path4 = this.add.path(675,240);
+    this.path4.lineTo(125,240);
+    this.path4.lineTo(675,240);
+
+    this.path5 = this.add.path(675, 240);
+    this.path5.lineTo(400, 48);
+    this.path5.lineTo(125, 240);
+    this.path5.lineTo(400, 48);
+    this.path5.lineTo(675,240);
+
+    this.path6= this.add.path(675, 240);
+    this.path6.lineTo(400, 432);
+    this.path6.lineTo(125, 240);
+    this.path6.lineTo(400, 432);
+    this.path6.lineTo(675,240)
+
 
     graphics.lineStyle(3, 0xffffff, 1);
 

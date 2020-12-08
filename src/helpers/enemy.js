@@ -8,11 +8,13 @@ export default new Phaser.Class({
       this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
       scene.enemyNumber++;
       this.number = scene.enemyNumber;
+      this.hasSwitched = false;
     } else {
       Phaser.GameObjects.Sprite.call(this, scene, 675, 224, "p2attackers");
       this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
       scene.enemyNumber++;
       this.number = scene.enemyNumber;
+      this.hasSwitched = false;
     }
   },
   //differentiate player attacks based on class
@@ -42,15 +44,20 @@ export default new Phaser.Class({
 
   receiveDamage: function (damage) {
     // decrement health points
-    //console.log("ENEMY NUMBER:", this.number);
-    //console.log(">>>before bullet", this.hp);
+
     this.hp -= damage;
     console.log(`enemy ${this.number} took damage`, this.hp);
     //console.log(">>>after bullet", this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
-      // this.setActive(false);
-      // this.setVisible(false);
+      if(this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementBlueScore();
+      }
+      if(!this.scene.isPlayerA && this.hasSwitched){
+        this.scene.incrementRedScore();
+      }
+      this.scene.resourcePoints += 1;
+      this.scene.resourceText.setText("RESOURCE | " + this.scene.resourcePoints);
       this.destroy();
     }
   },
@@ -62,18 +69,26 @@ export default new Phaser.Class({
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
-        if (this.follower.t >= 1) {
-          // this.setActive(false);
-          // this.setVisible(false);
+        if(this.follower.t >= .5 && !this.hasSwitched){
+          this.anims.play("reverseBlueWalk");
           this.scene.decrementRedScore();
+          this.hasSwitched = true;
+        }
+
+        if (this.follower.t >= 1) {
+          this.scene.incrementBlueScore();
           this.destroy();
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
-        if (this.follower.t <= 0) {
-          // this.setActive(false);
-          // this.setVisible(false);
+        if(this.follower.t <= .5 && !this.hasSwitched){
+          this.anims.play("reverseRedWalk");
           this.scene.decrementBlueScore();
+          this.hasSwitched = true;
+        }
+
+        if (this.follower.t <= 0) {
+          this.scene.incrementRedScore();
           this.destroy();
         }
       }
