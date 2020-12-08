@@ -9,8 +9,16 @@ class PreStart extends Phaser.Scene {
 
   preload() {
     this.load.image("preStart", "/assets/pre_start_screen.png");
-    this.load.spritesheet("waitingSprite1", "/assets/waiting_room_sprite1.png", {frameWidth: 150, frameHeight: 179})
-    this.load.spritesheet("waitingSprite2", "/assets/waiting_room_sprite2.png", {frameWidth: 150, frameHeight: 179})
+    this.load.spritesheet(
+      "waitingSprite1",
+      "/assets/waiting_room_sprite1.png",
+      { frameWidth: 150, frameHeight: 179 }
+    );
+    this.load.spritesheet(
+      "waitingSprite2",
+      "/assets/waiting_room_sprite2.png",
+      { frameWidth: 150, frameHeight: 179 }
+    );
     this.load.image("play", "/assets/play.png");
     this.load.image("pause", "/assets/pause.png");
     this.load.audio("theme", ["/assets/intro_theme2.mp3"]);
@@ -19,31 +27,37 @@ class PreStart extends Phaser.Scene {
   create() {
     var bg = this.add.sprite(0, 0, "preStart");
     bg.setOrigin(0, 0);
+    var self = this;
 
     const waitingSprite1 = this.add.sprite(525, 305, "waitingSprite1", 0);
     const waitingSprite2 = this.add.sprite(275, 305, "waitingSprite2", 0);
 
-    var play = this.add.image(70, 70, "play" )
-    var pause = this.add.image(125, 70, "pause" )
+    var play = this.add.image(70, 70, "play");
+    var pause = this.add.image(125, 70, "pause");
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
     // this.theme.play()
 
-
-   this.anims.create({
+    this.anims.create({
       key: "wait1",
       repeat: -1,
       frameRate: 5,
-      frames: this.anims.generateFrameNames("waitingSprite1", {start: 10, end: 0})
+      frames: this.anims.generateFrameNames("waitingSprite1", {
+        start: 10,
+        end: 0,
+      }),
     });
-    waitingSprite1.play("wait1")
+    waitingSprite1.play("wait1");
 
     this.anims.create({
       key: "wait2",
       repeat: -1,
       frameRate: 5,
-      frames: this.anims.generateFrameNames("waitingSprite2", {start: 10, end: 0})
+      frames: this.anims.generateFrameNames("waitingSprite2", {
+        start: 10,
+        end: 0,
+      }),
     });
-    waitingSprite2.play("wait2")
+    waitingSprite2.play("wait2");
 
     var redPlayerText = this.make.text({
       x: 125,
@@ -69,30 +83,28 @@ class PreStart extends Phaser.Scene {
 
     bluePlayerText.setInteractive({ useHandCursor: true });
     bluePlayerText.on("pointerdown", () => {
-      bluePlayerText.text = "BLUE PLAYER IS READY"
+      bluePlayerText.text = "BLUE PLAYER IS READY";
+      self.clickButton();
     });
-
 
     redPlayerText.setInteractive({ useHandCursor: true });
     redPlayerText.on("pointerdown", () => {
-      redPlayerText.text = "RED PLAYER IS READY"
+      redPlayerText.text = "RED PLAYER IS READY";
+      self.clickButton();
     });
-
-
-
 
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       // this.theme.play()
-    })
+    });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
-      this.theme.stop()
-    })
+      this.theme.stop();
+    });
   }
 
   clickButton() {
-    this.theme.stop()
+    this.theme.stop();
     this.scene.switch("game");
   }
 }
