@@ -54,6 +54,7 @@ export default class Game extends Phaser.Scene {
     this.resourcePoints = 12;
     this.oppResourcePoints = 12;
     this.resourceText;
+    this.oppResourceText;
     this.counter = 10;
     this.clock;
     this.timer;
@@ -154,7 +155,7 @@ export default class Game extends Phaser.Scene {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
           this.resourcePoints -= 2;
-          this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+          this.resourceText.setText("USER RP | " + this.resourcePoints);
           if (attacker) {
             this.snips.play();
             attacker.setActive(true);
@@ -166,7 +167,7 @@ export default class Game extends Phaser.Scene {
       } else {
         if (this.oppResourcePoints > 1) {
           this.oppResourcePoints -= 2;
-          //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
+          this.oppResourceText.setText("ENEMY RP | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
           if (enemy) {
             if (event.path === 1) path = this.path4;
@@ -189,7 +190,7 @@ export default class Game extends Phaser.Scene {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
           this.resourcePoints -= 2;
-          this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+          this.resourceText.setText("USER RP | " + this.resourcePoints);
           if (attacker) {
             this.snips.play();
             attacker.setActive(true);
@@ -201,7 +202,7 @@ export default class Game extends Phaser.Scene {
       } else {
         if (this.oppResourcePoints > 1) {
           this.oppResourcePoints -= 2;
-          //this.resourceText.setText("RESOURCE | " + this.oppResourcePoints);
+          this.oppResourceText.setText("ENEMY RP | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
           if (enemy) {
             if (event.path === 1) path = this.path1;
@@ -226,7 +227,7 @@ export default class Game extends Phaser.Scene {
         if (this.resourcePoints > 2) {
           var turret = this.turrets.get();
           this.resourcePoints -= 3;
-          this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+          this.resourceText.setText("USER RP | " + this.resourcePoints);
           if (turret) {
             this.plop.play();
             turret.setActive(true);
@@ -237,6 +238,7 @@ export default class Game extends Phaser.Scene {
       } else if (this.oppResourcePoints > 2) {
         var turret = this.turrets.get();
         this.oppResourcePoints -= 3;
+        this.oppResourceText.setText("ENEMY RP | " + this.oppResourcePoints);
         if (turret) {
           this.plop.play();
           turret.setActive(true);
@@ -335,7 +337,8 @@ export default class Game extends Phaser.Scene {
     if (this.counter <= 0) {
       this.resourcePoints += 3;
       this.oppResourcePoints += 3;
-      this.resourceText.setText("RESOURCE | " + this.resourcePoints);
+      this.resourceText.setText("USER RP | " + this.resourcePoints);
+      this.oppResourceText.setText("ENEMY RP | " + this.oppResourcePoints);
       this.counter += 10;
       this.clock.setText(`${this.counter}`);
     }
@@ -676,13 +679,25 @@ export default class Game extends Phaser.Scene {
     });
 
     this.resourceText = self.add.text(
-      300,
-      520,
-      `RESOURCE | ` + this.resourcePoints,
+      280,
+      540,
+      `USER RP | ` + this.resourcePoints,
       {
         fontFamily: "Arial Black",
         fontStyle: "bold",
-        fontSize: "24px",
+        fontSize: "18px",
+        fill: "white",
+      }
+    );
+
+    this.oppResourceText = self.add.text(
+      280,
+      560,
+      `ENEMY RP | ` + this.resourcePoints,
+      {
+        fontFamily: "Arial Black",
+        fontStyle: "bold",
+        fontSize: "18px",
         fill: "white",
       }
     );
