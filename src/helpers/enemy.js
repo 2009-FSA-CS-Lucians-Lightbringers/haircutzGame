@@ -50,17 +50,16 @@ export default new Phaser.Class({
 
   receiveDamage: function (damage) {
     // decrement health points
-
     this.hp -= damage;
     console.log(`enemy ${this.number} took damage`, this.hp);
     this.scene.setValue(this.healthBar,this.hp);
     //console.log(">>>after bullet", this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
-      if(this.scene.isPlayerA && this.hasSwitched){
+      if (this.scene.isPlayerA && this.hasSwitched) {
         this.scene.incrementBlueScore();
       }
-      if(!this.scene.isPlayerA && this.hasSwitched){
+      if (!this.scene.isPlayerA && this.hasSwitched) {
         this.scene.incrementRedScore();
       }
       this.scene.resourcePoints += 1;
@@ -78,7 +77,7 @@ export default new Phaser.Class({
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
-        if(this.follower.t >= .5 && !this.hasSwitched){
+        if (this.follower.t >= 0.5 && !this.hasSwitched) {
           this.anims.play("reverseBlueWalk");
           this.scene.decrementRedScore();
           this.hasSwitched = true;
@@ -91,7 +90,7 @@ export default new Phaser.Class({
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
-        if(this.follower.t <= .5 && !this.hasSwitched){
+        if (this.follower.t <= 0.5 && !this.hasSwitched) {
           this.anims.play("reverseRedWalk");
           this.scene.decrementBlueScore();
           this.hasSwitched = true;
