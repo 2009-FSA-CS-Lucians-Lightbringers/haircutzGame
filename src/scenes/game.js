@@ -353,6 +353,29 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  makeBar(x, y,color) {
+    //draw the bar
+    let bar = this.add.graphics();
+
+    //color the bar
+    bar.fillStyle(color, 1);
+
+    //fill the bar with a rectangle
+    bar.fillRect(0, 0, 50, 10);
+
+    //position the bar
+    bar.x = x;
+    bar.y = y;
+
+    //return the bar
+    return bar;
+  }
+
+  setValue(bar,percentage) {
+      //scale the bar
+      bar.scaleX = percentage/100;
+  }
+
 //   drawClock (x, y, timer){
 //     //  Progress is between 0 and 1, where 0 = the hand pointing up and then rotating clockwise a full 360
 

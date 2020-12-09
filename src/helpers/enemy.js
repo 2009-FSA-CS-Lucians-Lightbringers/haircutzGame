@@ -9,12 +9,14 @@ export default new Phaser.Class({
       scene.enemyNumber++;
       this.number = scene.enemyNumber;
       this.hasSwitched = false;
+      this.healthBar;
     } else {
       Phaser.GameObjects.Sprite.call(this, scene, 675, 224, "p2attackers");
       this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
       scene.enemyNumber++;
       this.number = scene.enemyNumber;
       this.hasSwitched = false;
+      this.healthBar;
     }
   },
   //differentiate player attacks based on class
@@ -32,6 +34,8 @@ export default new Phaser.Class({
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
       this.hp = 100;
+      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y+20, 0x712ecc);
+      this.scene.setValue(this.healthBar,this.hp)
     } else {
       this.follower.t = 1;
       this.anims.play("redWalk");
@@ -39,6 +43,8 @@ export default new Phaser.Class({
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
       this.hp = 100;
+      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y+20, 0x712ecc);
+      this.scene.setValue(this.healthBar,this.hp)
     }
   },
 
@@ -47,6 +53,7 @@ export default new Phaser.Class({
 
     this.hp -= damage;
     console.log(`enemy ${this.number} took damage`, this.hp);
+    this.scene.setValue(this.healthBar,this.hp);
     //console.log(">>>after bullet", this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
@@ -58,6 +65,7 @@ export default new Phaser.Class({
       }
       this.scene.resourcePoints += 1;
       this.scene.resourceText.setText("USER RP | " + this.scene.resourcePoints);
+      this.healthBar.destroy();
       this.destroy();
     }
   },
@@ -66,6 +74,7 @@ export default new Phaser.Class({
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
+      this.healthBar.setPosition(this.follower.vec.x-20, this.follower.vec.y+20)
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
@@ -77,6 +86,7 @@ export default new Phaser.Class({
 
         if (this.follower.t >= 1) {
           this.scene.incrementBlueScore();
+          this.healthBar.destroy();
           this.destroy();
         }
       } else {
@@ -89,6 +99,7 @@ export default new Phaser.Class({
 
         if (this.follower.t <= 0) {
           this.scene.incrementRedScore();
+          this.healthBar.destroy();
           this.destroy();
         }
       }
