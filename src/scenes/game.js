@@ -1,12 +1,11 @@
-//figures out how turrets are spawned
-//then link turret spawn to drag and drop
-//add conditionals for turrets based on who player is
-import io from "socket.io-client";
-import Zone from "../helpers/zone.js";
-import Enemy from "../helpers/enemy.js";
-import Attacker from "../helpers/attacker.js";
-import Turret from "../helpers/turret.js";
-import Bullet from "../helpers/bullet.js";
+//make it so that placement of turrets does not depend on map
+//turrets should depend on coordinates of drop zone
+import io from 'socket.io-client';
+import Zone from '../helpers/zone.js';
+import Enemy from '../helpers/enemy.js';
+import Attacker from '../helpers/attacker.js';
+import Turret from '../helpers/turret.js';
+import Bullet from '../helpers/bullet.js';
 // import HomeBase from "../helpers/homeBase.js";
 // import EnemyBase from "../helpers/enemyBase.js";
 
@@ -986,26 +985,30 @@ export default class Game extends Phaser.Scene {
           self.attackerReleased = self.time.now;
         }
       }
-      if (gameObject.name === "turret") {
-        if (dropZone.name === "triangleA" && self.isPlayerA) {
-          dropZone.fillColor = 0x9fc5e8;
-          dropZone.setStrokeStyle(4, 0xffffff);
-          gameObject.setTint(0xff0000);
-        }
-        if (dropZone.name === "triangleB" && self.isPlayerB) {
-          dropZone.fillColor = 0xf4cccc;
-          dropZone.setStrokeStyle(4, 0xffffff);
-          gameObject.setTint(0xff0000);
-        }
-        if (dropZone.name === "triangleA" || dropZone.name === "triangleB") {
-          self.game.socket.emit(
-            "placeTurret",
-            self.isPlayerA,
-            pointer.upX,
-            pointer.upY
-          );
-        }
-      }
+      if (gameObject.name === 'turret') {
+				if (dropZone.name === 'triangleA' && self.isPlayerA) {
+					dropZone.fillColor = 0x9fc5e8;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+					self.game.socket.emit(
+						'placeTurret',
+						self.isPlayerA,
+						pointer.upX,
+						pointer.upY
+					);
+				}
+				if (dropZone.name === 'triangleB' && self.isPlayerB) {
+					dropZone.fillColor = 0xf4cccc;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+					self.game.socket.emit(
+						'placeTurret',
+						self.isPlayerA,
+						pointer.upX,
+						pointer.upY
+					);
+				}
+			}
     });
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
       gameObject.x = gameObject.input.dragStartX;
@@ -1023,22 +1026,26 @@ export default class Game extends Phaser.Scene {
     // );
   }
 
-  update(time, delta) {
-    var self = this;
-    this.graphics.clear();
-    this.graphics.lineStyle(4, 0x0000ff, 1);
+	update(time, delta) {
+		var self = this;
+		this.graphics.clear();
 
-    this.cursorPath.draw(self.graphics);
-
-    this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
-
-    this.graphics.fillStyle(0xff0000, 1);
-    this.graphics.fillRect(
-      self.cursor.vec.x - 8,
-      self.cursor.vec.y - 8,
-      16,
-      16
-    );
+		this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
+		this.graphics.fillStyle(0xffff00, 1);
+		// this.graphics.fillRect(
+		// 	self.cursor.vec.x - 8,
+		// 	self.cursor.vec.y - 8,
+		// 	16,
+		// 	16
+		// );
+		this.graphics.fillTriangle(
+			self.cursor.vec.x,
+			self.cursor.vec.y,
+			self.cursor.vec.x + 10,
+			self.cursor.vec.y + 10,
+			self.cursor.vec.x + 20,
+			self.cursor.vec.y
+		);
     // console.log(this.input.mousePointer.x, this.input.mousePointer.y);
   }
 }
