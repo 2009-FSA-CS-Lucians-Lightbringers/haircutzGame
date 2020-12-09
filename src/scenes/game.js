@@ -1,9 +1,12 @@
-import io from "socket.io-client";
-import Zone from "../helpers/zone.js";
-import Enemy from "../helpers/enemy.js";
-import Attacker from "../helpers/attacker.js";
-import Turret from "../helpers/turret.js";
-import Bullet from "../helpers/bullet.js";
+//figures out how turrets are spawned
+//then link turret spawn to drag and drop
+//add conditionals for turrets based on who player is
+import io from 'socket.io-client';
+import Zone from '../helpers/zone.js';
+import Enemy from '../helpers/enemy.js';
+import Attacker from '../helpers/attacker.js';
+import Turret from '../helpers/turret.js';
+import Bullet from '../helpers/bullet.js';
 // import HomeBase from "../helpers/homeBase.js";
 // import EnemyBase from "../helpers/enemyBase.js";
 
@@ -41,6 +44,9 @@ export default class Game extends Phaser.Scene {
     this.path4;
     this.path5;
     this.path6;
+    this.cursorPath;
+		this.cursor;
+    this.graphics;
     this.enemies;
     this.attackers;
     this.turrets;
@@ -421,12 +427,27 @@ export default class Game extends Phaser.Scene {
     let self = this;
 
     if (this.isPlayerA) {
-      self.scissor = self.add.sprite(85, 450, "p1attackers").setInteractive();
-      self.input.setDraggable(self.scissor);
-    } else {
-      self.scissor = self.add.sprite(85, 450, "p2attackers").setInteractive();
-      self.input.setDraggable(self.scissor);
-    }
+			self.scissor = self.add
+				.sprite(314, 555, 'p1attackers')
+				.setInteractive()
+				.setScale(0.75);
+			self.turret = self.add
+				.sprite(465, 550, 'p1turret')
+				.setInteractive()
+				.setScale(0.55);
+		} else {
+			self.scissor = self.add
+				.sprite(314, 555, 'p2attackers')
+				.setInteractive()
+				.setScale(0.75);
+			self.turret = self.add
+				.sprite(465, 550, 'p2turret')
+				.setInteractive()
+				.setScale(0.55);
+		}
+		this.input.setDraggable([this.scissor, this.turret]);
+		this.scissor.name = 'scissor';
+		this.turret.name = 'turret';
 
     this.anims.create({
       key: "blueWalk",
@@ -504,64 +525,42 @@ export default class Game extends Phaser.Scene {
     blueArc1.setStrokeStyle(3, 0xffffff);
     var blueArc2 = this.add.arc(350, 280, 230, 193, 277, false, 0x9fc5e8);
     blueArc2.setStrokeStyle(3, 0xffffff);
-    var RUTri = this.add.triangle(520, 260, 5, 50, 235, 50, 5, -110, 0xf4cccc);
-    RUTri.setStrokeStyle(4, 0xffffff);
-    var RLTri = this.add.triangle(520, 280, 5, 50, 235, 50, 5, 210, 0xf4cccc);
-    RLTri.setStrokeStyle(4, 0xffffff);
-    var LUTri = this.add.triangle(
-      510,
-      260,
-      -5,
-      50,
-      -235,
-      50,
-      -5,
-      -110,
-      0x9fc5e8
-    );
-    LUTri.setStrokeStyle(4, 0xffffff);
-    var LUTri = this.add.triangle(
-      510,
-      280,
-      -5,
-      50,
-      -235,
-      50,
-      -5,
-      210,
-      0x9fc5e8
-    );
-    LUTri.setStrokeStyle(4, 0xffffff);
-
-    // this.zone = new Zone(this);
-    // this.dropZone = this.zone.renderZone();
-    // this.outline = this.zone.renderOutline(this.dropZone);
-
-    //connecting to our socket on the client-side
-    // this.socket = io();
-
-    // this.socket.on("connect", function () {
-    //   console.log("Connected!");
-    // });
-
-    //If our client is the first to connect to the server, the server will emit
-    //an event that tells the client that it will be Player A.  The client
-    //socket receives that event and turns our "isPlayerA" boolean from
-    //false to true.
-    //this.socket.on('isPlayerA', function () {
-    //self.isPlayerA = true;
-    //self.scissor = self.add.sprite(85, 450, 'p1attackers').setInteractive();
-    //self.input.setDraggable(self.scissor);
-    //console.log('Welcome Blue Player A!');
-    //});
-    //this.socket.on('isPlayerB', function () {
-    //if (!self.isPlayerA) {
-    //self.isPlayerB = true;
-    //self.scissor = self.add.sprite(85, 450, 'p2attackers').setInteractive();
-    //self.input.setDraggable(self.scissor);
-    //console.log('Welcome Red Player B!');
-    //}
-    //});
+    var RUTri = this.add
+			.triangle(520, 260, 5, 50, 235, 50, 5, -110, 0xf4cccc)
+			.setInteractive(
+				new Phaser.Geom.Triangle(5, 50, 235, 50, 5, -110),
+				Phaser.Geom.Triangle.Contains,
+				true
+			)
+			.setStrokeStyle(4, 0xffffff);
+		var RLTri = this.add
+			.triangle(520, 280, 5, 50, 235, 50, 5, 210, 0xf4cccc)
+			.setInteractive(
+				new Phaser.Geom.Triangle(5, 50, 235, 50, 5, 210),
+				Phaser.Geom.Triangle.Contains,
+				true
+			)
+			.setStrokeStyle(4, 0xffffff);
+		var LUTri = this.add
+			.triangle(510, 260, -5, 50, -235, 50, -5, -110, 0x9fc5e8)
+			.setInteractive(
+				new Phaser.Geom.Triangle(-5, 50, -235, 50, -5, -110),
+				Phaser.Geom.Triangle.Contains,
+				true
+			)
+			.setStrokeStyle(4, 0xffffff);
+		var LLTri = this.add
+			.triangle(510, 280, -5, 50, -235, 50, -5, 210, 0x9fc5e8)
+			.setInteractive(
+				new Phaser.Geom.Triangle(-5, 50, -235, 50, -5, 210),
+				Phaser.Geom.Triangle.Contains,
+				true
+			)
+			.setStrokeStyle(4, 0xffffff);
+		LUTri.name = 'triangleA';
+		LLTri.name = 'triangleA';
+		RUTri.name = 'triangleB';
+		RLTri.name = 'triangleB';
 
     // this graphics element is only for visualization,
     // its not related to our path
@@ -659,6 +658,27 @@ export default class Game extends Phaser.Scene {
     groupZone2.add(this.path2ZoneR);
     groupZone3.add(this.path3ZoneL);
     groupZone3.add(this.path3ZoneR);
+    
+    //path for cusor
+		this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
+
+		//  The curves do not have to be joined
+		var line1 = new Phaser.Curves.Line([50, 100, 50, 400]);
+
+		this.cursorPath = this.add.path();
+
+		// path = new Phaser.Curves.Path();
+
+		this.cursorPath.add(line1);
+
+		this.tweens.add({
+			targets: this.cursor,
+			t: 1,
+			ease: 'Linear',
+			duration: 4000,
+			yoyo: true,
+			repeat: -1,
+		});
 
     this.enemies = this.physics.add.group({
       classType: Enemy,
@@ -720,20 +740,6 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
 
-    // this.homeBase = this.physics.add
-    //   .group({
-    //     classType: HomeBase,
-    //     runChildUpdate: true,
-    //   })
-    //   .create();
-
-    // this.enemyBase = this.physics.add
-    //   .group({
-    //     classType: EnemyBase,
-    //     runChildUpdate: true,
-    //   })
-    //   .create();
-
     this.physics.add.overlap(this.enemies, this.bullets, this.damageEnemy);
     this.physics.add.overlap(this.attackers, this.bullets, this.damageAttacker);
 
@@ -744,31 +750,31 @@ export default class Game extends Phaser.Scene {
 
     this.game.socket.emit("stopTheme");
 
-    this.input.keyboard.on("keydown", function (event) {
-      if (self.time.now > self.attackerReleased + 2000) {
-        if (event.key === "1") {
-          self.game.socket.emit("spawnScissor", {
-            isPlayerA: self.isPlayerA,
-            path: 1,
-          });
-          self.attackerReleased = self.time.now;
-        }
-        if (event.key === "2") {
-          self.game.socket.emit("spawnScissor", {
-            isPlayerA: self.isPlayerA,
-            path: 2,
-          });
-          self.attackerReleased = self.time.now;
-        }
-        if (event.key === "3") {
-          self.game.socket.emit("spawnScissor", {
-            isPlayerA: self.isPlayerA,
-            path: 3,
-          });
-          self.attackerReleased = self.time.now;
-        }
-      }
-    });
+//     this.input.keyboard.on("keydown", function (event) {
+//       if (self.time.now > self.attackerReleased + 2000) {
+//         if (event.key === "1") {
+//           self.game.socket.emit("spawnScissor", {
+//             isPlayerA: self.isPlayerA,
+//             path: 1,
+//           });
+//           self.attackerReleased = self.time.now;
+//         }
+//         if (event.key === "2") {
+//           self.game.socket.emit("spawnScissor", {
+//             isPlayerA: self.isPlayerA,
+//             path: 2,
+//           });
+//           self.attackerReleased = self.time.now;
+//         }
+//         if (event.key === "3") {
+//           self.game.socket.emit("spawnScissor", {
+//             isPlayerA: self.isPlayerA,
+//             path: 3,
+//           });
+//           self.attackerReleased = self.time.now;
+//         }
+//       }
+//     });
 
     this.input.on("pointerdown", function (event) {
       self.game.socket.emit("placeTurret", self.isPlayerA, event.x, event.y);
@@ -781,97 +787,147 @@ export default class Game extends Phaser.Scene {
 
     this.input.dragDistanceThreshold = 16;
 
-    this.input.on("dragstart", function (pointer, gameObject) {
-      gameObject.setTint(0xff0000);
-      self.children.bringToTop(gameObject);
-    });
+    this.input.on('dragstart', function (pointer, gameObject) {
+			gameObject.setTint(0xff0000);
+			self.children.bringToTop(gameObject);
+		});
 
-    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-    });
-    this.input.on("dragenter", function (pointer, gameObject, dropZone) {
-      if (dropZone.name === "path2") {
-        for (const child of groupZone2.getChildren()) {
-          child.fillAlpha = 1;
-          child.setStrokeStyle(4, 0xefc53f);
-        }
-      }
-      if (dropZone.name === "path3") {
-        for (const child of groupZone3.getChildren()) {
-          child.fillAlpha = 1;
-          child.setStrokeStyle(4, 0xefc53f);
-        }
-      } else {
-        dropZone.fillAlpha = 1;
-        dropZone.setStrokeStyle(4, 0xefc53f);
-      }
+		this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+			gameObject.x = dragX;
+			gameObject.y = dragY;
+		});
+		this.input.on('dragenter', function (pointer, gameObject, dropZone) {
+			if (gameObject.name === 'scissor') {
+				if (dropZone.name === 'path1') {
+					dropZone.fillAlpha = 1;
+					dropZone.setStrokeStyle(4, 0xefc53f);
+					gameObject.setTint(0x00ff00);
+				}
+				if (dropZone.name === 'path2') {
+					for (const child of groupZone2.getChildren()) {
+						child.fillAlpha = 1;
+						child.setStrokeStyle(4, 0xefc53f);
+						gameObject.setTint(0x00ff00);
+					}
+				}
+				if (dropZone.name === 'path3') {
+					for (const child of groupZone3.getChildren()) {
+						child.fillAlpha = 1;
+						child.setStrokeStyle(4, 0xefc53f);
+						gameObject.setTint(0x00ff00);
+					}
+				}
+			}
 
-      // graphics.lineStyle(2, 0x00ff00, 1);
-      // graphics.strokeRect(
-      // 	zone.x - zone.input.hitArea.width / 2,
-      // 	zone.y,
-      // 	zone.input.hitArea.width,
-      // 	zone.input.hitArea.height
-      // );
+			if (gameObject.name === 'turret') {
+				if (dropZone.name === 'triangleA' && self.isPlayerA) {
+					dropZone.fillColor = 0x00ff00;
+					dropZone.setStrokeStyle(4, 0xefc53f);
+					gameObject.setTint(0x00ff00);
+				}
+				if (dropZone.name === 'triangleB' && self.isPlayerB) {
+					dropZone.fillColor = 0x00ff00;
+					dropZone.setStrokeStyle(4, 0xefc53f);
+					gameObject.setTint(0x00ff00);
+				}
+			}
+		});
 
-      gameObject.setTint(0x00ff00);
-    });
+		this.input.on('dragleave', function (pointer, gameObject, dropZone) {
+			if (gameObject.name === 'scissor') {
+				if (dropZone.name === 'path1') {
+					dropZone.fillAlpha = 0;
+					dropZone.strokeAlpha = 0;
+					gameObject.setTint(0xff0000);
+				}
+				if (dropZone.name === 'path2') {
+					for (const child of groupZone2.getChildren()) {
+						child.fillAlpha = 0;
+						child.strokeAlpha = 0;
+						gameObject.setTint(0xff0000);
+					}
+				}
+				if (dropZone.name === 'path3') {
+					for (const child of groupZone3.getChildren()) {
+						child.fillAlpha = 0;
+						child.strokeAlpha = 0;
+						gameObject.setTint(0xff0000);
+					}
+				}
+			}
 
-    this.input.on("dragleave", function (pointer, gameObject, dropZone) {
-      if (dropZone.name === "path2") {
-        for (const child of groupZone2.getChildren()) {
-          child.fillAlpha = 0;
-          child.strokeAlpha = 0;
-        }
-      }
-      if (dropZone.name === "path3") {
-        for (const child of groupZone3.getChildren()) {
-          child.fillAlpha = 0;
-          child.strokeAlpha = 0;
-        }
-      } else {
-        dropZone.fillAlpha = 0;
-        dropZone.strokeAlpha = 0;
-      }
+			if (gameObject.name === 'turret') {
+				if (dropZone.name === 'triangleA' && self.isPlayerA) {
+					dropZone.fillColor = 0x9fc5e8;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+				}
+				if (dropZone.name === 'triangleB' && self.isPlayerB) {
+					dropZone.fillColor = 0xf4cccc;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+				}
+			}
+		});
 
-      gameObject.setTint(0xff0000);
-    });
-
-    this.input.on("drop", function (pointer, gameObject, dropZone) {
-      if (dropZone.name === "path1") {
-        dropZone.fillAlpha = 0;
-        dropZone.strokeAlpha = 0;
-        self.game.socket.emit("spawnScissor", {
-          isPlayerA: self.isPlayerA,
-          path: 1,
-        });
-      }
-      if (dropZone.name === "path2") {
-        for (const child of groupZone2.getChildren()) {
-          child.fillAlpha = 0;
-          child.strokeAlpha = 0;
-        }
-        self.game.socket.emit("spawnScissor", {
-          isPlayerA: self.isPlayerA,
-          path: 2,
-        });
-      }
-      if (dropZone.name === "path3") {
-        for (const child of groupZone3.getChildren()) {
-          child.fillAlpha = 0;
-          child.strokeAlpha = 0;
-        }
-        self.game.socket.emit("spawnScissor", {
-          isPlayerA: self.isPlayerA,
-          path: 3,
-        });
-      }
-
-      self.attackerReleased = self.time.now;
-
-      gameObject.clearTint();
-    });
+		this.input.on('drop', function (pointer, gameObject, dropZone) {
+			if (gameObject.name === 'scissor') {
+				if (dropZone.name === 'path1') {
+					dropZone.fillAlpha = 0;
+					dropZone.strokeAlpha = 0;
+					self.game.socket.emit('spawnScissor', {
+						isPlayerA: self.isPlayerA,
+						path: 1,
+					});
+					gameObject.clearTint();
+					self.attackerReleased = self.time.now;
+				}
+				if (dropZone.name === 'path2') {
+					for (const child of groupZone2.getChildren()) {
+						child.fillAlpha = 0;
+						child.strokeAlpha = 0;
+					}
+					self.game.socket.emit('spawnScissor', {
+						isPlayerA: self.isPlayerA,
+						path: 2,
+					});
+					gameObject.clearTint();
+					self.attackerReleased = self.time.now;
+				}
+				if (dropZone.name === 'path3') {
+					for (const child of groupZone3.getChildren()) {
+						child.fillAlpha = 0;
+						child.strokeAlpha = 0;
+					}
+					self.game.socket.emit('spawnScissor', {
+						isPlayerA: self.isPlayerA,
+						path: 3,
+					});
+					gameObject.clearTint();
+					self.attackerReleased = self.time.now;
+				}
+			}
+			if (gameObject.name === 'turret') {
+				if (dropZone.name === 'triangleA' && self.isPlayerA) {
+					dropZone.fillColor = 0x9fc5e8;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+				}
+				if (dropZone.name === 'triangleB' && self.isPlayerB) {
+					dropZone.fillColor = 0xf4cccc;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+				}
+				if (dropZone.name === 'triangleA' || dropZone.name === 'triangleB') {
+					self.game.socket.emit(
+						'placeTurret',
+						self.isPlayerA,
+						pointer.upX,
+						pointer.upY
+					);
+				}
+			}
+		});
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
       gameObject.x = gameObject.input.dragStartX;
       gameObject.y = gameObject.input.dragStartY;
@@ -888,6 +944,21 @@ export default class Game extends Phaser.Scene {
   }
 
   update(time, delta) {
-    // console.log(this.input.mousePointer.x, this.input.mousePointer.y);
-  }
+		var self = this;
+		this.graphics.clear();
+		this.graphics.lineStyle(4, 0x0000ff, 1);
+
+		this.cursorPath.draw(self.graphics);
+
+		this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
+
+		this.graphics.fillStyle(0xff0000, 1);
+		this.graphics.fillRect(
+			self.cursor.vec.x - 8,
+			self.cursor.vec.y - 8,
+			16,
+			16
+		);
+		// console.log(this.input.mousePointer.x, this.input.mousePointer.y);
+	}
 }
