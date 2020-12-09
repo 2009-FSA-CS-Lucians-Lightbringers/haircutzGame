@@ -7,11 +7,11 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
   preload() {
     this.load.image(
       "redPlayerWaitingRoom",
-      "/assets/waiting_room_background.png"
+      "/assets/waiting_room_background2.png"
     );
     this.load.spritesheet("waitingSprite", "/assets/waiting_room_sprite2.png", {
       frameWidth: 150,
-      frameHeight: 178,
+      frameHeight: 179,
     });
     this.load.image("play", "/assets/play.png");
     this.load.image("pause", "/assets/pause.png");
@@ -28,7 +28,7 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
     var pause = this.add.image(125, 70, "pause");
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
 
-    const waitingSprite = this.add.sprite(400, 295, "waitingSprite", 0);
+    const waitingSprite = this.add.sprite(390, 295, "waitingSprite", 0);
 
     this.anims.create({
       key: "wait",
@@ -44,11 +44,11 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
     var waiting = this.make.text({
       x: 165,
       y: 55,
-      text: "YOU ARE RED PLAYER. ENTERING ROOM SHORTLY",
+      text: "YOU ARE THE RED PLAYER, ENTERING THE GAME SHORTLY...",
       style: {
-        font: "bold 30px Marker Felt",
+        font: "bold 38px Marker Felt",
         fill: "red",
-        wordWrap: { width: 500 },
+        wordWrap: { width: 600 },
       },
     });
 
