@@ -14,17 +14,17 @@ server.use(morgan("dev"));
 // static file-serving middleware
 server.use(express.static(path.join(__dirname, "public")));
 
-////get route to serve up entry point***
-////combine our package.json files
-////similar to boilermaker - webpack build then run server
-////look at boilermaker webpack config
-////add src/index.js script to html
-
 //our players array
 let players = [];
 
 //socket rooms
 var rooms = {};
+// rooms = {
+//   room#: {
+//     players: [p1, p2],
+//   }
+// }
+var openRoomQueue = [];
 
 //random room code generator
 const randomRoomCodeGenerator = () => {
@@ -50,7 +50,7 @@ io.on("connection", function (socket) {
     socket.join(roomCode);
     io.to(roomCode).emit("isPlayerA");
     io.to(roomCode).emit("roomCode", roomCode);
-    rooms[roomCode] = [socket.id];
+    rooms[roomCode] = { players: [socket.id] };
   });
 
   socket.on("findRoom", function (roomCode) {
@@ -58,7 +58,7 @@ io.on("connection", function (socket) {
       if (rooms[roomCode].length === 1) {
         socket.join(roomCode);
         io.to(roomCode).emit("isPlayerB");
-        rooms[roomCode].push(socket.id);
+        rooms[roomCode].players.push(socket.id);
         io.in(roomCode).emit("roomFound", roomCode);
       } else {
         io.to(socket.id).emit("roomNotFound");
@@ -76,7 +76,6 @@ io.on("connection", function (socket) {
     io.in(roomCode).emit("bluePlayerReady");
   });
 
-  //emit spawnEnemy
   socket.on("spawnScissor", function (event) {
     let roomCode = Array.from(socket.rooms).filter(
       (item) => item != socket.id
@@ -84,7 +83,6 @@ io.on("connection", function (socket) {
     io.in(roomCode).emit("spawnScissor", event);
   });
 
-  //emit choosePath
   socket.on("choosePath", function (event) {
     let roomCode = Array.from(socket.rooms).filter(
       (item) => item != socket.id
@@ -92,7 +90,6 @@ io.on("connection", function (socket) {
     io.in(roomCode).emit("choosePath", event);
   });
 
-  //emit cardPlayed
   socket.on("placeTurret", function (isPlayerA, x, y) {
     let roomCode = Array.from(socket.rooms).filter(
       (item) => item != socket.id
@@ -107,10 +104,31 @@ io.on("connection", function (socket) {
     io.in(roomCode).emit("stopTheme");
   });
 
+  socket.on("openRoom", function () {
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
+    openRoomQueue.push(roomCode);
+    console.log(openRoomQueue);
+  });
+
+  socket.on("joinRandom", function () {
+    if (openRoomQueue.length) {
+      let roomCode = openRoomQueue.shift();
+      socket.join(roomCode);
+      io.in(roomCode).emit("randomJoin", roomCode);
+    } else io.to(socket.id).emit("randomJoin");
+  });
+
   //when a user disconnects, log and take player out of players array
   socket.on("disconnect", function () {
     console.log("A user disconnected: " + socket.id);
     players = players.filter((player) => player !== socket.id);
+    //if the socket was in a room,
+    //emit message to player left in room - "Game over, other player left"
+    //have other player leave the room. emit leave room message to the roomCode, then use socket.leave(roomCode)
+    //destroy room instance in rooms obj
+    //if they had a room in the openRoomsQueue, remove it
   });
 });
 

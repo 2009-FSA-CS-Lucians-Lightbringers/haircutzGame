@@ -33,6 +33,10 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
       self.game.switchTime = self.time.now;
     });
 
+    this.game.socket.on("randomJoin", function () {
+      self.game.switchTime = self.time.now;
+    });
+
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(125, 70, "pause");
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
@@ -50,27 +54,58 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
     });
     waitingSprite.play("wait");
 
-    var waiting = this.make.text({
-      x: 165,
-      y: 55,
-      text: "YOU ARE BLUE PLAYER. WAITING FOR RED PLAYER",
-      style: {
-        font: "bold 30px Marker Felt",
-        fill: "blue",
-        wordWrap: { width: 500 },
-      },
+    var button = this.add.rectangle(400, 140, 250, 30, 0x89cff0).setOrigin(0.5);
+    button.setStrokeStyle(4, 0xffffff);
+    button.setInteractive({ useHandCursor: true });
+
+    button.on("pointerdown", function () {
+      button.fillColor = "0x15a5ff";
+      button.setStrokeStyle(2, 0xefc53f);
+      playRandom.text = "Finding Opponent...";
+      self.game.socket.emit("openRoom");
     });
 
-    var waitingRoomCode = this.make.text({
-      x: 172,
-      y: 155,
-      text: "ROOM CODE:",
-      style: {
-        font: "bold 40px Marker Felt",
-        fill: "red",
-        wordWrap: { width: 500 },
-      },
-    });
+    var waiting = this.make
+      .text({
+        x: 400,
+        y: 80,
+        text: "YOU ARE BLUE PLAYER, WAITING FOR RED PLAYER",
+        style: {
+          align: "center",
+          font: "bold 30px Marker Felt",
+          fill: "blue",
+          wordWrap: { width: 500 },
+        },
+      })
+      .setOrigin(0.5);
+
+    var playRandom = this.make
+      .text({
+        x: 400,
+        y: 140,
+        text: "Match With Random Opponent",
+        style: {
+          align: "center",
+          font: "bold 16px Marker Felt",
+          fill: "black",
+          wordWrap: { width: 500 },
+        },
+      })
+      .setOrigin(0.5);
+
+    var waitingRoomCode = this.make
+      .text({
+        x: 400,
+        y: 185,
+        text: "ROOM CODE:",
+        style: {
+          align: "center",
+          font: "bold 40px Marker Felt",
+          fill: "red",
+          wordWrap: { width: 500 },
+        },
+      })
+      .setOrigin(0.5);
 
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {

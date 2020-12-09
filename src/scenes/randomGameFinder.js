@@ -1,7 +1,6 @@
-class RedPlayerWaitingRoom extends Phaser.Scene {
+class RandomGameFinder extends Phaser.Scene {
   constructor() {
-    super({ key: "redPlayerWaitingRoom" });
-    this.theme;
+    super({ key: "randomGameFinder" });
   }
 
   preload() {
@@ -26,7 +25,6 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
 
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(125, 70, "pause");
-    this.theme = this.sound.add("theme", { loop: true, volume: 1 });
 
     const waitingSprite = this.add.sprite(400, 295, "waitingSprite", 0);
 
@@ -41,17 +39,19 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
     });
     waitingSprite.play("wait");
 
-    var waiting = this.make.text({
-      x: 165,
-      y: 55,
-      text: "YOU ARE RED PLAYER. ENTERING ROOM...",
-      style: {
-        align: "center",
-        font: "bold 30px Marker Felt",
-        fill: "red",
-        wordWrap: { width: 500 },
-      },
-    });
+    this.waiting = this.make
+      .text({
+        x: 400,
+        y: 80,
+        text: "LOOKING FOR AN OPEN GAME...",
+        style: {
+          align: "center",
+          font: "bold 30px Marker Felt",
+          fill: "red",
+          wordWrap: { width: 500 },
+        },
+      })
+      .setOrigin(0.5);
 
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
@@ -64,10 +64,31 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (this.game.switchTime + 5000 < this.time.now) {
-      this.scene.switch("preStart");
+    if (this.resetTime) {
+      this.game.switchTime = this.time.now;
+      this.resetTime = false;
+    }
+    if (this.game.switchTime) {
+      if (!this.game.roomCode) {
+        if (this.game.switchTime + 3000 < this.time.now) {
+          this.waiting.text = "NO OPEN GAMES FOUND. REDIRECTING TO MAIN MENU.";
+        }
+        if (this.game.switchTime + 6000 < this.time.now) {
+          this.game.switchTime = this.time.now;
+          this.resetTime = true;
+          this.scene.switch("introScene");
+          this.waiting.text = "LOOKING FOR AN OPEN GAME...";
+        }
+      } else {
+        if (this.game.switchTime + 2000 < this.time.now) {
+          this.waiting.text = "YOU ARE RED PLAYER. ENTERING ROOM...";
+        }
+        if (this.game.switchTime + 5000 < this.time.now) {
+          this.scene.switch("preStart");
+        }
+      }
     }
   }
 }
 
-export default RedPlayerWaitingRoom;
+export default RandomGameFinder;

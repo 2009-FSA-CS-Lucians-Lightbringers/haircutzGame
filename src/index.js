@@ -5,6 +5,7 @@ import PlayerOneWins from "./scenes/p1wins";
 import PlayerTwoWins from "./scenes/p2wins";
 import BluePlayerWaitingRoom from "./scenes/bluePlayerWaitingRoom";
 import RedPlayerWaitingRoom from "./scenes/redPlayerWaitingRoom";
+import RandomGameFinder from "./scenes/randomGameFinder";
 
 import PreStart from "./scenes/preStart";
 import io from "socket.io-client";
@@ -35,6 +36,7 @@ game.scene.add("p2Wins", PlayerTwoWins);
 game.scene.add("bluePlayerWaitingRoom", BluePlayerWaitingRoom);
 game.scene.add("redPlayerWaitingRoom", RedPlayerWaitingRoom);
 game.scene.add("preStart", PreStart);
+game.scene.add("randomGameFinder", RandomGameFinder);
 
 //start title
 game.scene.start("introScene");
