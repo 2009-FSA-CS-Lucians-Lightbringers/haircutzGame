@@ -15,9 +15,6 @@ export default new Phaser.Class({
       this.number = scene.attackerNumber;
       this.hasSwitched = false;
       this.healthBar;
-      // this.healthBar = scene.makeBar(140,100, 0x2ecc71);
-      // scene.setValue(this.healthBar,100)
-
     } else {
       Phaser.GameObjects.Sprite.call(this, scene, 675, 224, "p2attackers");
       this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
