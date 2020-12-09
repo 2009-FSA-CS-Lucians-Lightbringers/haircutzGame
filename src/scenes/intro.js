@@ -12,7 +12,7 @@ class IntroScene extends Phaser.Scene {
     this.load.image("play", "/assets/play.png");
     this.load.image("pause", "/assets/pause.png");
     this.load.html("joinRoom", "/assets/joinRoom.html");
-    this.load.audio("theme", ["/assets/intro_theme2.mp3"]);
+    this.load.audio("theme", ["/assets/andrew_theme2.mp3"]);
   }
 
   create() {
@@ -104,7 +104,7 @@ class IntroScene extends Phaser.Scene {
     //Join Game
     joinGame.setInteractive({ useHandCursor: true });
     joinGame.on("pointerdown", () => {
-      const form = this.add.dom(580, 453, "div").createFromCache("joinRoom");
+      const form = this.add.dom(623, 455, "div").createFromCache("joinRoom");
       form.addListener("click");
       form.on("click", (event) => {
         event.preventDefault();
@@ -119,9 +119,16 @@ class IntroScene extends Phaser.Scene {
       });
     });
 
+    //Browse Games
     browseGames.setInteractive({ useHandCursor: true });
     browseGames.on("pointerdown", () => {
       self.game.socket.emit("joinRandom");
+    });
+
+    //Credits
+    credits.setInteractive({ useHandCursor: true });
+    credits.on("pointerdown", () => {
+      this.scene.switch("credits");
     });
 
     this.game.socket.on("randomJoin", (roomCode) => {

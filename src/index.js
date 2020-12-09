@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Game from "./scenes/game";
 import IntroScene from "./scenes/intro";
+import Credits from "./scenes/credits";
 import PlayerOneWins from "./scenes/p1wins";
 import PlayerTwoWins from "./scenes/p2wins";
 import BluePlayerWaitingRoom from "./scenes/bluePlayerWaitingRoom";
@@ -44,6 +45,7 @@ game.scene.add("bluePlayerWaitingRoom", BluePlayerWaitingRoom);
 game.scene.add("redPlayerWaitingRoom", RedPlayerWaitingRoom);
 game.scene.add("preStart", PreStart);
 game.scene.add("randomGameFinder", RandomGameFinder);
+game.scene.add("credits", Credits)
 
 //start title
 game.scene.start("introScene");

@@ -483,7 +483,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("logo", "/assets/logo_underline.png");
     this.load.image("play", "/assets/play.png");
     this.load.image("clock", "/assets/clock.png");
-    this.load.audio("gameTheme", ["/assets/intro_theme.mp3"]);
+    this.load.audio("gameTheme", ["/assets/main_game_theme.mp3"]);
     this.load.audio("snips", ["/assets/snips.mp3"]);
     this.load.audio("bulletSound", ["/assets/bullet_sound.mp3"]);
     this.load.audio("ouch", ["/assets/ouch.mp3"]);

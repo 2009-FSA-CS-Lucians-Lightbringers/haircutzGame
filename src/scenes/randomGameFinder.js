@@ -6,11 +6,11 @@ class RandomGameFinder extends Phaser.Scene {
   preload() {
     this.load.image(
       "redPlayerWaitingRoom",
-      "/assets/waiting_room_background.png"
+      "/assets/waiting_room_background2.png"
     );
     this.load.spritesheet("waitingSprite", "/assets/waiting_room_sprite2.png", {
       frameWidth: 150,
-      frameHeight: 178,
+      frameHeight: 179,
     });
     this.load.image("play", "/assets/play.png");
     this.load.image("pause", "/assets/pause.png");
