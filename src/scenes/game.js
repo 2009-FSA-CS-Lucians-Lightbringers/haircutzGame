@@ -57,6 +57,7 @@ export default class Game extends Phaser.Scene {
     this.oppResourceText;
     this.counter = 10;
     this.clock;
+    this.clockSize = 40;
     this.timer;
     this.gameOver = false;
     this.attackerReleased = -2000;
@@ -85,6 +86,7 @@ export default class Game extends Phaser.Scene {
     this.damageAttacker = this.damageAttacker.bind(this);
     this.placeTurret = this.placeTurret.bind(this);
     this.canPlaceTurret = this.canPlaceTurret.bind(this);
+    // this.turretTimer = this.turretTimer.bind(this);
     this.addBullet = this.addBullet.bind(this);
     this.getEnemy = this.getEnemy.bind(this);
     this.getAttacker = this.getAttacker.bind(this);
@@ -94,6 +96,7 @@ export default class Game extends Phaser.Scene {
     this.decrementRedScore = this.decrementRedScore.bind(this);
     this.resourceTimer = this.resourceTimer.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
+    // this.drawClock = this.drawClock.bind(this);
   }
 
   //Game methods
@@ -344,6 +347,53 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+//   drawClock (x, y, timer){
+//     //  Progress is between 0 and 1, where 0 = the hand pointing up and then rotating clockwise a full 360
+
+//     //  The frame
+//     var graphics = this.add.graphics();
+//     graphics.lineStyle(6, 0xffffff, 1);
+//     graphics.strokeCircle(x, y, this.clockSize);
+
+//     var angle;
+//     var dest;
+//     var p1;
+//     var p2;
+//     var size;
+
+
+//     if (timer > 0)
+//     {
+//         size = this.clockSize * 0.9;
+
+//         angle = (21600 * timer/1000) - 90;
+//         dest = Phaser.Math.RotateAroundDistance({ x: x, y: y }, x, y, Phaser.Math.DegToRad(angle), size);
+
+//         graphics.lineStyle(2, 0xff0000, 1);
+
+//         graphics.beginPath();
+
+//         graphics.moveTo(x, y);
+
+//         p1 = Phaser.Math.RotateAroundDistance({ x: x, y: y }, x, y, Phaser.Math.DegToRad(angle - 5), size * 0.7);
+
+//         graphics.lineTo(p1.x, p1.y);
+//         graphics.lineTo(dest.x, dest.y);
+
+//         graphics.moveTo(x, y);
+
+//         p2 = Phaser.Math.RotateAroundDistance({ x: x, y: y }, x, y, Phaser.Math.DegToRad(angle + 5), size * 0.7);
+
+//         graphics.lineTo(p2.x, p2.y);
+//         graphics.lineTo(dest.x, dest.y);
+
+//         graphics.strokePath();
+//         graphics.closePath();
+//     }
+// }
+
+
+
   //grid methods
   drawGrid(graphics) {
     for (var i = 1; i < 8; i++) {
@@ -357,6 +407,7 @@ export default class Game extends Phaser.Scene {
     graphics.lineStyle(1, 0x0000ff, 0);
     graphics.strokePath();
   }
+
 
   preload() {
     // load the game assets –
@@ -415,7 +466,7 @@ export default class Game extends Phaser.Scene {
     this.isPlayerA = this.game.isPlayerA;
     this.isPlayerB = this.game.isPlayerB;
     this.add.image(400, 300, "background");
-    this.add.image(85, 508, "scoreboard");
+    this.add.image(85, 508, "scoreboard")
     this.add.image(400, 535, "blackboard");
     this.add.image(700, 520, "clock");
     this.play = this.add.image(50, 50, "play");
