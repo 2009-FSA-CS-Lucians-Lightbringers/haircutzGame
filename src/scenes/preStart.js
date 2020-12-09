@@ -62,7 +62,7 @@ class PreStart extends Phaser.Scene {
 
     var bluePlayerText = this.make.text({
       x: 125,
-      y: 87,
+      y: 95,
       text: "BLUE PLAYER READY?",
       style: {
         font: "bold 40px Marker Felt",
@@ -73,8 +73,8 @@ class PreStart extends Phaser.Scene {
 
     var blueClickText = this.make.text({
       x: 125,
-      y: 173,
-      text: "(CLICK TO START)",
+      y: 180,
+      text: "(CLICK ABOVE)",
       style: {
         font: "bold 18px Marker Felt",
         color: "blue",
@@ -84,7 +84,7 @@ class PreStart extends Phaser.Scene {
 
     var redPlayerText = this.make.text({
       x: 430,
-      y: 87,
+      y: 95,
       text: "RED PLAYER READY?",
       style: {
         font: "bold 40px Marker Felt",
@@ -95,8 +95,8 @@ class PreStart extends Phaser.Scene {
 
     var redClickText = this.make.text({
       x: 430,
-      y: 173,
-      text: "(CLICK TO START)",
+      y: 180,
+      text: "(CLICK ABOVE)",
       style: {
         font: "bold 18px Marker Felt",
         color: "red",

@@ -44,11 +44,11 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
     var waiting = this.make.text({
       x: 165,
       y: 55,
-      text: "YOU ARE THE RED PLAYER, ENTERING THE ROOM SHORTLY...",
+      text: "YOU ARE THE RED PLAYER, ENTERING THE GAME SHORTLY...",
       style: {
-        font: "bold 30px Marker Felt",
+        font: "bold 38px Marker Felt",
         fill: "red",
-        wordWrap: { width: 500 },
+        wordWrap: { width: 600 },
       },
     });
 
