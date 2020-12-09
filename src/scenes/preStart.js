@@ -33,7 +33,6 @@ class PreStart extends Phaser.Scene {
     const waitingSprite1 = this.add.sprite(275, 305, "waitingSprite1", 0);
     const waitingSprite2 = this.add.sprite(525, 305, "waitingSprite2", 0);
 
-
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(125, 70, "pause");
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
@@ -80,7 +79,7 @@ class PreStart extends Phaser.Scene {
         color: "blue",
         wordWrap: { width: 300 },
       },
-    })
+    });
 
     var redPlayerText = this.make.text({
       x: 430,
@@ -102,7 +101,7 @@ class PreStart extends Phaser.Scene {
         color: "red",
         wordWrap: { width: 300 },
       },
-    })
+    });
 
     bluePlayerText.setInteractive({ useHandCursor: true });
     bluePlayerText.on("pointerdown", () => {

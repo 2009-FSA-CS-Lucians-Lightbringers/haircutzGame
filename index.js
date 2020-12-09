@@ -55,7 +55,7 @@ io.on("connection", function (socket) {
 
   socket.on("findRoom", function (roomCode) {
     if (roomCode in rooms) {
-      if (rooms[roomCode].length === 1) {
+      if (rooms[roomCode].players.length === 1) {
         socket.join(roomCode);
         io.to(roomCode).emit("isPlayerB");
         rooms[roomCode].players.push(socket.id);
@@ -118,6 +118,13 @@ io.on("connection", function (socket) {
       socket.join(roomCode);
       io.in(roomCode).emit("randomJoin", roomCode);
     } else io.to(socket.id).emit("randomJoin");
+  });
+
+  socket.on("timer", function () {
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
+    io.in(roomCode).emit("timer");
   });
 
   //when a user disconnects, log and take player out of players array
