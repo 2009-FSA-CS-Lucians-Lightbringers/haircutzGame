@@ -109,11 +109,11 @@ class Credits extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-      var homeText = this.make
+      var introMusicText = this.make
       .text({
         x: 415,
         y: 452,
-        text: "HOME - RESONANCE",
+        text: "ANDREW COHEN - INTRO THEME",
         style: {
           align: "center",
           font: "bold 20px Marker Felt",
@@ -123,11 +123,11 @@ class Credits extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-      var flyLoText = this.make
+      var lakeyText = this.make
       .text({
         x: 415,
         y: 482,
-        text: "FLYING LOTUS - 1983",
+        text: "LAKEY - WATCHING THE CLOUDS",
         style: {
           align: "center",
           font: "bold 20px Marker Felt",
