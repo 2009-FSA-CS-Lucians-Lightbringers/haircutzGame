@@ -55,7 +55,7 @@ io.on("connection", function (socket) {
 
   socket.on("findRoom", function (roomCode) {
     if (roomCode in rooms) {
-      if (rooms[roomCode].length === 1) {
+      if (rooms[roomCode].players.length === 1) {
         socket.join(roomCode);
         io.to(roomCode).emit("isPlayerB");
         rooms[roomCode].players.push(socket.id);
