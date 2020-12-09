@@ -53,17 +53,17 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
     var waiting = this.make.text({
       x: 165,
       y: 55,
-      text: "YOU ARE BLUE PLAYER. WAITING FOR RED PLAYER",
+      text: "YOU ARE THE BLUE PLAYER, WAITING FOR THE RED PLAYER...",
       style: {
         font: "bold 30px Marker Felt",
         fill: "blue",
-        wordWrap: { width: 500 },
+        wordWrap: { width: 515 },
       },
     });
 
     var waitingRoomCode = this.make.text({
       x: 172,
-      y: 155,
+      y: 145,
       text: "ROOM CODE:",
       style: {
         font: "bold 40px Marker Felt",

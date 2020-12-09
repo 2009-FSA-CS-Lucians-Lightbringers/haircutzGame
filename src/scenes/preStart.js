@@ -8,15 +8,15 @@ class PreStart extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("preStart", "/assets/pre_start_screen.png");
+    this.load.image("preStart", "/assets/pre_start_screen2.png");
     this.load.spritesheet(
       "waitingSprite1",
-      "/assets/waiting_room_sprite1.png",
+      "/assets/waiting_room_sprite1_v2.png",
       { frameWidth: 150, frameHeight: 179 }
     );
     this.load.spritesheet(
       "waitingSprite2",
-      "/assets/waiting_room_sprite2.png",
+      "/assets/waiting_room_sprite_2_v2.png",
       { frameWidth: 150, frameHeight: 179 }
     );
     this.load.image("play", "/assets/play.png");
@@ -30,8 +30,9 @@ class PreStart extends Phaser.Scene {
     var self = this;
     var roomCode = this.game.roomCode;
 
-    const waitingSprite1 = this.add.sprite(525, 305, "waitingSprite1", 0);
-    const waitingSprite2 = this.add.sprite(275, 305, "waitingSprite2", 0);
+    const waitingSprite1 = this.add.sprite(275, 305, "waitingSprite1", 0);
+    const waitingSprite2 = this.add.sprite(525, 305, "waitingSprite2", 0);
+
 
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(125, 70, "pause");
@@ -59,9 +60,31 @@ class PreStart extends Phaser.Scene {
     });
     waitingSprite2.play("wait2");
 
-    var redPlayerText = this.make.text({
+    var bluePlayerText = this.make.text({
       x: 125,
-      y: 85,
+      y: 87,
+      text: "BLUE PLAYER READY?",
+      style: {
+        font: "bold 40px Marker Felt",
+        color: "blue",
+        wordWrap: { width: 300 },
+      },
+    });
+
+    var blueClickText = this.make.text({
+      x: 125,
+      y: 173,
+      text: "(CLICK TO START)",
+      style: {
+        font: "bold 18px Marker Felt",
+        color: "blue",
+        wordWrap: { width: 300 },
+      },
+    })
+
+    var redPlayerText = this.make.text({
+      x: 430,
+      y: 87,
       text: "RED PLAYER READY?",
       style: {
         font: "bold 40px Marker Felt",
@@ -70,16 +93,16 @@ class PreStart extends Phaser.Scene {
       },
     });
 
-    var bluePlayerText = this.make.text({
+    var redClickText = this.make.text({
       x: 430,
-      y: 85,
-      text: "BLUE PLAYER READY?",
+      y: 173,
+      text: "(CLICK TO START)",
       style: {
-        font: "bold 40px Marker Felt",
-        color: "blue",
+        font: "bold 18px Marker Felt",
+        color: "red",
         wordWrap: { width: 300 },
       },
-    });
+    })
 
     bluePlayerText.setInteractive({ useHandCursor: true });
     bluePlayerText.on("pointerdown", () => {
@@ -97,12 +120,14 @@ class PreStart extends Phaser.Scene {
 
     this.game.socket.on("redPlayerReady", function () {
       redPlayerText.text = "RED PLAYER IS READY";
+      redClickText.visible = false;
       self.redPlayerReady = true;
       self.playersReady();
     });
 
     this.game.socket.on("bluePlayerReady", function () {
       bluePlayerText.text = "BLUE PLAYER IS READY";
+      blueClickText.visible = false;
       self.bluePlayerReady = true;
       self.playersReady();
     });
