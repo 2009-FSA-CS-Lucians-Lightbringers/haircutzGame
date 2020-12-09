@@ -44,9 +44,10 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
     var waiting = this.make.text({
       x: 165,
       y: 55,
-      text: "YOU ARE THE RED PLAYER, ENTERING THE GAME SHORTLY...",
+      text: "YOU ARE RED PLAYER. ENTERING ROOM...",
       style: {
-        font: "bold 38px Marker Felt",
+        align: "center",
+        font: "bold 30px Marker Felt",
         fill: "red",
         wordWrap: { width: 600 },
       },
@@ -63,10 +64,8 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (this.game.switchTime) {
-      if (this.game.switchTime + 5000 < this.time.now) {
-        this.scene.switch("preStart");
-      }
+    if (this.game.switchTime + 5000 < this.time.now) {
+      this.scene.switch("preStart");
     }
   }
 }

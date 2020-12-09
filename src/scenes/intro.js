@@ -28,49 +28,61 @@ class IntroScene extends Phaser.Scene {
     this.add.image(70, 70, "play");
     this.add.image(135, 70, "pause");
 
-    var createGame = this.make.text({
-      x: 295,
-      y: 335,
-      text: "CREATE GAME",
-      style: {
-        font: "bold 30px Marker Felt",
-        fill: "blue",
-        wordWrap: { width: 400 },
-      },
-    });
+    var createGame = this.make
+      .text({
+        x: 415,
+        y: 355,
+        text: "CREATE GAME",
+        style: {
+          align: "center",
+          font: "bold 30px Marker Felt",
+          fill: "blue",
+          wordWrap: { width: 400 },
+        },
+      })
+      .setOrigin(0.5);
 
-    var browseGames = this.make.text({
-      x: 285,
-      y: 380,
-      text: "BROWSE GAMES",
-      style: {
-        font: "bold 30px Marker Felt",
-        fill: "red",
-        wordWrap: { width: 400 },
-      },
-    });
+    var browseGames = this.make
+      .text({
+        x: 415,
+        y: 400,
+        text: "JOIN RANDOM GAME",
+        style: {
+          align: "center",
+          font: "bold 30px Marker Felt",
+          fill: "red",
+          wordWrap: { width: 400 },
+        },
+      })
+      .setOrigin(0.5);
 
-    var joinGame = this.make.text({
-      x: 323,
-      y: 425,
-      text: "JOIN GAME",
-      style: {
-        font: "bold 30px Marker Felt",
-        fill: "blue",
-        wordWrap: { width: 400 },
-      },
-    });
+    var joinGame = this.make
+      .text({
+        x: 415,
+        y: 445,
+        text: "JOIN WITH CODE",
+        style: {
+          align: "center",
+          font: "bold 30px Marker Felt",
+          fill: "blue",
+          wordWrap: { width: 400 },
+        },
+      })
+      .setOrigin(0.5);
 
-    var credits = this.make.text({
-      x: 342,
-      y: 470,
-      text: "CREDITS",
-      style: {
-        font: "bold 30px Marker Felt",
-        fill: "red",
-        wordWrap: { width: 400 },
-      },
-    });
+    var credits = this.make
+      .text({
+        x: 415,
+        y: 490,
+        text: "CREDITS",
+        style: {
+          align: "center",
+          font: "bold 30px Marker Felt",
+          fill: "red",
+          wordWrap: { width: 400 },
+        },
+      })
+      .setOrigin(0.5);
 
     //Play button
     play.setInteractive({ useHandCursor: true });
@@ -105,6 +117,21 @@ class IntroScene extends Phaser.Scene {
           } else console.log("ERROR: No room specified"); // Text input was left empty
         }
       });
+    });
+
+    browseGames.setInteractive({ useHandCursor: true });
+    browseGames.on("pointerdown", () => {
+      self.game.socket.emit("joinRandom");
+    });
+
+    this.game.socket.on("randomJoin", (roomCode) => {
+      if (!self.game.isPlayerA) {
+        if (roomCode) {
+          self.game.roomCode = roomCode;
+          self.game.isPlayerB = true;
+        }
+        this.scene.switch("randomGameFinder");
+      }
     });
 
     this.game.socket.on("roomFound", (roomCode) => {
