@@ -68,7 +68,7 @@ export default new Phaser.Class({
       }
       this.scene.snips.stop();
       this.scene.oppResourcePoints += 1;
-      this.scene.oppResourceText.setText("ENEMY RP | " + this.scene.oppResourcePoints);
+      this.scene.oppResourceText.setText("ENEMY | " + this.scene.oppResourcePoints);
       this.healthBar.destroy();
       this.destroy();
     }

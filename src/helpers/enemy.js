@@ -64,7 +64,7 @@ export default new Phaser.Class({
         this.scene.incrementRedScore();
       }
       this.scene.resourcePoints += 1;
-      this.scene.resourceText.setText("USER RP | " + this.scene.resourcePoints);
+      this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
       this.healthBar.destroy();
       this.destroy();
     }
