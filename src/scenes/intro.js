@@ -104,7 +104,7 @@ class IntroScene extends Phaser.Scene {
     //Join Game
     joinGame.setInteractive({ useHandCursor: true });
     joinGame.on("pointerdown", () => {
-      const form = this.add.dom(450, 360, "div").createFromCache("joinRoom");
+      const form = this.add.dom(580, 453, "div").createFromCache("joinRoom");
       form.addListener("click");
       form.on("click", (event) => {
         event.preventDefault();
