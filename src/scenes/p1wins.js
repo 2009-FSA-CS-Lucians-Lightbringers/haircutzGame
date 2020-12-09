@@ -15,10 +15,10 @@ class PlayerOneWins extends Phaser.Scene {
   create() {
     var bg = this.add.sprite(0, 0, "p1Wins");
     bg.setOrigin(0, 0);
-    var play = this.add.image(70, 70, "play" )
-    var pause = this.add.image(135, 70, "pause" )
+    var play = this.add.image(70, 70, "play");
+    var pause = this.add.image(135, 70, "pause");
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
-    this.theme.play()
+    this.theme.play();
 
     var playAgain = this.make.text({
       x: 295,
@@ -35,16 +35,16 @@ class PlayerOneWins extends Phaser.Scene {
     playAgain.on("pointerdown", () => this.clickButton());
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
-      this.theme.play()
-    })
+      self.game.sound.mute = false;
+    });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
-      this.theme.stop()
-    })
+      self.game.sound.mute = true;
+    });
   }
 
   clickButton() {
-    this.theme.stop()
+    this.theme.stop();
     this.scene.switch("introScene");
   }
 }
