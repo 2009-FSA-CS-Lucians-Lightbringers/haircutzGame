@@ -51,6 +51,8 @@ io.on("connection", function (socket) {
     io.to(roomCode).emit("isPlayerA");
     io.to(roomCode).emit("roomCode", roomCode);
     rooms[roomCode] = { players: [socket.id] };
+    //console.log(rooms);
+    //console.log(io.sockets.adapter.rooms);
   });
 
   socket.on("findRoom", function (roomCode) {
@@ -116,6 +118,7 @@ io.on("connection", function (socket) {
     if (openRoomQueue.length) {
       let roomCode = openRoomQueue.shift();
       socket.join(roomCode);
+      rooms[roomCode].players.push(socket.id);
       io.in(roomCode).emit("randomJoin", roomCode);
     } else io.to(socket.id).emit("randomJoin");
   });
@@ -127,15 +130,45 @@ io.on("connection", function (socket) {
     io.in(roomCode).emit("timer");
   });
 
+  socket.on("removeAttacker", function (number, createdByPlayerA) {
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
+    io.in(roomCode).emit("removeAttacker", number, createdByPlayerA);
+  });
+
+  socket.on("removeEnemy", function (number, createdByPlayerA) {
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
+    io.in(roomCode).emit("removeEnemy", number, createdByPlayerA);
+  });
+
+  socket.on("gameReady", function (isPlayerA) {
+    let roomCode = Array.from(socket.rooms).filter(
+      (item) => item != socket.id
+    )[0];
+    io.in(roomCode).emit("gameReady", isPlayerA);
+  });
+
   //when a user disconnects, log and take player out of players array
   socket.on("disconnect", function () {
+    let roomCode;
     console.log("A user disconnected: " + socket.id);
     players = players.filter((player) => player !== socket.id);
-    //if the socket was in a room,
-    //emit message to player left in room - "Game over, other player left"
-    //have other player leave the room. emit leave room message to the roomCode, then use socket.leave(roomCode)
-    //destroy room instance in rooms obj
-    //if they had a room in the openRoomsQueue, remove it
+    for (let room in rooms) {
+      if (rooms[room].players.includes(socket.id)) {
+        roomCode = room;
+        delete rooms[room];
+      }
+    }
+    if (roomCode) {
+      if (openRoomQueue.includes(roomCode)) {
+        let idx = openRoomQueue.indexOf(roomCode);
+        openRoomQueue.splice(idx, 1);
+      }
+      io.in(roomCode).emit("playerLeft");
+    }
   });
 });
 

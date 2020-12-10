@@ -13,7 +13,7 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
       frameWidth: 150,
       frameHeight: 179,
     });
-    this.load.image("play", "/assets/play.png");
+    this.load.image("play", "/assets/playing.png");
     this.load.image("pause", "/assets/pause.png");
     this.load.audio("theme", ["/assets/intro_theme2.mp3"]);
   }
@@ -25,7 +25,9 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
     this.game.switchTime = this.time.now;
 
     var play = this.add.image(70, 70, "play");
-    var pause = this.add.image(125, 70, "pause");
+    var pause = this.add.image(70, 70, "pause");
+    play.setVisible(false)
+    play.setActive(false)
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
 
     const waitingSprite = this.add.sprite(390, 295, "waitingSprite", 0);
@@ -56,10 +58,18 @@ class RedPlayerWaitingRoom extends Phaser.Scene {
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       self.game.sound.mute = false;
+      play.setVisible(false)
+      play.setActive(false)
+      pause.setVisible(true)
+      pause.setActive(true)
     });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
       self.game.sound.mute = true;
+      play.setVisible(true)
+      play.setActive(true)
+      pause.setVisible(false)
+      pause.setActive(false)
     });
   }
 
