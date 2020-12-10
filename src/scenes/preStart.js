@@ -103,6 +103,25 @@ class PreStart extends Phaser.Scene {
       },
     });
 
+    var backToMain = this.make
+      .text({
+        x: 650,
+        y: 525,
+        text: "Back to Main Menu",
+        style: {
+          align: "center",
+          font: "bold 18px Marker Felt",
+          fill: "blue",
+          wordWrap: { width: 500 },
+        },
+      })
+      .setOrigin(0.5);
+
+    backToMain.setInteractive({ useHandCursor: true });
+    backToMain.on("pointerdown", () => {
+      location.reload();
+    });
+
     bluePlayerText.setInteractive({ useHandCursor: true });
     bluePlayerText.on("pointerdown", () => {
       if (this.game.isPlayerA) {

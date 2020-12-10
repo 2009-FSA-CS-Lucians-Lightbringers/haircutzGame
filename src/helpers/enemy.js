@@ -29,13 +29,16 @@ export default new Phaser.Class({
       this.follower.t = 0;
       this.anims.play("blueWalk");
       // get x and y of the given t point
-      // console.log(this.path.getPoint(this.follower.t, this.follower.vec));
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
       this.hp = 100;
-      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y+20, 0x712ecc);
-      this.scene.setValue(this.healthBar,this.hp)
+      this.healthBar = this.scene.makeBar(
+        this.follower.vec.x - 20,
+        this.follower.vec.y + 20,
+        0x712ecc
+      );
+      this.scene.setValue(this.healthBar, this.hp);
     } else {
       this.follower.t = 1;
       this.anims.play("redWalk");
@@ -43,8 +46,12 @@ export default new Phaser.Class({
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
       this.hp = 100;
-      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y+20, 0x712ecc);
-      this.scene.setValue(this.healthBar,this.hp)
+      this.healthBar = this.scene.makeBar(
+        this.follower.vec.x - 20,
+        this.follower.vec.y + 20,
+        0x712ecc
+      );
+      this.scene.setValue(this.healthBar, this.hp);
     }
   },
 
@@ -52,28 +59,38 @@ export default new Phaser.Class({
     // decrement health points
     this.hp -= damage;
     console.log(`enemy ${this.number} took damage`, this.hp);
-    this.scene.setValue(this.healthBar,this.hp);
-    //console.log(">>>after bullet", this.hp);
-    // if hp drops below 0 we deactivate this enemy
+    this.scene.setValue(this.healthBar, this.hp);
     if (this.hp <= 0) {
-      if (this.scene.isPlayerA && this.hasSwitched) {
-        this.scene.incrementBlueScore();
-      }
-      if (!this.scene.isPlayerA && this.hasSwitched) {
-        this.scene.incrementRedScore();
-      }
-      this.scene.resourcePoints += 1;
-      this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
-      this.healthBar.destroy();
-      this.destroy();
+      this.scene.game.socket.emit(
+        "removeEnemy",
+        this.number,
+        this.createdByPlayerA
+      );
     }
+  },
+
+  removeEnemy() {
+    if (this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementBlueScore();
+    }
+    if (!this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementRedScore();
+    }
+    console.log("Removing Enemy...");
+    this.scene.resourcePoints += 1;
+    this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
+    this.healthBar.destroy();
+    this.destroy();
   },
 
   update: function (time, delta) {
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      this.healthBar.setPosition(this.follower.vec.x-20, this.follower.vec.y+20)
+      this.healthBar.setPosition(
+        this.follower.vec.x - 20,
+        this.follower.vec.y + 20
+      );
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 

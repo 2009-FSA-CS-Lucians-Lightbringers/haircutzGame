@@ -35,22 +35,29 @@ export default new Phaser.Class({
       // set the t parameter at the start of the path
       this.follower.t = 0;
       // get x and y of the given t point
-      // console.log(this.path.getPoint(this.follower.t, this.follower.vec));
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y-20, 0x2ecc71);
+      this.healthBar = this.scene.makeBar(
+        this.follower.vec.x - 20,
+        this.follower.vec.y - 20,
+        0x2ecc71
+      );
       this.hp = 100;
-      this.scene.setValue(this.healthBar,this.hp)
+      this.scene.setValue(this.healthBar, this.hp);
     } else {
       this.follower.t = 1;
 
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y-20, 0x2ecc71);
+      this.healthBar = this.scene.makeBar(
+        this.follower.vec.x - 20,
+        this.follower.vec.y - 20,
+        0x2ecc71
+      );
       this.hp = 100;
-      this.scene.setValue(this.healthBar,this.hp)
+      this.scene.setValue(this.healthBar, this.hp);
     }
   },
 
@@ -60,29 +67,43 @@ export default new Phaser.Class({
     this.scene.setValue(this.healthBar, this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
-      if(this.scene.isPlayerA && this.hasSwitched){
-        this.scene.incrementRedScore();
-      }
-      if(!this.scene.isPlayerA && this.hasSwitched){
-        this.scene.incrementBlueScore();
-      }
-      this.scene.snips.stop();
-      this.scene.oppResourcePoints += 1;
-      this.scene.oppResourceText.setText("ENEMY | " + this.scene.oppResourcePoints);
-      this.healthBar.destroy();
-      this.destroy();
+      this.scene.game.socket.emit(
+        "removeAttacker",
+        this.number,
+        this.createdByPlayerA
+      );
     }
+  },
+
+  removeAttacker() {
+    if (this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementRedScore();
+    }
+    if (!this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementBlueScore();
+    }
+    console.log("Removing Attacker...");
+    this.scene.snips.stop();
+    this.scene.oppResourcePoints += 1;
+    this.scene.oppResourceText.setText(
+      "ENEMY | " + this.scene.oppResourcePoints
+    );
+    this.healthBar.destroy();
+    this.destroy();
   },
 
   update: function (time, delta) {
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      this.healthBar.setPosition(this.follower.vec.x-20, this.follower.vec.y+20)
+      this.healthBar.setPosition(
+        this.follower.vec.x - 20,
+        this.follower.vec.y + 20
+      );
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
-        if(this.follower.t >= .5 && !this.hasSwitched){
-          this.anims.play("reverseBlueWalk")
+        if (this.follower.t >= 0.5 && !this.hasSwitched) {
+          this.anims.play("reverseBlueWalk");
           this.scene.decrementRedScore();
           this.hasSwitched = true;
         }
@@ -94,7 +115,7 @@ export default new Phaser.Class({
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
 
-        if(this.follower.t <= .5 && !this.hasSwitched){
+        if (this.follower.t <= 0.5 && !this.hasSwitched) {
           this.anims.play("reverseRedWalk");
           this.scene.decrementBlueScore();
           this.hasSwitched = true;
@@ -104,7 +125,6 @@ export default new Phaser.Class({
           this.healthBar.destroy();
           this.scene.incrementRedScore();
           this.destroy();
-
         }
       }
     }
