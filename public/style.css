@@ -125,11 +125,10 @@ p {
   visibility: hidden;
 }
 
-/* canvas {
-  transform: scale(1.5, 1.5);
-  position: absolute;
-  left: 25%;
-  right: 25%
-} */
+#game {
+  float: left;
+  height: 90vh;
+  width: 90vw;
+}
 
 }
