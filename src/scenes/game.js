@@ -3,7 +3,9 @@
 import io from 'socket.io-client';
 import Zone from '../helpers/zone.js';
 import Enemy from '../helpers/enemy.js';
+import EnemyLvl2 from '../helpers/enemy2.js';
 import Attacker from '../helpers/attacker.js';
+import AttackerLvl2 from '../helpers/attacker2.js';
 import Turret from '../helpers/turret.js';
 import Bullet from '../helpers/bullet.js';
 // import HomeBase from "../helpers/homeBase.js";
@@ -47,7 +49,9 @@ export default class Game extends Phaser.Scene {
     this.cursor;
     this.graphics;
     this.enemies;
+    this.enemiesLvl2;
     this.attackers;
+    this.attackersLvl2;
     this.turrets;
     this.bullets;
     this.enemyBase;
@@ -161,7 +165,7 @@ export default class Game extends Phaser.Scene {
 
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
-          var attacker = this.attackers.get();
+          var attacker = this.attackersLvl2.get();
           this.resourcePoints -= 2;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (attacker) {
@@ -489,11 +493,33 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
+      key: "blue2Walk",
+      frames: [
+        { key: "p1attackers", frame: 20 },
+        { key: "p1attackers", frame: 21 },
+        { key: "p1attackers", frame: 22 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
       key: "reverseBlueWalk",
       frames: [
         { key: "p1return", frame: 1 },
         { key: "p1return", frame: 2 },
         { key: "p1return", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "reverseBlue2Walk",
+      frames: [
+        { key: "p1return", frame: 4 },
+        { key: "p1return", frame: 5 },
+        { key: "p1return", frame: 6 },
       ],
       frameRate: 10,
       repeat: -1,
@@ -511,11 +537,22 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
-      key: "reverseRedWalk",
+      key: "red2Walk",
       frames: [
-        { key: "p2return", frame: 1 },
-        { key: "p2return", frame: 2 },
-        { key: "p2return", frame: 3 },
+        { key: "p2attackers", frame: 20 },
+        { key: "p2attackers", frame: 21 },
+        { key: "p2attackers", frame: 22 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "reverseRed2Walk",
+      frames: [
+        { key: "p2return", frame: 4 },
+        { key: "p2return", frame: 5 },
+        { key: "p2return", frame: 6 },
       ],
       frameRate: 10,
       repeat: -1,
@@ -713,11 +750,24 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
     this.nextEnemy = 0;
+
+    this.enemiesLvl2 = this.physics.add.group({
+      classType: EnemyLvl2,
+      runChildUpdate: true,
+    });
+    this.nextEnemy = 0;
+
     this.attackers = this.physics.add.group({
       classType: Attacker,
       runChildUpdate: true,
     });
+
+    this.attackersLvl2 = this.physics.add.group({
+      classType: AttackerLvl2,
+      runChildUpdate: true,
+    });
     this.nextAttacker = 0;
+
     this.turrets = this.physics.add.group({
       classType: Turret,
       runChildUpdate: true,
