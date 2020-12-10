@@ -21,6 +21,8 @@ class PreStart extends Phaser.Scene {
     );
     this.load.image("play", "/assets/playing.png");
     this.load.image("pause", "/assets/muted.png");
+    this.load.image("readyPlayer1", "/assets/readyPlayer1.png");
+    this.load.image("readyPlayer2", "/assets/readyPlayer2.png");
     this.load.audio("theme", ["/assets/intro_theme2.mp3"]);
   }
 
@@ -32,6 +34,10 @@ class PreStart extends Phaser.Scene {
 
     const waitingSprite1 = this.add.sprite(275, 305, "waitingSprite1", 0);
     const waitingSprite2 = this.add.sprite(525, 305, "waitingSprite2", 0);
+    const readyImage1 = this.add.image(275, 305, "readyPlayer1")
+    const readyImage2 = this.add.image(525, 305, "readyPlayer2")
+    readyImage1.setVisible(false)
+    readyImage2.setVisible(false)
 
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(70, 70, "pause");
@@ -122,6 +128,9 @@ class PreStart extends Phaser.Scene {
     this.game.socket.on("redPlayerReady", function () {
       redPlayerText.text = "RED PLAYER IS READY";
       redClickText.visible = false;
+      waitingSprite2.setVisible(false);
+      waitingSprite2.setActive(false)
+      readyImage2.setVisible(true);
       self.redPlayerReady = true;
       self.playersReady();
     });
@@ -129,6 +138,9 @@ class PreStart extends Phaser.Scene {
     this.game.socket.on("bluePlayerReady", function () {
       bluePlayerText.text = "BLUE PLAYER IS READY";
       blueClickText.visible = false;
+      waitingSprite1.setVisible(false);
+      waitingSprite1.setActive(false)
+      readyImage1.setVisible(true);
       self.bluePlayerReady = true;
       self.playersReady();
     });
