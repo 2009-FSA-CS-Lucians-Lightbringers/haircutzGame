@@ -1,5 +1,3 @@
-//make it so that placement of turrets does not depend on map
-//turrets should depend on coordinates of drop zone
 import io from "socket.io-client";
 import Zone from "../helpers/zone.js";
 import Enemy from "../helpers/enemy.js";
@@ -25,6 +23,8 @@ export default class Game extends Phaser.Scene {
     this.BULLET_DAMAGE = 20;
     this.gameTheme;
     this.scissor;
+    this.attackerLevel;
+		this.strikeCoordinate;
     this.ouch;
     this.snips;
     this.plop;
@@ -103,6 +103,7 @@ export default class Game extends Phaser.Scene {
     this.resourceTimer = this.resourceTimer.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
     // this.drawClock = this.drawClock.bind(this);
+    this.whereInMeter = this.whereInMeter.bind(this)
     this.truthy = false;
   }
 
@@ -155,7 +156,7 @@ export default class Game extends Phaser.Scene {
 
   spawnScissor(event) {
     let path;
-
+    let attackerLevel = event.attackerLevel;
     if (this.isPlayerA) {
       if (event.path === 1) path = this.path1;
       if (event.path === 2) path = this.path2;
@@ -452,7 +453,28 @@ export default class Game extends Phaser.Scene {
       location.reload();
     });
   }
-
+  	whereInMeter(strikeCoordinate) {
+		if (strikeCoordinate >= 216.5 && strikeCoordinate <= 277.5) {
+			//left red zone in meter
+			this.attackerLevel = 2;
+		}
+		if (strikeCoordinate >= 277.5 && strikeCoordinate <= 384.27) {
+			//left blue
+			this.attackerLevel = 1;
+		}
+		if (strikeCoordinate >= 384.27 && strikeCoordinate <= 421.44) {
+			//white
+			this.attackerLevel = 3;
+		}
+		if (strikeCoordinate >= 421.44 && strikeCoordinate <= 523.4) {
+			//right blue
+			this.attackerLevel = 1;
+		}
+		if (strikeCoordinate >= 523.4 && strikeCoordinate <= 582.1) {
+			//right red
+			this.attackerLevel = 2;
+		}
+	}
   preload() {
     // load the game assets –
     this.load.image("background", "/assets/background.png");
@@ -898,27 +920,20 @@ export default class Game extends Phaser.Scene {
     groupZone2.add(this.path2ZoneR);
     groupZone3.add(this.path3ZoneL);
     groupZone3.add(this.path3ZoneR);
-
-    //path for cusor
-    this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
-
-    //  The curves do not have to be joined
-    var line1 = new Phaser.Curves.Line([50, 100, 50, 400]);
-
-    this.cursorPath = this.add.path();
-
-    // path = new Phaser.Curves.Path();
-
-    this.cursorPath.add(line1);
-
-    this.tweens.add({
-      targets: this.cursor,
-      t: 1,
-      ease: "Linear",
-      duration: 4000,
-      yoyo: true,
-      repeat: -1,
-    });
+    
+		//path for cusor
+		this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
+		var line1 = new Phaser.Curves.Line([216.5, 50, 582.4, 50]);
+		this.cursorPath = this.add.path();
+		this.cursorPath.add(line1);
+		this.tweens.add({
+			targets: this.cursor,
+			t: 1,
+			ease: "Linear",
+			duration: 4000,
+			yoyo: true,
+			repeat: -1,
+		});
 
     this.enemies = this.physics.add.group({
       classType: Enemy,
@@ -1163,68 +1178,76 @@ export default class Game extends Phaser.Scene {
       }
     });
 
-    this.input.on("drop", function (pointer, gameObject, dropZone) {
-      if (gameObject.name === "scissor") {
-        if (dropZone.name === "path1") {
-          dropZone.fillAlpha = 0;
-          dropZone.strokeAlpha = 0;
-          self.game.socket.emit("spawnScissor", {
-            isPlayerA: self.isPlayerA,
-            path: 1,
-          });
-          gameObject.clearTint();
-          self.attackerReleased = self.time.now;
-        }
-        if (dropZone.name === "path2") {
-          for (const child of groupZone2.getChildren()) {
-            child.fillAlpha = 0;
-            child.strokeAlpha = 0;
-          }
-          self.game.socket.emit("spawnScissor", {
-            isPlayerA: self.isPlayerA,
-            path: 2,
-          });
-          gameObject.clearTint();
-          self.attackerReleased = self.time.now;
-        }
-        if (dropZone.name === "path3") {
-          for (const child of groupZone3.getChildren()) {
-            child.fillAlpha = 0;
-            child.strokeAlpha = 0;
-          }
-          self.game.socket.emit("spawnScissor", {
-            isPlayerA: self.isPlayerA,
-            path: 3,
-          });
-          gameObject.clearTint();
-          self.attackerReleased = self.time.now;
-        }
-      }
-      if (gameObject.name === "turret") {
-        if (dropZone.name === "triangleA" && self.isPlayerA) {
-          dropZone.fillColor = 0x9fc5e8;
-          dropZone.setStrokeStyle(4, 0xffffff);
-          gameObject.setTint(0xff0000);
-          self.game.socket.emit(
-            "placeTurret",
-            self.isPlayerA,
-            pointer.upX,
-            pointer.upY
-          );
-        }
-        if (dropZone.name === "triangleB" && self.isPlayerB) {
-          dropZone.fillColor = 0xf4cccc;
-          dropZone.setStrokeStyle(4, 0xffffff);
-          gameObject.setTint(0xff0000);
-          self.game.socket.emit(
-            "placeTurret",
-            self.isPlayerA,
-            pointer.upX,
-            pointer.upY
-          );
-        }
-      }
-    });
+		this.input.on("drop", function (pointer, gameObject, dropZone) {
+			if (gameObject.name === "scissor") {
+				self.strikeCoordinate = self.cursor.vec.x;
+				if (dropZone.name === "path1") {
+					dropZone.fillAlpha = 0;
+					dropZone.strokeAlpha = 0;
+					self.whereInMeter(self.strikeCoordinate);
+					self.game.socket.emit("spawnScissor", {
+						isPlayerA: self.isPlayerA,
+						path: 1,
+						attackerLevel: self.attackerLevel,
+					});
+					gameObject.clearTint();
+					self.attackerReleased = self.time.now;
+				}
+				if (dropZone.name === "path2") {
+					for (const child of groupZone2.getChildren()) {
+						child.fillAlpha = 0;
+						child.strokeAlpha = 0;
+					}
+					self.whereInMeter(self.strikeCoordinate);
+					self.game.socket.emit("spawnScissor", {
+						isPlayerA: self.isPlayerA,
+						path: 2,
+						attackerLevel: self.attackerLevel,
+					});
+					gameObject.clearTint();
+					self.attackerReleased = self.time.now;
+				}
+				if (dropZone.name === "path3") {
+					for (const child of groupZone3.getChildren()) {
+						child.fillAlpha = 0;
+						child.strokeAlpha = 0;
+					}
+					self.whereInMeter(self.strikeCoordinate);
+					self.game.socket.emit("spawnScissor", {
+						isPlayerA: self.isPlayerA,
+						path: 3,
+						attackerLevel: self.attackerLevel,
+					});
+					gameObject.clearTint();
+					self.attackerReleased = self.time.now;
+				}
+			}
+			if (gameObject.name === "turret") {
+				if (dropZone.name === "triangleA" && self.isPlayerA) {
+					console.log(self.cursor.vec.x);
+					dropZone.fillColor = 0x9fc5e8;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+					self.game.socket.emit(
+						"placeTurret",
+						self.isPlayerA,
+						pointer.upX,
+						pointer.upY
+					);
+				}
+				if (dropZone.name === "triangleB" && self.isPlayerB) {
+					dropZone.fillColor = 0xf4cccc;
+					dropZone.setStrokeStyle(4, 0xffffff);
+					gameObject.setTint(0xff0000);
+					self.game.socket.emit(
+						"placeTurret",
+						self.isPlayerA,
+						pointer.upX,
+						pointer.upY
+					);
+				}
+			}
+		});
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
       gameObject.x = gameObject.input.dragStartX;
       gameObject.y = gameObject.input.dragStartY;
@@ -1247,25 +1270,18 @@ export default class Game extends Phaser.Scene {
   update(time, delta) {
     if (this.loadingText) this.loadingText.destroy();
 
-    var self = this;
-    this.graphics.clear();
-
-    this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
-    this.graphics.fillStyle(0xffff00, 1);
-    // this.graphics.fillRect(
-    // 	self.cursor.vec.x - 8,
-    // 	self.cursor.vec.y - 8,
-    // 	16,
-    // 	16
-    // );
-    this.graphics.fillTriangle(
-      self.cursor.vec.x,
-      self.cursor.vec.y,
-      self.cursor.vec.x + 10,
-      self.cursor.vec.y + 10,
-      self.cursor.vec.x + 20,
-      self.cursor.vec.y
-    );
-    // console.log(this.input.mousePointer.x, this.input.mousePointer.y);
+		var self = this;
+		this.graphics.clear();
+		this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
+		this.graphics.fillStyle(0xffffff, 1);
+		this.graphics.fillTriangle(
+			self.cursor.vec.x,
+			self.cursor.vec.y,
+			self.cursor.vec.x + 10,
+			self.cursor.vec.y - 10,
+			self.cursor.vec.x + 20,
+			self.cursor.vec.y
+		);
+    //console.log(this.input.mousePointer.x);
   }
 }
