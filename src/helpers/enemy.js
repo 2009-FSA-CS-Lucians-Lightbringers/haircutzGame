@@ -10,6 +10,9 @@ export default new Phaser.Class({
       this.number = scene.enemyNumber;
       this.hasSwitched = false;
       this.healthBar;
+      this.level1 = false;
+      this.level2 = false;
+      this.level3 = false;
     } else {
       Phaser.GameObjects.Sprite.call(this, scene, 675, 224, "p2attackers");
       this.follower = { t: 1, vec: new Phaser.Math.Vector2() };
@@ -17,6 +20,9 @@ export default new Phaser.Class({
       this.number = scene.enemyNumber;
       this.hasSwitched = false;
       this.healthBar;
+      this.level1 = false;
+      this.level2 = false;
+      this.level3 = false;
     }
   },
   //differentiate player attacks based on class
@@ -27,23 +33,53 @@ export default new Phaser.Class({
     if (this.createdByPlayerA) {
       // set the t parameter at the start of the path
       this.follower.t = 0;
-      this.anims.play("blueWalk");
       // get x and y of the given t point
       // console.log(this.path.getPoint(this.follower.t, this.follower.vec));
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      this.hp = 100;
-      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y+20, 0x712ecc);
+      if(this.attribute === 1){
+        this.level1 = true;
+        this.anims.play("blueWalk");
+        this.healthBar = this.scene.makeBar(this.follower.vec.x-10,this.follower.vec.y-20, 0x712ecc);
+        this.hp = 80;
+      }
+      if(this.attribute === 2){
+        this.level2 = true;
+        this.anims.play("blue2Walk");
+        this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y-20, 0x712ecc);
+        this.hp = 100;
+      }
+      if(this.attribute === 3){
+        this.level3 = true;
+        this.anims.play("blue3Walk");
+        this.healthBar = this.scene.makeBar(this.follower.vec.x-30,this.follower.vec.y-20, 0x712ecc);
+        this.hp = 120;
+      }
       this.scene.setValue(this.healthBar,this.hp)
     } else {
       this.follower.t = 1;
-      this.anims.play("redWalk");
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      this.hp = 100;
-      this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y+20, 0x712ecc);
+      if(this.attribute === 1){
+        this.level1 = true;
+        this.anims.play("redWalk");
+        this.healthBar = this.scene.makeBar(this.follower.vec.x-10,this.follower.vec.y-20, 0x712ecc);
+        this.hp = 80;
+      }
+      if(this.attribute === 2){
+        this.level2 = true;
+        this.anims.play("red2Walk");
+        this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y-20, 0x712ecc);
+        this.hp = 100;
+      }
+      if(this.attribute === 3){
+        this.level3 = true;
+        this.anims.play("red3Walk");
+        this.healthBar = this.scene.makeBar(this.follower.vec.x-30,this.follower.vec.y-20, 0x712ecc);
+        this.hp = 120;
+      }
       this.scene.setValue(this.healthBar,this.hp)
     }
   },
@@ -73,12 +109,28 @@ export default new Phaser.Class({
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      this.healthBar.setPosition(this.follower.vec.x-20, this.follower.vec.y+20)
+      if(this.level1){
+        this.healthBar.setPosition(this.follower.vec.x-10, this.follower.vec.y+20)
+      }
+      if(this.level2){
+        this.healthBar.setPosition(this.follower.vec.x-20, this.follower.vec.y+20)
+      }
+      if(this.level3){
+        this.healthBar.setPosition(this.follower.vec.x-30, this.follower.vec.y+20)
+      }
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
         if (this.follower.t >= 0.5 && !this.hasSwitched) {
-          this.anims.play("reverseBlueWalk");
+          if(this.level1){
+            this.anims.play("reverseBlueWalk");
+          }
+          if(this.level2){
+            this.anims.play("reverseBlue2Walk");
+          }
+          if(this.level3){
+            this.anims.play("reverseBlue3Walk");
+          }
           this.scene.decrementRedScore();
           this.hasSwitched = true;
         }
@@ -91,7 +143,15 @@ export default new Phaser.Class({
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
         if (this.follower.t <= 0.5 && !this.hasSwitched) {
-          this.anims.play("reverseRedWalk");
+          if(this.level1){
+            this.anims.play("reverseRedWalk");
+          }
+          if(this.level2){
+            this.anims.play("reverseRed2Walk");
+          }
+          if(this.level3){
+            this.anims.play("reverseRed3Walk");
+          }
           this.scene.decrementBlueScore();
           this.hasSwitched = true;
         }
