@@ -85,6 +85,7 @@ export default class Game extends Phaser.Scene {
       [-1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1],
     ];
     this.spawnScissor = this.spawnScissor.bind(this);
+    // this.spawnScissorLvl2 = this.spawnScissorLvl2.bind(this);
     this.touchBase = this.touchBase.bind(this);
     this.choosePath = this.choosePath.bind(this);
     this.damageEnemy = this.damageEnemy.bind(this);
@@ -102,6 +103,7 @@ export default class Game extends Phaser.Scene {
     this.resourceTimer = this.resourceTimer.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
     // this.drawClock = this.drawClock.bind(this);
+    this.truthy = false;
   }
 
   //Game methods
@@ -162,6 +164,13 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
+          attacker.attribute = 1
+          // If Level 2, reassign attacker.atribute to 2
+          if(this.truthy){
+            attacker.attribute = 3;
+            this.truthy = false;
+          }
+          // If Level 3, reassign attacker.attribute to 3
           this.resourcePoints -= 2;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (attacker) {
@@ -177,6 +186,13 @@ export default class Game extends Phaser.Scene {
           this.oppResourcePoints -= 2;
           this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
+          enemy.attribute = 1;
+          // If Level 2, reassign attacker.attribute to 2
+          if(this.truthy){
+            enemy.attribute = 3;
+            this.truthy = false;
+          }
+          // If Level 3, reassign attacker.attribute to 3
           if (enemy) {
             if (event.path === 1) path = this.path4;
             if (event.path === 2) path = this.path5;
@@ -197,6 +213,11 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
+          attacker.attribute = 1;
+          if(this.truthy){
+            attacker.attribute = 3;
+            this.truthy = false;
+          }
           this.resourcePoints -= 2;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (attacker) {
@@ -212,6 +233,11 @@ export default class Game extends Phaser.Scene {
           this.oppResourcePoints -= 2;
           this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
+          enemy.attribute = 1;
+          if(this.truthy){
+            enemy.attribute = 3;
+            this.truthy = false;
+          }
           if (enemy) {
             if (event.path === 1) path = this.path1;
             if (event.path === 2) path = this.path2;
@@ -230,6 +256,7 @@ export default class Game extends Phaser.Scene {
   placeTurret(isPlayerA, x, y) {
     var i = Math.floor(y / 64);
     var j = Math.floor(x / 64);
+    this.truthy = true;
     if (this.canPlaceTurret(isPlayerA, i, j)) {
       if (isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 2) {
@@ -433,9 +460,33 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
+    this.load.spritesheet("p1attackersLvl2", "/assets/player1_attackers_level2.png", {
+      frameWidth: 68,
+      frameHeight: 45,
+    });
+    this.load.spritesheet("p1attackersLvl3", "/assets/player1_attackers_level3.png", {
+      frameWidth: 68,
+      frameHeight: 45,
+    });
     this.load.spritesheet(
       "p1return",
       "/assets/player1_returning_attackers.png",
+      {
+        frameWidth: 68,
+        frameHeight: 65,
+      }
+    );
+    this.load.spritesheet(
+      "p1returnLvl2",
+      "/assets/player1_returning_attackers_level2.png",
+      {
+        frameWidth: 68,
+        frameHeight: 65,
+      }
+    );
+    this.load.spritesheet(
+      "p1returnLvl3",
+      "/assets/player1_returning_attackers_level3.png",
       {
         frameWidth: 68,
         frameHeight: 65,
@@ -445,9 +496,33 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
+    this.load.spritesheet("p2attackersLvl2", "/assets/player2_attackers_level2.png", {
+      frameWidth: 68,
+      frameHeight: 45,
+    });
+    this.load.spritesheet("p2attackersLvl3", "/assets/player2_attackers_level3.png", {
+      frameWidth: 68,
+      frameHeight: 45,
+    });
     this.load.spritesheet(
       "p2return",
       "/assets/player2_returning_attackers.png",
+      {
+        frameWidth: 68,
+        frameHeight: 65,
+      }
+    );
+    this.load.spritesheet(
+      "p2returnLvl2",
+      "/assets/player2_returning_attackers_level2.png",
+      {
+        frameWidth: 68,
+        frameHeight: 65,
+      }
+    );
+    this.load.spritesheet(
+      "p2returnLvl3",
+      "/assets/player2_returning_attackers_level3.png",
       {
         frameWidth: 68,
         frameHeight: 65,
@@ -469,7 +544,8 @@ export default class Game extends Phaser.Scene {
     });
 
     this.load.image("logo", "/assets/logo_underline.png");
-    this.load.image("play", "/assets/play.png");
+    this.load.image("play", "/assets/playing.png");
+    this.load.image("pause", "/assets/muted.png");
     this.load.image("clock", "/assets/clock.png");
     this.load.image("hangingSign", "/assets/hanging_sign.png");
     this.load.audio("gameTheme", ["/assets/main_game_theme.mp3"]);
@@ -488,7 +564,7 @@ export default class Game extends Phaser.Scene {
     this.add.image(400, 535, "blackboard");
     this.add.image(700, 520, "clock");
     this.play = this.add.image(50, 50, "play");
-    this.pause = this.add.image(105, 50, "pause");
+    this.pause = this.add.image(50, 50, "pause");
     this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 0.5 });
     let self = this;
 
@@ -527,11 +603,55 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
+      key: "blue2Walk",
+      frames: [
+        { key: "p1attackersLvl2", frame: 1 },
+        { key: "p1attackersLvl2", frame: 2 },
+        { key: "p1attackersLvl2", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "blue3Walk",
+      frames: [
+        { key: "p1attackersLvl3", frame: 1 },
+        { key: "p1attackersLvl3", frame: 2 },
+        { key: "p1attackersLvl3", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
       key: "reverseBlueWalk",
       frames: [
         { key: "p1return", frame: 1 },
         { key: "p1return", frame: 2 },
         { key: "p1return", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "reverseBlue2Walk",
+      frames: [
+        { key: "p1returnLvl2", frame: 1 },
+        { key: "p1returnLvl2", frame: 2 },
+        { key: "p1returnLvl2", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "reverseBlue3Walk",
+      frames: [
+        { key: "p1returnLvl3", frame: 1 },
+        { key: "p1returnLvl3", frame: 2 },
+        { key: "p1returnLvl3", frame: 3 },
       ],
       frameRate: 10,
       repeat: -1,
@@ -549,11 +669,55 @@ export default class Game extends Phaser.Scene {
     });
 
     this.anims.create({
+      key: "red2Walk",
+      frames: [
+        { key: "p2attackersLvl2", frame: 1 },
+        { key: "p2attackersLvl2", frame: 2 },
+        { key: "p2attackersLvl2", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "red3Walk",
+      frames: [
+        { key: "p2attackersLvl3", frame: 1 },
+        { key: "p2attackersLvl3", frame: 2 },
+        { key: "p2attackersLvl3", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
       key: "reverseRedWalk",
       frames: [
         { key: "p2return", frame: 1 },
         { key: "p2return", frame: 2 },
         { key: "p2return", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "reverseRed2Walk",
+      frames: [
+        { key: "p2returnLvl2", frame: 1 },
+        { key: "p2returnLvl2", frame: 2 },
+        { key: "p2returnLvl2", frame: 3 },
+      ],
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "reverseRed3Walk",
+      frames: [
+        { key: "p2returnLvl3", frame: 1 },
+        { key: "p2returnLvl3", frame: 2 },
+        { key: "p2returnLvl3", frame: 3 },
       ],
       frameRate: 10,
       repeat: -1,
@@ -573,14 +737,24 @@ export default class Game extends Phaser.Scene {
     this.bulletSound = this.sound.add("bulletSound", { loop: false });
     this.plop = this.sound.add("plop", { loop: false });
     this.gameTheme.play();
+    this.play.setVisible(false)
+    this.play.setActive(false)
 
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
       self.game.sound.mute = false;
+      this.play.setVisible(false)
+      this.play.setActive(false)
+      this.pause.setVisible(true)
+      this.pause.setActive(true)
     });
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
       self.game.sound.mute = true;
+      this.play.setVisible(true)
+      this.play.setActive(true)
+      this.pause.setVisible(false)
+      this.pause.setActive(false)
     });
 
     var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
@@ -751,11 +925,16 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
     this.nextEnemy = 0;
+
+    this.nextEnemy = 0;
+
     this.attackers = this.physics.add.group({
       classType: Attacker,
       runChildUpdate: true,
     });
+
     this.nextAttacker = 0;
+
     this.turrets = this.physics.add.group({
       classType: Turret,
       runChildUpdate: true,

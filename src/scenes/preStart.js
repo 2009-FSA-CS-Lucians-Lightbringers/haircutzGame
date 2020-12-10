@@ -19,8 +19,10 @@ class PreStart extends Phaser.Scene {
       "/assets/waiting_room_sprite_2_v2.png",
       { frameWidth: 150, frameHeight: 179 }
     );
-    this.load.image("play", "/assets/play.png");
-    this.load.image("pause", "/assets/pause.png");
+    this.load.image("play", "/assets/playing.png");
+    this.load.image("pause", "/assets/muted.png");
+    this.load.image("readyPlayer1", "/assets/readyPlayer1.png");
+    this.load.image("readyPlayer2", "/assets/readyPlayer2.png");
     this.load.audio("theme", ["/assets/intro_theme2.mp3"]);
   }
 
@@ -32,9 +34,15 @@ class PreStart extends Phaser.Scene {
 
     const waitingSprite1 = this.add.sprite(275, 305, "waitingSprite1", 0);
     const waitingSprite2 = this.add.sprite(525, 305, "waitingSprite2", 0);
+    const readyImage1 = this.add.image(275, 305, "readyPlayer1")
+    const readyImage2 = this.add.image(525, 305, "readyPlayer2")
+    readyImage1.setVisible(false)
+    readyImage2.setVisible(false)
 
     var play = this.add.image(70, 70, "play");
-    var pause = this.add.image(125, 70, "pause");
+    var pause = this.add.image(70, 70, "pause");
+    play.setVisible(false)
+    play.setActive(false)
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
 
     this.anims.create({
@@ -139,6 +147,9 @@ class PreStart extends Phaser.Scene {
     this.game.socket.on("redPlayerReady", function () {
       redPlayerText.text = "RED PLAYER IS READY";
       redClickText.visible = false;
+      waitingSprite2.setVisible(false);
+      waitingSprite2.setActive(false)
+      readyImage2.setVisible(true);
       self.redPlayerReady = true;
       self.playersReady();
     });
@@ -146,6 +157,9 @@ class PreStart extends Phaser.Scene {
     this.game.socket.on("bluePlayerReady", function () {
       bluePlayerText.text = "BLUE PLAYER IS READY";
       blueClickText.visible = false;
+      waitingSprite1.setVisible(false);
+      waitingSprite1.setActive(false)
+      readyImage1.setVisible(true);
       self.bluePlayerReady = true;
       self.playersReady();
     });
@@ -153,10 +167,18 @@ class PreStart extends Phaser.Scene {
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       self.game.sound.mute = false;
+      play.setVisible(false)
+      play.setActive(false)
+      pause.setVisible(true)
+      pause.setActive(true)
     });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
       self.game.sound.mute = true;
+      play.setVisible(true)
+      play.setActive(true)
+      pause.setVisible(false)
+      pause.setActive(false)
     });
   }
 

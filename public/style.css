@@ -85,11 +85,6 @@ p {
   display: flex;
 }
 
-canvas {
-  width: 100%;
-  height: 100%;
-}
-
 #left {
   float: left;
   width: 25%;
@@ -129,4 +124,11 @@ canvas {
  #right {
   visibility: hidden;
 }
+
+#game {
+  float: left;
+  height: 90vh;
+  width: 90vw;
+}
+
 }
