@@ -104,7 +104,6 @@ export default class Game extends Phaser.Scene {
     this.drawGrid = this.drawGrid.bind(this);
     // this.drawClock = this.drawClock.bind(this);
     this.whereInMeter = this.whereInMeter.bind(this)
-    this.truthy = false;
   }
 
   //Game methods
@@ -156,7 +155,6 @@ export default class Game extends Phaser.Scene {
 
   spawnScissor(event) {
     let path;
-    let attackerLevel = event.attackerLevel;
     if (this.isPlayerA) {
       if (event.path === 1) path = this.path1;
       if (event.path === 2) path = this.path2;
@@ -165,12 +163,8 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
-          attacker.attribute = 1
+          attacker.attribute = event.attackerLevel
           // If Level 2, reassign attacker.atribute to 2
-          if(this.truthy){
-            attacker.attribute = 3;
-            this.truthy = false;
-          }
           // If Level 3, reassign attacker.attribute to 3
           this.resourcePoints -= 2;
           this.resourceText.setText("USER | " + this.resourcePoints);
@@ -187,12 +181,8 @@ export default class Game extends Phaser.Scene {
           this.oppResourcePoints -= 2;
           this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
-          enemy.attribute = 1;
+          enemy.attribute = event.attackerLevel
           // If Level 2, reassign attacker.attribute to 2
-          if(this.truthy){
-            enemy.attribute = 3;
-            this.truthy = false;
-          }
           // If Level 3, reassign attacker.attribute to 3
           if (enemy) {
             if (event.path === 1) path = this.path4;
@@ -214,11 +204,7 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
-          attacker.attribute = 1;
-          if(this.truthy){
-            attacker.attribute = 3;
-            this.truthy = false;
-          }
+          attacker.attribute = event.attackerLevel
           this.resourcePoints -= 2;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (attacker) {
@@ -234,11 +220,7 @@ export default class Game extends Phaser.Scene {
           this.oppResourcePoints -= 2;
           this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
-          enemy.attribute = 1;
-          if(this.truthy){
-            enemy.attribute = 3;
-            this.truthy = false;
-          }
+          enemy.attribute = event.attackerLevel;
           if (enemy) {
             if (event.path === 1) path = this.path1;
             if (event.path === 2) path = this.path2;
@@ -555,6 +537,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("bullet", "/assets/bullet.png");
     this.load.image("scoreboard", "/assets/scoreboard.png");
     this.load.image("blackboard", "/assets/blackboard.png");
+    this.load.image("meter", "/assets/attack_meter.png")
     this.load.spritesheet("p1base", "/assets/base1_v2.png", {
       frameWidth: 75,
       frameHeight: 89,
@@ -564,6 +547,8 @@ export default class Game extends Phaser.Scene {
       frameWidth: 75,
       frameHeight: 89,
     });
+
+
 
     this.load.image("logo", "/assets/logo_underline.png");
     this.load.image("play", "/assets/playing.png");
@@ -584,6 +569,7 @@ export default class Game extends Phaser.Scene {
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
+    this.add.image(400, 31, "meter").setScale(0.75, 0.65);
     this.add.image(700, 520, "clock");
     this.play = this.add.image(50, 50, "play");
     this.pause = this.add.image(50, 50, "pause");
@@ -920,7 +906,7 @@ export default class Game extends Phaser.Scene {
     groupZone2.add(this.path2ZoneR);
     groupZone3.add(this.path3ZoneL);
     groupZone3.add(this.path3ZoneR);
-    
+
 		//path for cusor
 		this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
 		var line1 = new Phaser.Curves.Line([216.5, 50, 582.4, 50]);
