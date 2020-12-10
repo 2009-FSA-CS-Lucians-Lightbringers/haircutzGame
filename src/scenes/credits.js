@@ -6,8 +6,8 @@ class Credits extends Phaser.Scene {
 
   preload() {
     this.load.image("intro", "/assets/haircutz_intro.png");
-    this.load.image("play", "/assets/play.png");
-    this.load.image("pause", "/assets/pause.png");
+    this.load.image("play", "/assets/playing.png");
+    this.load.image("pause", "/assets/muted.png");
     this.load.image("arrow1", "/assets/arrow1.png")
     this.load.image("arrow2", "/assets/arrow2.png")
     this.load.audio("theme", ["/assets/intro_theme2.mp3"]);
@@ -17,13 +17,13 @@ class Credits extends Phaser.Scene {
     var bg = this.add.sprite(0, 0, "intro");
     bg.setOrigin(0, 0);
     var play = this.add.image(70, 70, "play");
-    var pause = this.add.image(135, 70, "pause");
+    var pause = this.add.image(70, 70, "pause");
+    play.setVisible(false)
+    play.setActive(false)
     var arrow1 = this.add.image(195, 360, "arrow1")
     var arrow2 = this.add.image(625, 360, "arrow2")
     this.theme = this.sound.add("theme", { loop: true, volume: 0.5 });
     let self = this;
-    this.add.image(70, 70, "play");
-    this.add.image(135, 70, "pause");
 
     var creditsText = this.make
       .text({
@@ -141,11 +141,19 @@ class Credits extends Phaser.Scene {
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       self.game.sound.mute = false;
+      play.setVisible(false)
+      play.setActive(false)
+      pause.setVisible(true)
+      pause.setActive(true)
     });
     //Pause button
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
       self.game.sound.mute = true;
+      play.setVisible(true)
+      play.setActive(true)
+      pause.setVisible(false)
+      pause.setActive(false)
     });
 
     arrow1.setInteractive({ useHandCursor: true });

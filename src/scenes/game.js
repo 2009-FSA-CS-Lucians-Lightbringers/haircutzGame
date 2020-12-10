@@ -432,7 +432,8 @@ export default class Game extends Phaser.Scene {
     });
 
     this.load.image("logo", "/assets/logo_underline.png");
-    this.load.image("play", "/assets/play.png");
+    this.load.image("play", "/assets/playing.png");
+    this.load.image("pause", "/assets/muted.png");
     this.load.image("clock", "/assets/clock.png");
     this.load.audio("gameTheme", ["/assets/main_game_theme.mp3"]);
     this.load.audio("snips", ["/assets/snips.mp3"]);
@@ -450,7 +451,7 @@ export default class Game extends Phaser.Scene {
     this.add.image(400, 535, "blackboard");
     this.add.image(700, 520, "clock");
     this.play = this.add.image(50, 50, "play");
-    this.pause = this.add.image(105, 50, "pause");
+    this.pause = this.add.image(50, 50, "pause");
     this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 0.5 });
     let self = this;
 
@@ -535,14 +536,24 @@ export default class Game extends Phaser.Scene {
     this.bulletSound = this.sound.add("bulletSound", { loop: false });
     this.plop = this.sound.add("plop", { loop: false });
     this.gameTheme.play();
+    this.play.setVisible(false)
+    this.play.setActive(false)
 
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
       self.game.sound.mute = false;
+      this.play.setVisible(false)
+      this.play.setActive(false)
+      this.pause.setVisible(true)
+      this.pause.setActive(true)
     });
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
       self.game.sound.mute = true;
+      this.play.setVisible(true)
+      this.play.setActive(true)
+      this.pause.setVisible(false)
+      this.pause.setActive(false)
     });
 
     var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);

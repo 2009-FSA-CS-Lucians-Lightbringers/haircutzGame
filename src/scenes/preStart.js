@@ -19,8 +19,8 @@ class PreStart extends Phaser.Scene {
       "/assets/waiting_room_sprite_2_v2.png",
       { frameWidth: 150, frameHeight: 179 }
     );
-    this.load.image("play", "/assets/play.png");
-    this.load.image("pause", "/assets/pause.png");
+    this.load.image("play", "/assets/playing.png");
+    this.load.image("pause", "/assets/muted.png");
     this.load.audio("theme", ["/assets/intro_theme2.mp3"]);
   }
 
@@ -34,7 +34,9 @@ class PreStart extends Phaser.Scene {
     const waitingSprite2 = this.add.sprite(525, 305, "waitingSprite2", 0);
 
     var play = this.add.image(70, 70, "play");
-    var pause = this.add.image(125, 70, "pause");
+    var pause = this.add.image(70, 70, "pause");
+    play.setVisible(false)
+    play.setActive(false)
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
 
     this.anims.create({
@@ -134,10 +136,18 @@ class PreStart extends Phaser.Scene {
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       self.game.sound.mute = false;
+      play.setVisible(false)
+      play.setActive(false)
+      pause.setVisible(true)
+      pause.setActive(true)
     });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
       self.game.sound.mute = true;
+      play.setVisible(true)
+      play.setActive(true)
+      pause.setVisible(false)
+      pause.setActive(false)
     });
   }
 
