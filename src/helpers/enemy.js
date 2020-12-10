@@ -34,7 +34,6 @@ export default new Phaser.Class({
       // set the t parameter at the start of the path
       this.follower.t = 0;
       // get x and y of the given t point
-      // console.log(this.path.getPoint(this.follower.t, this.follower.vec));
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
@@ -88,21 +87,28 @@ export default new Phaser.Class({
     // decrement health points
     this.hp -= damage;
     console.log(`enemy ${this.number} took damage`, this.hp);
-    this.scene.setValue(this.healthBar,this.hp);
-    //console.log(">>>after bullet", this.hp);
-    // if hp drops below 0 we deactivate this enemy
+    this.scene.setValue(this.healthBar, this.hp);
     if (this.hp <= 0) {
-      if (this.scene.isPlayerA && this.hasSwitched) {
-        this.scene.incrementBlueScore();
-      }
-      if (!this.scene.isPlayerA && this.hasSwitched) {
-        this.scene.incrementRedScore();
-      }
-      this.scene.resourcePoints += 1;
-      this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
-      this.healthBar.destroy();
-      this.destroy();
+      this.scene.game.socket.emit(
+        "removeEnemy",
+        this.number,
+        this.createdByPlayerA
+      );
     }
+  },
+
+  removeEnemy() {
+    if (this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementBlueScore();
+    }
+    if (!this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementRedScore();
+    }
+    console.log("Removing Enemy...");
+    this.scene.resourcePoints += 1;
+    this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
+    this.healthBar.destroy();
+    this.destroy();
   },
 
   update: function (time, delta) {

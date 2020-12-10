@@ -39,7 +39,6 @@ export default new Phaser.Class({
       // set the t parameter at the start of the path
       this.follower.t = 0;
       // get x and y of the given t point
-      // console.log(this.path.getPoint(this.follower.t, this.follower.vec));
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
@@ -96,18 +95,29 @@ export default new Phaser.Class({
     this.scene.setValue(this.healthBar, this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
-      if(this.scene.isPlayerA && this.hasSwitched){
-        this.scene.incrementRedScore();
-      }
-      if(!this.scene.isPlayerA && this.hasSwitched){
-        this.scene.incrementBlueScore();
-      }
-      this.scene.snips.stop();
-      this.scene.oppResourcePoints += 1;
-      this.scene.oppResourceText.setText("ENEMY | " + this.scene.oppResourcePoints);
-      this.healthBar.destroy();
-      this.destroy();
+      this.scene.game.socket.emit(
+        "removeAttacker",
+        this.number,
+        this.createdByPlayerA
+      );
     }
+  },
+
+  removeAttacker() {
+    if (this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementRedScore();
+    }
+    if (!this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementBlueScore();
+    }
+    console.log("Removing Attacker...");
+    this.scene.snips.stop();
+    this.scene.oppResourcePoints += 1;
+    this.scene.oppResourceText.setText(
+      "ENEMY | " + this.scene.oppResourcePoints
+    );
+    this.healthBar.destroy();
+    this.destroy();
   },
 
   update: function (time, delta) {
@@ -145,7 +155,6 @@ export default new Phaser.Class({
         }
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
-
         if(this.follower.t <= .5 && !this.hasSwitched){
           if(this.level1){
             this.anims.play("reverseRedWalk");
@@ -164,7 +173,6 @@ export default new Phaser.Class({
           this.healthBar.destroy();
           this.scene.incrementRedScore();
           this.destroy();
-
         }
       }
     }

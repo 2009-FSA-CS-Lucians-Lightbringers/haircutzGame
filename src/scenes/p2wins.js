@@ -24,7 +24,7 @@ class PlayerTwoWins extends Phaser.Scene {
     var playAgain = this.make.text({
       x: 295,
       y: 525,
-      text: "PLAY AGAIN?",
+      text: "BACK TO MAIN MENU",
       style: {
         font: "bold 30px Marker Felt",
         fill: "red",
@@ -53,7 +53,7 @@ class PlayerTwoWins extends Phaser.Scene {
   }
 
   clickButton() {
-    this.scene.switch("introScene");
+    location.reload();
   }
 }
 

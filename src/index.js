@@ -21,10 +21,10 @@ const config = {
   height: 600,
   scale: {
     mode: Phaser.Scale.FIT,
-    parent: 'game',
+    parent: "game",
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 800,
-    height: 600
+    height: 600,
   },
   physics: {
     default: "arcade",
@@ -45,7 +45,7 @@ game.scene.add("bluePlayerWaitingRoom", BluePlayerWaitingRoom);
 game.scene.add("redPlayerWaitingRoom", RedPlayerWaitingRoom);
 game.scene.add("preStart", PreStart);
 game.scene.add("randomGameFinder", RandomGameFinder);
-game.scene.add("credits", Credits)
+game.scene.add("credits", Credits);
 
 //start title
 game.scene.start("introScene");
@@ -58,6 +58,8 @@ game.socket.on("connect", function () {
 
 game.isPlayerA = false;
 game.isPlayerB = false;
+game.playerAReady = false;
+game.playerBReady = false;
 
 game.socket.on("isPlayerA", function () {
   if (!game.isPlayerB) {
@@ -69,5 +71,18 @@ game.socket.on("isPlayerB", function () {
   if (!game.isPlayerA) {
     game.isPlayerB = true;
     console.log("Welcome Red Player B!");
+  }
+});
+
+game.socket.on("gameReady", function (isPlayerA) {
+  if (isPlayerA) {
+    game.playerAReady = true;
+    console.log("PlayerA Ready");
+  } else {
+    game.playerBReady = true;
+    console.log("PlayerB Ready");
+  }
+  if (game.playerAReady && game.playerBReady) {
+    game.scene.resume("game");
   }
 });

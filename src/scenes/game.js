@@ -1,11 +1,11 @@
 //make it so that placement of turrets does not depend on map
 //turrets should depend on coordinates of drop zone
-import io from 'socket.io-client';
-import Zone from '../helpers/zone.js';
-import Enemy from '../helpers/enemy.js';
-import Attacker from '../helpers/attacker.js';
-import Turret from '../helpers/turret.js';
-import Bullet from '../helpers/bullet.js';
+import io from "socket.io-client";
+import Zone from "../helpers/zone.js";
+import Enemy from "../helpers/enemy.js";
+import Attacker from "../helpers/attacker.js";
+import Turret from "../helpers/turret.js";
+import Bullet from "../helpers/bullet.js";
 // import HomeBase from "../helpers/homeBase.js";
 // import EnemyBase from "../helpers/enemyBase.js";
 
@@ -379,7 +379,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  makeBar(x, y,color) {
+  makeBar(x, y, color) {
     //draw the bar
     let bar = this.add.graphics();
 
@@ -397,9 +397,9 @@ export default class Game extends Phaser.Scene {
     return bar;
   }
 
-  setValue(bar,percentage) {
-      //scale the bar
-      bar.scaleX = percentage/100;
+  setValue(bar, percentage) {
+    //scale the bar
+    bar.scaleX = percentage / 100;
   }
 
   //grid methods
@@ -414,6 +414,43 @@ export default class Game extends Phaser.Scene {
     }
     graphics.lineStyle(1, 0x0000ff, 0);
     graphics.strokePath();
+  }
+
+  playerLeft(player) {
+    let color = "red";
+    let oppo = "blue";
+    let hex = 0xff0000;
+    if (player === "Red Player") {
+      color = "blue";
+      oppo = "red";
+      hex = 0x0000ff;
+    }
+    var sign = this.add.image(400, 240, "hangingSign");
+    sign.setScale(0.4);
+    var winnerText = this.add
+      .text(400, 240, `${player} Left Game, YOU WIN!!!`, {
+        align: "center",
+        fontFamily: "Arial Black",
+        fontStyle: "bold",
+        fontSize: "32px",
+        fill: color,
+        wordWrap: { width: 375 },
+      })
+      .setOrigin(0.5);
+    this.playAgain = this.add
+      .text(400, 340, "BACK TO MAIN MENU", {
+        align: "center",
+        fontFamily: "Arial Black",
+        fontStyle: "bold",
+        fontSize: "25px",
+        fill: oppo,
+        wordWrap: { width: 375 },
+      })
+      .setOrigin(0.5);
+    this.playAgain.setInteractive({ useHandCursor: true });
+    this.playAgain.on("pointerdown", () => {
+      location.reload();
+    });
   }
 
   preload() {
@@ -510,6 +547,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("play", "/assets/playing.png");
     this.load.image("pause", "/assets/muted.png");
     this.load.image("clock", "/assets/clock.png");
+    this.load.image("hangingSign", "/assets/hanging_sign.png");
     this.load.audio("gameTheme", ["/assets/main_game_theme.mp3"]);
     this.load.audio("snips", ["/assets/snips.mp3"]);
     this.load.audio("bulletSound", ["/assets/bullet_sound.mp3"]);
@@ -902,41 +940,26 @@ export default class Game extends Phaser.Scene {
       runChildUpdate: true,
     });
 
-    this.rpText = self.add.text(
-      315,
-      540,
-      "RESOURCE POINTS",
-      {
-        fontFamily: "Arial Black",
-        fontStyle: "bold",
-        fontSize: "16px",
-        fill: "white",
-      }
-    );
+    this.rpText = self.add.text(315, 540, "RESOURCE POINTS", {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "16px",
+      fill: "white",
+    });
 
-    this.scissorCost = self.add.text(
-      345,
-      500,
-      "- 2",
-      {
-        fontFamily: "Arial Black",
-        fontStyle: "bold",
-        fontSize: "20px",
-        fill: "white",
-      }
-    );
+    this.scissorCost = self.add.text(345, 500, "- 2", {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "20px",
+      fill: "white",
+    });
 
-    this.towerCost = self.add.text(
-      465,
-      500,
-      "- 3",
-      {
-        fontFamily: "Arial Black",
-        fontStyle: "bold",
-        fontSize: "20px",
-        fill: "white",
-      }
-    );
+    this.towerCost = self.add.text(465, 500, "- 3", {
+      fontFamily: "Arial Black",
+      fontStyle: "bold",
+      fontSize: "20px",
+      fill: "white",
+    });
 
     this.resourceText = self.add.text(
       290,
@@ -992,6 +1015,15 @@ export default class Game extends Phaser.Scene {
       fill: "white",
     });
 
+    this.loadingText = self.add
+      .text(400, 240, "LOADING GAME...", {
+        fontFamily: "Arial Black",
+        fontStyle: "bold",
+        fontSize: "32px",
+        fill: "blue",
+      })
+      .setOrigin(0.5);
+
     this.bullets = this.physics.add.group({
       classType: Bullet,
       runChildUpdate: true,
@@ -1009,33 +1041,37 @@ export default class Game extends Phaser.Scene {
       self.resourceTimer();
     });
 
+    this.game.socket.on("playerLeft", () => {
+      if (self.isPlayerA) {
+        console.log("Red Player Left Game, YOU WIN");
+        self.playerLeft("Red Player");
+      } else {
+        console.log("Blue Player Left Game, YOU WIN");
+        self.playerLeft("Blue Player");
+      }
+    });
+
     this.game.socket.emit("stopTheme");
 
-    //     this.input.keyboard.on("keydown", function (event) {
-    //       if (self.time.now > self.attackerReleased + 2000) {
-    //         if (event.key === "1") {
-    //           self.game.socket.emit("spawnScissor", {
-    //             isPlayerA: self.isPlayerA,
-    //             path: 1,
-    //           });
-    //           self.attackerReleased = self.time.now;
-    //         }
-    //         if (event.key === "2") {
-    //           self.game.socket.emit("spawnScissor", {
-    //             isPlayerA: self.isPlayerA,
-    //             path: 2,
-    //           });
-    //           self.attackerReleased = self.time.now;
-    //         }
-    //         if (event.key === "3") {
-    //           self.game.socket.emit("spawnScissor", {
-    //             isPlayerA: self.isPlayerA,
-    //             path: 3,
-    //           });
-    //           self.attackerReleased = self.time.now;
-    //         }
-    //       }
-    //     });
+    this.game.socket.on("removeAttacker", (number, createdByPlayerA) => {
+      if (createdByPlayerA === self.isPlayerA) {
+        let attacker = self.myAttackers[number];
+        attacker.removeAttacker();
+      } else {
+        let enemy = self.myEnemies[number];
+        enemy.removeEnemy();
+      }
+    });
+
+    this.game.socket.on("removeEnemy", (number, createdByPlayerA) => {
+      if (createdByPlayerA !== self.isPlayerA) {
+        let enemy = self.myEnemies[number];
+        enemy.removeEnemy();
+      } else {
+        let attacker = self.myAttackers[number];
+        attacker.removeAttacker();
+      }
+    });
 
     this.game.socket.on("placeTurret", function (isPlayerA, x, y) {
       self.turretPlacer = isPlayerA;
@@ -1164,30 +1200,30 @@ export default class Game extends Phaser.Scene {
           self.attackerReleased = self.time.now;
         }
       }
-      if (gameObject.name === 'turret') {
-				if (dropZone.name === 'triangleA' && self.isPlayerA) {
-					dropZone.fillColor = 0x9fc5e8;
-					dropZone.setStrokeStyle(4, 0xffffff);
-					gameObject.setTint(0xff0000);
-					self.game.socket.emit(
-						'placeTurret',
-						self.isPlayerA,
-						pointer.upX,
-						pointer.upY
-					);
-				}
-				if (dropZone.name === 'triangleB' && self.isPlayerB) {
-					dropZone.fillColor = 0xf4cccc;
-					dropZone.setStrokeStyle(4, 0xffffff);
-					gameObject.setTint(0xff0000);
-					self.game.socket.emit(
-						'placeTurret',
-						self.isPlayerA,
-						pointer.upX,
-						pointer.upY
-					);
-				}
-			}
+      if (gameObject.name === "turret") {
+        if (dropZone.name === "triangleA" && self.isPlayerA) {
+          dropZone.fillColor = 0x9fc5e8;
+          dropZone.setStrokeStyle(4, 0xffffff);
+          gameObject.setTint(0xff0000);
+          self.game.socket.emit(
+            "placeTurret",
+            self.isPlayerA,
+            pointer.upX,
+            pointer.upY
+          );
+        }
+        if (dropZone.name === "triangleB" && self.isPlayerB) {
+          dropZone.fillColor = 0xf4cccc;
+          dropZone.setStrokeStyle(4, 0xffffff);
+          gameObject.setTint(0xff0000);
+          self.game.socket.emit(
+            "placeTurret",
+            self.isPlayerA,
+            pointer.upX,
+            pointer.upY
+          );
+        }
+      }
     });
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
       gameObject.x = gameObject.input.dragStartX;
@@ -1203,28 +1239,33 @@ export default class Game extends Phaser.Scene {
     // 	zone.input.hitArea.width,
     // 	zone.input.hitArea.height
     // );
+    this.game.socket.emit("gameReady", self.isPlayerA);
+    console.log("waiting for other player...");
+    this.scene.pause();
   }
 
-	update(time, delta) {
-		var self = this;
-		this.graphics.clear();
+  update(time, delta) {
+    if (this.loadingText) this.loadingText.destroy();
 
-		this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
-		this.graphics.fillStyle(0xffff00, 1);
-		// this.graphics.fillRect(
-		// 	self.cursor.vec.x - 8,
-		// 	self.cursor.vec.y - 8,
-		// 	16,
-		// 	16
-		// );
-		this.graphics.fillTriangle(
-			self.cursor.vec.x,
-			self.cursor.vec.y,
-			self.cursor.vec.x + 10,
-			self.cursor.vec.y + 10,
-			self.cursor.vec.x + 20,
-			self.cursor.vec.y
-		);
+    var self = this;
+    this.graphics.clear();
+
+    this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
+    this.graphics.fillStyle(0xffff00, 1);
+    // this.graphics.fillRect(
+    // 	self.cursor.vec.x - 8,
+    // 	self.cursor.vec.y - 8,
+    // 	16,
+    // 	16
+    // );
+    this.graphics.fillTriangle(
+      self.cursor.vec.x,
+      self.cursor.vec.y,
+      self.cursor.vec.x + 10,
+      self.cursor.vec.y + 10,
+      self.cursor.vec.x + 20,
+      self.cursor.vec.y
+    );
     // console.log(this.input.mousePointer.x, this.input.mousePointer.y);
   }
 }

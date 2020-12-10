@@ -109,6 +109,25 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    var backToMain = this.make
+      .text({
+        x: 650,
+        y: 525,
+        text: "Back to Main Menu",
+        style: {
+          align: "center",
+          font: "bold 18px Marker Felt",
+          fill: "blue",
+          wordWrap: { width: 500 },
+        },
+      })
+      .setOrigin(0.5);
+
+    backToMain.setInteractive({ useHandCursor: true });
+    backToMain.on("pointerdown", () => {
+      location.reload();
+    });
+
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       self.game.sound.mute = false;
