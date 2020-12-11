@@ -56,7 +56,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 10,
           this.follower.vec.y - 20,
-          0x712ecc
+          0x008ee2
         );
         this.hp = 80;
       }
@@ -66,7 +66,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 20,
           this.follower.vec.y - 20,
-          0x712ecc
+          0x008ee2
         );
         this.hp = 100;
       }
@@ -76,7 +76,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 30,
           this.follower.vec.y - 20,
-          0x712ecc
+          0x008ee2
         );
         this.hp = 120;
       }
@@ -92,7 +92,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 10,
           this.follower.vec.y - 20,
-          0x712ecc
+          0xFF033E
         );
         this.hp = 80;
       }
@@ -102,7 +102,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 20,
           this.follower.vec.y - 20,
-          0x712ecc
+          0xFF033E
         );
         this.hp = 100;
       }
@@ -112,7 +112,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 30,
           this.follower.vec.y - 20,
-          0x712ecc
+          0xFF033E
         );
         this.hp = 120;
       }
@@ -133,6 +133,24 @@ export default new Phaser.Class({
       );
     }
   },
+
+
+  removeEnemy() {
+    if (this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementBlueScore();
+      this.scene.woohoo.play()
+    }
+    if (!this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementRedScore();
+      this.scene.woohoo.play()
+    }
+    console.log("Removing Enemy...");
+    this.scene.resourcePoints += 1;
+    this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
+    this.healthBar.destroy();
+    this.destroy();
+  },
+
 
   update: function (time, delta) {
     if (this.path) {
@@ -175,6 +193,7 @@ export default new Phaser.Class({
 
         if (this.follower.t >= 1) {
           this.scene.incrementBlueScore();
+          this.scene.woohoo.play()
           this.healthBar.destroy();
           this.destroy();
         }
@@ -196,6 +215,7 @@ export default new Phaser.Class({
 
         if (this.follower.t <= 0) {
           this.scene.incrementRedScore();
+          this.scene.woohoo.play()
           this.healthBar.destroy();
           this.destroy();
         }

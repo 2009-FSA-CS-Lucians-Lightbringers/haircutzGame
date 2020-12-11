@@ -10,8 +10,10 @@ export default new Phaser.Class({
 		else Phaser.GameObjects.Image.call(this, scene, 0, 0, 'p2turret');
 		this.nextTic = 0;
 		this.hasSwitched = false;
-		this.length = 20;
-		this.newLength;
+		this.length;
+		this.level1 = false
+		this.level2 = false
+		this.level3 = false
 		this.turretDuration;
 	},
 	// we will place the turret according to the grid
@@ -22,7 +24,30 @@ export default new Phaser.Class({
 		this.scene.map2[i][j] = 1;
 		this.i = i;
 		this.j = j;
-
+		if(this.attribute === 1){
+			this.level1 = true;
+			this.length = 10;
+		}
+		if(this.attribute === 2){
+			this.level2 = true;
+			this.length = 20;
+			if(this.createdByPlayerA){
+				this.setTexture("p1turretLvl2")
+			}
+			if(!this.createdByPlayerA){
+				this.setTexture("p2turretLvl2")
+			}
+		}
+		if(this.attribute === 3){
+			this.level3 = true;
+			this.length = 30;
+			if(this.createdByPlayerA){
+				this.setTexture("p1turretLvl3");
+			}
+			if(!this.createdByPlayerA){
+				this.setTexture("p2turretLvl3");
+			}
+		}
 		this.turretDuration = this.scene.add.text(this.x-20, this.y+40, `${this.length}`, {
       fontFamily: "Arial Black",
       fontStyle: "bold",
@@ -40,9 +65,23 @@ export default new Phaser.Class({
 		}
 		this.scene.map[this.i][this.j] = 0;
 		this.scene.map2[this.i][this.j] = 0;
-		if (this.timeCreated + 20000 < this.scene.time.now) {
-			this.destroy();
+		if(this.level1){
+			if(this.timeCreated + 10000 < this.scene.time.now){
+			this.destroy()
 			this.turretDuration.destroy();
+			}
+		}
+		if(this.level2){
+			if(this.timeCreated + 20000 < this.scene.time.now){
+			this.destroy()
+			this.turretDuration.destroy();
+			}
+		}
+		if(this.level3){
+			if(this.timeCreated + 30000 < this.scene.time.now){
+			this.destroy()
+			this.turretDuration.destroy();
+			}
 		}
 	},
 	fire: function () {
@@ -68,5 +107,3 @@ export default new Phaser.Class({
 		}
 	},
 });
-
-//.createdByPlayerA !== this.scene.isPlayerA
