@@ -24,6 +24,7 @@ export default class Game extends Phaser.Scene {
     this.gameTheme;
     this.scissor;
     this.attackerLevel;
+    this.turretLevel;
 		this.strikeCoordinate;
     this.ouch;
     this.snips;
@@ -237,19 +238,16 @@ export default class Game extends Phaser.Scene {
   }
 
   //Turret methods
-  placeTurret(isPlayerA, x, y) {
+  placeTurret(isPlayerA, x, y, turretLevel) {
     var i = Math.floor(y / 64);
     var j = Math.floor(x / 64);
+    console.log(turretLevel)
     //this.turretLevel = event.turretLevel
     if (this.canPlaceTurret(isPlayerA, i, j)) {
       if (isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 2) {
           var turret = this.turrets.get();
-          turret.attribute = 1 //event.turretLevel
-          if(this.truthy){
-            turret.attribute = 2;
-            this.truthy = false;
-          }
+          turret.attribute = turretLevel
           this.resourcePoints -= 3;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (turret) {
@@ -261,11 +259,7 @@ export default class Game extends Phaser.Scene {
         }
       } else if (this.oppResourcePoints > 2) {
         var turret = this.turrets.get();
-        turret.attribute = 1;
-        if(this.truthy){
-          turret.attribute = 2;
-          this.truthy = false;
-        }
+        turret.attribute = turretLevel
         this.oppResourcePoints -= 3;
         this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
         if (turret) {
@@ -449,23 +443,28 @@ export default class Game extends Phaser.Scene {
   	whereInMeter(strikeCoordinate) {
 		if (strikeCoordinate >= 216.5 && strikeCoordinate <= 277.5) {
 			//left red zone in meter
-			this.attackerLevel = 2;
+      this.attackerLevel = 2;
+      this.turretLevel = 2;
 		}
 		if (strikeCoordinate >= 277.5 && strikeCoordinate <= 384.27) {
 			//left blue
-			this.attackerLevel = 1;
+      this.attackerLevel = 1;
+      this.turretLevel = 1;
 		}
 		if (strikeCoordinate >= 384.27 && strikeCoordinate <= 421.44) {
 			//white
-			this.attackerLevel = 3;
+      this.attackerLevel = 3;
+      this.turretLevel = 3;
 		}
 		if (strikeCoordinate >= 421.44 && strikeCoordinate <= 523.4) {
 			//right blue
-			this.attackerLevel = 1;
+      this.attackerLevel = 1;
+      this.turretLevel = 1;
 		}
 		if (strikeCoordinate >= 523.4 && strikeCoordinate <= 582.1) {
 			//right red
-			this.attackerLevel = 2;
+      this.attackerLevel = 2;
+      this.turretLevel = 2;
 		}
 	}
   preload() {
@@ -545,6 +544,10 @@ export default class Game extends Phaser.Scene {
     );
     this.load.image("p2turret", "/assets/player2_turret.png");
     this.load.image("p1turret", "/assets/player1_turret.png");
+    this.load.image("p2turretLvl2", "/assets/player2_turret_level2.png");
+    this.load.image("p1turretLvl2", "/assets/player1_turret._level2.png");
+    this.load.image("p2turretLvl3", "/assets/player2_turret_level3.png");
+    this.load.image("p1turretLvl3", "/assets/player1_turret._level3.png");
     this.load.image("bullet", "/assets/bullet.png");
     this.load.image("scoreboard", "/assets/scoreboard.png");
     this.load.image("blackboard", "/assets/blackboard.png");
@@ -1085,9 +1088,9 @@ export default class Game extends Phaser.Scene {
       }
     });
 
-    this.game.socket.on("placeTurret", function (isPlayerA, x, y) {
+    this.game.socket.on("placeTurret", function (isPlayerA, x, y, turretLevel) {
       self.turretPlacer = isPlayerA;
-      self.placeTurret(isPlayerA, x, y);
+      self.placeTurret(isPlayerA, x, y, turretLevel);
     });
 
     this.input.dragDistanceThreshold = 16;
@@ -1220,27 +1223,32 @@ export default class Game extends Phaser.Scene {
 				}
 			}
 			if (gameObject.name === "turret") {
+        self.strikeCoordinate = self.cursor.vec.x;
 				if (dropZone.name === "triangleA" && self.isPlayerA) {
-					console.log(self.cursor.vec.x);
+          console.log(self.cursor.vec.x);
 					dropZone.fillColor = 0x9fc5e8;
 					dropZone.setStrokeStyle(4, 0xffffff);
-					gameObject.setTint(0xff0000);
+          gameObject.setTint(0xff0000);
+          self.whereInMeter(self.strikeCoordinate);
 					self.game.socket.emit(
 						"placeTurret",
-						self.isPlayerA,
+            self.isPlayerA,
 						pointer.upX,
-						pointer.upY
+            pointer.upY,
+            self.turretLevel
 					);
 				}
 				if (dropZone.name === "triangleB" && self.isPlayerB) {
 					dropZone.fillColor = 0xf4cccc;
 					dropZone.setStrokeStyle(4, 0xffffff);
-					gameObject.setTint(0xff0000);
+          gameObject.setTint(0xff0000);
+          self.whereInMeter(self.strikeCoordinate);
 					self.game.socket.emit(
 						"placeTurret",
 						self.isPlayerA,
 						pointer.upX,
-						pointer.upY
+            pointer.upY,
+            self.turretLevel
 					);
 				}
 			}

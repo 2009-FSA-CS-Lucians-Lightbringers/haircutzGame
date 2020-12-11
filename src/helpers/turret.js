@@ -31,10 +31,22 @@ export default new Phaser.Class({
 		if(this.attribute === 2){
 			this.level2 = true;
 			this.length = 20;
+			if(this.createdByPlayerA){
+				this.setTexture("p1turretLvl2")
+			}
+			if(!this.createdByPlayerA){
+				this.setTexture("p2turretLvl2")
+			}
 		}
 		if(this.attribute === 3){
 			this.level3 = true;
 			this.length = 30;
+			if(this.createdByPlayerA){
+				this.setTexture("p1turretLvl3");
+			}
+			if(!this.createdByPlayerA){
+				this.setTexture("p2turretLvl3");
+			}
 		}
 		this.turretDuration = this.scene.add.text(this.x-20, this.y+40, `${this.length}`, {
       fontFamily: "Arial Black",
