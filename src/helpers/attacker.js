@@ -47,6 +47,7 @@ export default new Phaser.Class({
         this.anims.play("blueWalk");
         this.healthBar = this.scene.makeBar(this.follower.vec.x-10,this.follower.vec.y-20, 0x2ecc71);
         this.hp = 80;
+
       }
       if(this.attribute === 2){
         this.level2 = true;
@@ -106,9 +107,11 @@ export default new Phaser.Class({
   removeAttacker() {
     if (this.scene.isPlayerA && this.hasSwitched) {
       this.scene.incrementRedScore();
+      this.scene.woohoo.play()
     }
     if (!this.scene.isPlayerA && this.hasSwitched) {
       this.scene.incrementBlueScore();
+      this.scene.woohoo.play()
     }
     console.log("Removing Attacker...");
     this.scene.snips.stop();
@@ -117,6 +120,8 @@ export default new Phaser.Class({
       "ENEMY | " + this.scene.oppResourcePoints
     );
     this.healthBar.destroy();
+    // this.anims.play('explosions')
+    //this.scene.explodeAnims(this.x, this.y)
     this.destroy();
   },
 
@@ -150,6 +155,7 @@ export default new Phaser.Class({
         }
         if (this.follower.t >= 1) {
           this.scene.incrementBlueScore();
+          this.scene.woohoo.play()
           this.healthBar.destroy();
           this.destroy();
         }
@@ -172,6 +178,7 @@ export default new Phaser.Class({
         if (this.follower.t <= 0) {
           this.healthBar.destroy();
           this.scene.incrementRedScore();
+          this.scene.woohoo.play()
           this.destroy();
         }
       }

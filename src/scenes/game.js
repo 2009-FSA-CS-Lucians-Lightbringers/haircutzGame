@@ -532,6 +532,7 @@ export default class Game extends Phaser.Scene {
         frameHeight: 65,
       }
     );
+
     this.load.image("p2turret", "/assets/player2_turret.png");
     this.load.image("p1turret", "/assets/player1_turret.png");
     this.load.image("bullet", "/assets/bullet.png");
@@ -548,7 +549,10 @@ export default class Game extends Phaser.Scene {
       frameHeight: 89,
     });
 
-
+    this.load.spritesheet("explosion", "/assets/explosion.png", {
+      frameWidth: 72,
+      frameHeight: 72
+    })
 
     this.load.image("logo", "/assets/logo_underline.png");
     this.load.image("play", "/assets/playing.png");
@@ -729,6 +733,20 @@ export default class Game extends Phaser.Scene {
       ],
       frameRate: 10,
       repeat: -1,
+    });
+
+    this.anims.create({
+      key: "explosions",
+      frames: [
+        { key: "explosion", frame: 2 },
+        { key: "explosion", frame: 3 },
+        { key: "explosion", frame: 4 },
+        { key: "explosion", frame: 5 },
+        { key: "explosion", frame: 6 },
+        { key: "explosion", frame: 7 },
+        { key: "explosion", frame: 8 },
+      ],
+      frameRate: 10,
     });
 
     this.enemyBase = this.add.image(715, 224, "p2base");

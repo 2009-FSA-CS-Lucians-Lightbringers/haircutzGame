@@ -113,14 +113,14 @@ class PreStart extends Phaser.Scene {
 
     var backToMain = this.make
       .text({
-        x: 650,
+        x: 680,
         y: 525,
         text: "Back to Main Menu",
         style: {
           align: "center",
           font: "bold 18px Marker Felt",
           fill: "blue",
-          wordWrap: { width: 500 },
+          wordWrap: { width: 100 },
         },
       })
       .setOrigin(0.5);

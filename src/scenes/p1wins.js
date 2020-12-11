@@ -23,7 +23,7 @@ class PlayerOneWins extends Phaser.Scene {
     this.theme.play();
 
     var playAgain = this.make.text({
-      x: 295,
+      x: 240,
       y: 525,
       text: "BACK TO MAIN MENU",
       style: {
