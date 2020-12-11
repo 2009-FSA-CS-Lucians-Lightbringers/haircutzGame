@@ -1015,7 +1015,7 @@ export default class Game extends Phaser.Scene {
       targets: this.cursor,
       t: 1,
       ease: "Linear",
-      duration: 4000,
+      duration: 1000,
       yoyo: true,
       repeat: -1,
     });
