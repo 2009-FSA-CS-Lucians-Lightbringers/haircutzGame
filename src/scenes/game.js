@@ -104,6 +104,7 @@ export default class Game extends Phaser.Scene {
     this.drawGrid = this.drawGrid.bind(this);
     // this.drawClock = this.drawClock.bind(this);
     this.whereInMeter = this.whereInMeter.bind(this)
+    this.truthy = false;
   }
 
   //Game methods
@@ -155,11 +156,11 @@ export default class Game extends Phaser.Scene {
 
   spawnScissor(event) {
     let path;
+    this.truthy = true;
     if (this.isPlayerA) {
       if (event.path === 1) path = this.path1;
       if (event.path === 2) path = this.path2;
       if (event.path === 3) path = this.path3;
-
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
@@ -239,11 +240,16 @@ export default class Game extends Phaser.Scene {
   placeTurret(isPlayerA, x, y) {
     var i = Math.floor(y / 64);
     var j = Math.floor(x / 64);
-    this.truthy = true;
+    //this.turretLevel = event.turretLevel
     if (this.canPlaceTurret(isPlayerA, i, j)) {
       if (isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 2) {
           var turret = this.turrets.get();
+          turret.attribute = 1 //event.turretLevel
+          if(this.truthy){
+            turret.attribute = 2;
+            this.truthy = false;
+          }
           this.resourcePoints -= 3;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (turret) {
@@ -255,6 +261,11 @@ export default class Game extends Phaser.Scene {
         }
       } else if (this.oppResourcePoints > 2) {
         var turret = this.turrets.get();
+        turret.attribute = 1;
+        if(this.truthy){
+          turret.attribute = 2;
+          this.truthy = false;
+        }
         this.oppResourcePoints -= 3;
         this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
         if (turret) {
