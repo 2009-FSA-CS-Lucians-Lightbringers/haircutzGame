@@ -134,6 +134,24 @@ export default new Phaser.Class({
     }
   },
 
+
+  removeEnemy() {
+    if (this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementBlueScore();
+      this.scene.woohoo.play()
+    }
+    if (!this.scene.isPlayerA && this.hasSwitched) {
+      this.scene.incrementRedScore();
+      this.scene.woohoo.play()
+    }
+    console.log("Removing Enemy...");
+    this.scene.resourcePoints += 1;
+    this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
+    this.healthBar.destroy();
+    this.destroy();
+  },
+
+
   update: function (time, delta) {
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
@@ -175,6 +193,7 @@ export default new Phaser.Class({
 
         if (this.follower.t >= 1) {
           this.scene.incrementBlueScore();
+          this.scene.woohoo.play()
           this.healthBar.destroy();
           this.destroy();
         }
@@ -196,6 +215,7 @@ export default new Phaser.Class({
 
         if (this.follower.t <= 0) {
           this.scene.incrementRedScore();
+          this.scene.woohoo.play()
           this.healthBar.destroy();
           this.destroy();
         }

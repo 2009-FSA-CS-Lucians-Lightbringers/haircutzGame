@@ -104,8 +104,7 @@ export default class Game extends Phaser.Scene {
     this.resourceTimer = this.resourceTimer.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
     // this.drawClock = this.drawClock.bind(this);
-    this.whereInMeter = this.whereInMeter.bind(this)
-    this.truthy = false;
+    this.whereInMeter = this.whereInMeter.bind(this);
   }
 
   //Game methods
@@ -165,7 +164,7 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
-          attacker.attribute = event.attackerLevel
+          attacker.attribute = event.attackerLevel;
           // If Level 2, reassign attacker.atribute to 2
           // If Level 3, reassign attacker.attribute to 3
           this.resourcePoints -= 2;
@@ -183,7 +182,7 @@ export default class Game extends Phaser.Scene {
           this.oppResourcePoints -= 2;
           this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
-          enemy.attribute = event.attackerLevel
+          enemy.attribute = event.attackerLevel;
           // If Level 2, reassign attacker.attribute to 2
           // If Level 3, reassign attacker.attribute to 3
           if (enemy) {
@@ -206,7 +205,7 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
-          attacker.attribute = event.attackerLevel
+          attacker.attribute = event.attackerLevel;
           this.resourcePoints -= 2;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (attacker) {
@@ -474,14 +473,22 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.spritesheet("p1attackersLvl2", "/assets/player1_attackers_level2.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
-    this.load.spritesheet("p1attackersLvl3", "/assets/player1_attackers_level3.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
+    this.load.spritesheet(
+      "p1attackersLvl2",
+      "/assets/player1_attackers_level2.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
+    this.load.spritesheet(
+      "p1attackersLvl3",
+      "/assets/player1_attackers_level3.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
     this.load.spritesheet(
       "p1return",
       "/assets/player1_returning_attackers.png",
@@ -510,14 +517,22 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.spritesheet("p2attackersLvl2", "/assets/player2_attackers_level2.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
-    this.load.spritesheet("p2attackersLvl3", "/assets/player2_attackers_level3.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
+    this.load.spritesheet(
+      "p2attackersLvl2",
+      "/assets/player2_attackers_level2.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
+    this.load.spritesheet(
+      "p2attackersLvl3",
+      "/assets/player2_attackers_level3.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
     this.load.spritesheet(
       "p2return",
       "/assets/player2_returning_attackers.png",
@@ -542,6 +557,7 @@ export default class Game extends Phaser.Scene {
         frameHeight: 65,
       }
     );
+
     this.load.image("p2turret", "/assets/player2_turret.png");
     this.load.image("p1turret", "/assets/player1_turret.png");
     this.load.image("p2turretLvl2", "/assets/player2_turret_level2.png");
@@ -551,7 +567,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("bullet", "/assets/bullet.png");
     this.load.image("scoreboard", "/assets/scoreboard.png");
     this.load.image("blackboard", "/assets/blackboard.png");
-    this.load.image("meter", "/assets/attack_meter.png")
+    this.load.image("meter", "/assets/attack_meter.png");
     this.load.spritesheet("p1base", "/assets/base1_v2.png", {
       frameWidth: 75,
       frameHeight: 89,
@@ -562,7 +578,10 @@ export default class Game extends Phaser.Scene {
       frameHeight: 89,
     });
 
-
+    this.load.spritesheet("explosion", "/assets/explosion.png", {
+      frameWidth: 72,
+      frameHeight: 72
+    })
 
     this.load.image("logo", "/assets/logo_underline.png");
     this.load.image("play", "/assets/playing.png");
@@ -745,6 +764,20 @@ export default class Game extends Phaser.Scene {
       repeat: -1,
     });
 
+    this.anims.create({
+      key: "explosions",
+      frames: [
+        { key: "explosion", frame: 2 },
+        { key: "explosion", frame: 3 },
+        { key: "explosion", frame: 4 },
+        { key: "explosion", frame: 5 },
+        { key: "explosion", frame: 6 },
+        { key: "explosion", frame: 7 },
+        { key: "explosion", frame: 8 },
+      ],
+      frameRate: 10,
+    });
+
     this.enemyBase = this.add.image(715, 224, "p2base");
     this.homeBase = this.add.image(95, 224, "p1base");
     2;
@@ -759,34 +792,66 @@ export default class Game extends Phaser.Scene {
     this.bulletSound = this.sound.add("bulletSound", { loop: false });
     this.plop = this.sound.add("plop", { loop: false });
     this.gameTheme.play();
-    this.play.setVisible(false)
-    this.play.setActive(false)
+    this.play.setVisible(false);
+    this.play.setActive(false);
 
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
       self.game.sound.mute = false;
-      this.play.setVisible(false)
-      this.play.setActive(false)
-      this.pause.setVisible(true)
-      this.pause.setActive(true)
+      this.play.setVisible(false);
+      this.play.setActive(false);
+      this.pause.setVisible(true);
+      this.pause.setActive(true);
     });
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
       self.game.sound.mute = true;
-      this.play.setVisible(true)
-      this.play.setActive(true)
-      this.pause.setVisible(false)
-      this.pause.setActive(false)
+      this.play.setVisible(true);
+      this.play.setActive(true);
+      this.pause.setVisible(false);
+      this.pause.setActive(false);
     });
 
-    var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
-    redArc1.setStrokeStyle(3, 0xffffff);
-    var redArc2 = this.add.arc(450, 200, 230, 13, 97, false, 0xf4cccc);
-    redArc2.setStrokeStyle(3, 0xffffff);
-    var blueArc1 = this.add.arc(350, 200, 230, 83, 167, false, 0x9fc5e8);
-    blueArc1.setStrokeStyle(3, 0xffffff);
-    var blueArc2 = this.add.arc(350, 280, 230, 193, 277, false, 0x9fc5e8);
-    blueArc2.setStrokeStyle(3, 0xffffff);
+    // var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
+    // redArc1.setStrokeStyle(3, 0xffffff);
+    // var redArc2 = this.add.arc(450, 200, 230, 13, 97, false, 0xf4cccc);
+    // redArc2.setStrokeStyle(3, 0xffffff);
+    // var blueArc1 = this.add.arc(350, 200, 230, 83, 167, false, 0x9fc5e8);
+    // blueArc1.setStrokeStyle(3, 0xffffff);
+    // var blueArc2 = this.add.arc(350, 280, 230, 193, 277, false, 0x9fc5e8);
+    // blueArc2.setStrokeStyle(3, 0xffffff);
+    var redTri1 = this.add
+      .triangle(550, 255, 162.5, -85, 235, 50, -10, -120, 0xf4cccc)
+      .setInteractive(
+        new Phaser.Geom.Triangle(162.5, -85, 235, 50, -10, -120),
+        Phaser.Geom.Triangle.Contains,
+        true
+      );
+    redTri1.setStrokeStyle(3, 0xffffff);
+    var redTri2 = this.add
+      .triangle(550, 295, 162.5, 185, 235, 50, -10, 225, 0xf4cccc)
+      .setInteractive(
+        new Phaser.Geom.Triangle(162.5, 185, 235, 50, -10, 225),
+        Phaser.Geom.Triangle.Contains,
+        true
+      );
+    redTri2.setStrokeStyle(3, 0xffffff);
+    var blueTri1 = this.add
+      .triangle(495, 295, -162.5, 185, -235, 50, 10, 225, 0x9fc5e8)
+      .setInteractive(
+        new Phaser.Geom.Triangle(-162.5, 185, -235, 50, 10, 225),
+        Phaser.Geom.Triangle.Contains,
+        true
+      );
+    blueTri1.setStrokeStyle(3, 0xffffff);
+    var blueTri2 = this.add
+      .triangle(267.5, 87.5, 72.5, 85, 235, 50, -10, 225, 0x9fc5e8)
+      .setInteractive(
+        new Phaser.Geom.Triangle(72.5, 85, 235, 50, -10, 225),
+        Phaser.Geom.Triangle.Contains,
+        true
+      );
+    blueTri2.setStrokeStyle(3, 0xffffff);
     var RUTri = this.add
       .triangle(520, 260, 5, 50, 235, 50, 5, -110, 0xf4cccc)
       .setInteractive(
@@ -823,6 +888,11 @@ export default class Game extends Phaser.Scene {
     LLTri.name = "triangleA";
     RUTri.name = "triangleB";
     RLTri.name = "triangleB";
+
+    redTri1.name = "triangleB";
+    redTri2.name = "triangleB";
+    blueTri1.name = "triangleA";
+    blueTri2.name = "triangleA";
 
     // this graphics element is only for visualization,
     // its not related to our path
@@ -872,6 +942,21 @@ export default class Game extends Phaser.Scene {
       Phaser.Geom.Polygon.Contains,
       true
     );
+
+    // this.path1Zone = this.add
+    // 	.line(275, 0, 125, 240, 675, 240, 0x00ff00, 1)
+    // 	.setInteractive(
+    // 		new Phaser.Geom.Line(125, 240, 675, 240),
+    // 		(hitArea, x, y, gameObject) => {
+    // 			if (x >= 125 && x <= 675 && y >= 210 && y <= 254) {
+    // 				console.log(hitArea, gameObject);
+    // 			} else {
+    // 				return false;
+    // 			}
+    // 		},
+    // 		true
+    // 	);
+
     //An array of paired numbers that represent point coordinates: [x1,y1, x2,y2, ...]
     var pointsFSlash = [132, 228, 153, 228, 389, 65, 379, 51];
     var pointsBSlash = [638, 227, 673, 227, 424, 53, 411, 71];
@@ -921,19 +1006,19 @@ export default class Game extends Phaser.Scene {
     groupZone3.add(this.path3ZoneL);
     groupZone3.add(this.path3ZoneR);
 
-		//path for cusor
-		this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
-		var line1 = new Phaser.Curves.Line([216.5, 50, 582.4, 50]);
-		this.cursorPath = this.add.path();
-		this.cursorPath.add(line1);
-		this.tweens.add({
-			targets: this.cursor,
-			t: 1,
-			ease: "Linear",
-			duration: 4000,
-			yoyo: true,
-			repeat: -1,
-		});
+    //path for cusor
+    this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
+    var line1 = new Phaser.Curves.Line([216.5, 50, 582.4, 50]);
+    this.cursorPath = this.add.path();
+    this.cursorPath.add(line1);
+    this.tweens.add({
+      targets: this.cursor,
+      t: 1,
+      ease: "Linear",
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+    });
 
     this.enemies = this.physics.add.group({
       classType: Enemy,
@@ -1092,7 +1177,6 @@ export default class Game extends Phaser.Scene {
       self.turretPlacer = isPlayerA;
       self.placeTurret(isPlayerA, x, y, turretLevel);
     });
-
     this.input.dragDistanceThreshold = 16;
 
     this.input.on("dragstart", function (pointer, gameObject) {
@@ -1275,18 +1359,18 @@ export default class Game extends Phaser.Scene {
   update(time, delta) {
     if (this.loadingText) this.loadingText.destroy();
 
-		var self = this;
-		this.graphics.clear();
-		this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
-		this.graphics.fillStyle(0xffffff, 1);
-		this.graphics.fillTriangle(
-			self.cursor.vec.x,
-			self.cursor.vec.y,
-			self.cursor.vec.x + 10,
-			self.cursor.vec.y - 10,
-			self.cursor.vec.x + 20,
-			self.cursor.vec.y
-		);
-    //console.log(this.input.mousePointer.x);
+    var self = this;
+    this.graphics.clear();
+    this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
+    this.graphics.fillStyle(0xffffff, 1);
+    this.graphics.fillTriangle(
+      self.cursor.vec.x,
+      self.cursor.vec.y,
+      self.cursor.vec.x + 10,
+      self.cursor.vec.y - 10,
+      self.cursor.vec.x + 20,
+      self.cursor.vec.y
+    );
+    // console.log(this.input.mousePointer.x, this.input.mousePointer.y);
   }
 }
