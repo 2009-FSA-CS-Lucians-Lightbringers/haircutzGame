@@ -58,6 +58,8 @@ game.socket.on("connect", function () {
 
 game.isPlayerA = false;
 game.isPlayerB = false;
+game.redPlayerReady = false;
+game.bluePlayerReady = false;
 game.playerAReady = false;
 game.playerBReady = false;
 
@@ -85,4 +87,12 @@ game.socket.on("gameReady", function (isPlayerA) {
   if (game.playerAReady && game.playerBReady) {
     game.scene.resume("game");
   }
+});
+
+game.socket.on("bluePlayerReady", function () {
+  game.bluePlayerReady = true;
+});
+
+game.socket.on("redPlayerReady", function () {
+  game.redPlayerReady = true;
 });
