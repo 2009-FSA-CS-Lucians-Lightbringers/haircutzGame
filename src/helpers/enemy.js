@@ -56,7 +56,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 10,
           this.follower.vec.y - 20,
-          0x712ecc
+          0x008ee2
         );
         this.hp = 80;
       }
@@ -66,7 +66,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 20,
           this.follower.vec.y - 20,
-          0x712ecc
+          0x008ee2
         );
         this.hp = 100;
       }
@@ -76,7 +76,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 30,
           this.follower.vec.y - 20,
-          0x712ecc
+          0x008ee2
         );
         this.hp = 120;
       }
@@ -92,7 +92,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 10,
           this.follower.vec.y - 20,
-          0x712ecc
+          0xFF033E
         );
         this.hp = 80;
       }
@@ -102,7 +102,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 20,
           this.follower.vec.y - 20,
-          0x712ecc
+          0xFF033E
         );
         this.hp = 100;
       }
@@ -112,7 +112,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 30,
           this.follower.vec.y - 20,
-          0x712ecc
+          0xFF033E
         );
         this.hp = 120;
       }
