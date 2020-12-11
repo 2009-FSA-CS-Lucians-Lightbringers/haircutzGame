@@ -32,17 +32,17 @@ class PreStart extends Phaser.Scene {
     var self = this;
     var roomCode = this.game.roomCode;
 
-    const waitingSprite1 = this.add.sprite(275, 305, "waitingSprite1", 0);
-    const waitingSprite2 = this.add.sprite(525, 305, "waitingSprite2", 0);
-    const readyImage1 = this.add.image(275, 305, "readyPlayer1")
-    const readyImage2 = this.add.image(525, 305, "readyPlayer2")
-    readyImage1.setVisible(false)
-    readyImage2.setVisible(false)
+    this.waitingSprite1 = this.add.sprite(275, 305, "waitingSprite1", 0);
+    this.waitingSprite2 = this.add.sprite(525, 305, "waitingSprite2", 0);
+    this.readyImage1 = this.add.image(275, 305, "readyPlayer1");
+    this.readyImage2 = this.add.image(525, 305, "readyPlayer2");
+    this.readyImage1.setVisible(false);
+    this.readyImage2.setVisible(false);
 
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(70, 70, "pause");
-    play.setVisible(false)
-    play.setActive(false)
+    play.setVisible(false);
+    play.setActive(false);
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
 
     this.anims.create({
@@ -54,7 +54,7 @@ class PreStart extends Phaser.Scene {
         end: 0,
       }),
     });
-    waitingSprite1.play("wait1");
+    this.waitingSprite1.play("wait1");
 
     this.anims.create({
       key: "wait2",
@@ -65,9 +65,9 @@ class PreStart extends Phaser.Scene {
         end: 0,
       }),
     });
-    waitingSprite2.play("wait2");
+    this.waitingSprite2.play("wait2");
 
-    var bluePlayerText = this.make.text({
+    this.bluePlayerText = this.make.text({
       x: 125,
       y: 95,
       text: "BLUE PLAYER READY?",
@@ -78,7 +78,7 @@ class PreStart extends Phaser.Scene {
       },
     });
 
-    var blueClickText = this.make.text({
+    this.blueClickText = this.make.text({
       x: 125,
       y: 180,
       text: "(CLICK ABOVE)",
@@ -89,7 +89,7 @@ class PreStart extends Phaser.Scene {
       },
     });
 
-    var redPlayerText = this.make.text({
+    this.redPlayerText = this.make.text({
       x: 430,
       y: 95,
       text: "RED PLAYER READY?",
@@ -100,7 +100,7 @@ class PreStart extends Phaser.Scene {
       },
     });
 
-    var redClickText = this.make.text({
+    this.redClickText = this.make.text({
       x: 430,
       y: 180,
       text: "(CLICK ABOVE)",
@@ -130,55 +130,35 @@ class PreStart extends Phaser.Scene {
       location.reload();
     });
 
-    bluePlayerText.setInteractive({ useHandCursor: true });
-    bluePlayerText.on("pointerdown", () => {
+    this.bluePlayerText.setInteractive({ useHandCursor: true });
+    this.bluePlayerText.on("pointerdown", () => {
       if (this.game.isPlayerA) {
         self.game.socket.emit("bluePlayerReady", roomCode);
       }
     });
 
-    redPlayerText.setInteractive({ useHandCursor: true });
-    redPlayerText.on("pointerdown", () => {
+    this.redPlayerText.setInteractive({ useHandCursor: true });
+    this.redPlayerText.on("pointerdown", () => {
       if (this.game.isPlayerB) {
         self.game.socket.emit("redPlayerReady", roomCode);
       }
     });
 
-    this.game.socket.on("redPlayerReady", function () {
-      redPlayerText.text = "RED PLAYER IS READY";
-      redClickText.visible = false;
-      waitingSprite2.setVisible(false);
-      waitingSprite2.setActive(false)
-      readyImage2.setVisible(true);
-      self.redPlayerReady = true;
-      self.playersReady();
-    });
-
-    this.game.socket.on("bluePlayerReady", function () {
-      bluePlayerText.text = "BLUE PLAYER IS READY";
-      blueClickText.visible = false;
-      waitingSprite1.setVisible(false);
-      waitingSprite1.setActive(false)
-      readyImage1.setVisible(true);
-      self.bluePlayerReady = true;
-      self.playersReady();
-    });
-
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       self.game.sound.mute = false;
-      play.setVisible(false)
-      play.setActive(false)
-      pause.setVisible(true)
-      pause.setActive(true)
+      play.setVisible(false);
+      play.setActive(false);
+      pause.setVisible(true);
+      pause.setActive(true);
     });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
       self.game.sound.mute = true;
-      play.setVisible(true)
-      play.setActive(true)
-      pause.setVisible(false)
-      pause.setActive(false)
+      play.setVisible(true);
+      play.setActive(true);
+      pause.setVisible(false);
+      pause.setActive(false);
     });
   }
 
@@ -186,6 +166,28 @@ class PreStart extends Phaser.Scene {
     if (this.bluePlayerReady && this.redPlayerReady) {
       this.theme.stop();
       this.scene.switch("game");
+    }
+  }
+
+  update(time, delta) {
+    if (this.game.redPlayerReady && !this.redPlayerReady) {
+      this.redPlayerText.text = "RED PLAYER IS READY";
+      this.redClickText.visible = false;
+      this.waitingSprite2.setVisible(false);
+      this.waitingSprite2.setActive(false);
+      this.readyImage2.setVisible(true);
+      this.redPlayerReady = true;
+      this.playersReady();
+    }
+
+    if (this.game.bluePlayerReady && !this.bluePlayerReady) {
+      this.bluePlayerText.text = "BLUE PLAYER IS READY";
+      this.blueClickText.visible = false;
+      this.waitingSprite1.setVisible(false);
+      this.waitingSprite1.setActive(false);
+      this.readyImage1.setVisible(true);
+      this.bluePlayerReady = true;
+      this.playersReady();
     }
   }
 }
