@@ -15,6 +15,13 @@ export default class Game extends Phaser.Scene {
     //game properties
     this.isPlayerA = false;
     this.isPlayerB = false;
+    this.sendAttacker = true;
+    this.placementOptions = [
+      [440, 180],
+      [500, 180],
+      [440, 280],
+      [500, 280],
+    ];
     this.myEnemies = [];
     this.myAttackers = [];
     this.enemyNumber = -1;
@@ -23,8 +30,8 @@ export default class Game extends Phaser.Scene {
     this.BULLET_DAMAGE = 20;
     this.gameTheme;
     this.scissor;
-    this.attackerLevel;
-    this.turretLevel;
+    this.attackerLevel = 2;
+    this.turretLevel = 2
 		this.strikeCoordinate;
     this.ouch;
     this.snips;
@@ -439,7 +446,8 @@ export default class Game extends Phaser.Scene {
       location.reload();
     });
   }
-  	whereInMeter(strikeCoordinate) {
+
+  whereInMeter(strikeCoordinate) {
 		if (strikeCoordinate >= 216.5 && strikeCoordinate <= 277.5) {
 			//left red zone in meter
       this.attackerLevel = 2;
@@ -466,6 +474,7 @@ export default class Game extends Phaser.Scene {
       this.turretLevel = 2;
 		}
 	}
+
   preload() {
     // load the game assets –
     this.load.image("background", "/assets/background.png");
@@ -599,6 +608,7 @@ export default class Game extends Phaser.Scene {
   create() {
     this.isPlayerA = this.game.isPlayerA;
     this.isPlayerB = this.game.isPlayerB;
+    this.compTime = this.time.now;
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
@@ -608,6 +618,8 @@ export default class Game extends Phaser.Scene {
     this.pause = this.add.image(50, 50, "pause");
     this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 0.5 });
     let self = this;
+
+    if (this.game.playerBComputer) this.isPlayerA = true;
 
     if (this.isPlayerA) {
       self.scissor = self.add
@@ -812,14 +824,6 @@ export default class Game extends Phaser.Scene {
       this.pause.setActive(false);
     });
 
-    // var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
-    // redArc1.setStrokeStyle(3, 0xffffff);
-    // var redArc2 = this.add.arc(450, 200, 230, 13, 97, false, 0xf4cccc);
-    // redArc2.setStrokeStyle(3, 0xffffff);
-    // var blueArc1 = this.add.arc(350, 200, 230, 83, 167, false, 0x9fc5e8);
-    // blueArc1.setStrokeStyle(3, 0xffffff);
-    // var blueArc2 = this.add.arc(350, 280, 230, 193, 277, false, 0x9fc5e8);
-    // blueArc2.setStrokeStyle(3, 0xffffff);
     var redTri1 = this.add
       .triangle(550, 255, 162.5, -85, 235, 50, -10, -120, 0xf4cccc)
       .setInteractive(
@@ -852,6 +856,7 @@ export default class Game extends Phaser.Scene {
         true
       );
     blueTri2.setStrokeStyle(3, 0xffffff);
+
     var RUTri = this.add
       .triangle(520, 260, 5, 50, 235, 50, 5, -110, 0xf4cccc)
       .setInteractive(
@@ -1261,7 +1266,6 @@ export default class Game extends Phaser.Scene {
         }
       }
     });
-
 		this.input.on("drop", function (pointer, gameObject, dropZone) {
 			if (gameObject.name === "scissor") {
 				self.strikeCoordinate = self.cursor.vec.x;
@@ -1359,6 +1363,10 @@ export default class Game extends Phaser.Scene {
   update(time, delta) {
     if (this.loadingText) this.loadingText.destroy();
 
+    let path;
+    let idx;
+    let x;
+    let y;
     var self = this;
     this.graphics.clear();
     this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
@@ -1371,6 +1379,34 @@ export default class Game extends Phaser.Scene {
       self.cursor.vec.x + 20,
       self.cursor.vec.y
     );
+
+    if (
+      this.sendAttacker &&
+      this.game.playerBComputer &&
+      this.compTime + 3000 < this.time.now
+    ) {
+      this.compTime = this.time.now;
+      this.sendAttacker = false;
+      path = Math.floor(Math.random() * 3) + 1;
+      this.game.socket.emit("spawnScissor", {
+        isPlayerA: false,
+        path: path,
+        attackerLevel: this.attackerLevel,
+      });
+    }
+
+    if (
+      !this.sendAttacker &&
+      this.game.playerBComputer &&
+      this.compTime + 4000 < this.time.now
+    ) {
+      this.compTime = this.time.now;
+      this.sendAttacker = true;
+      idx = Math.floor(Math.random() * 3) + 1;
+      x = this.placementOptions[idx][0];
+      y = this.placementOptions[idx][1];
+      self.game.socket.emit("placeTurret", false, x, y, this.turretLevel);
+    }
     // console.log(this.input.mousePointer.x, this.input.mousePointer.y);
   }
 }

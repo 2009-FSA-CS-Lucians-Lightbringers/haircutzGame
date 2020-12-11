@@ -19,6 +19,7 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
   }
 
   create() {
+    this.clickable = true;
     this.game.socket.emit("createGame");
     var bg = this.add.sprite(0, 0, "bluePlayerWaitingRoom");
     bg.setOrigin(0, 0);
@@ -39,8 +40,8 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
 
     var play = this.add.image(70, 70, "play");
     var pause = this.add.image(70, 70, "pause");
-    play.setVisible(false)
-    play.setActive(false)
+    play.setVisible(false);
+    play.setActive(false);
     this.theme = this.sound.add("theme", { loop: true, volume: 1 });
 
     const waitingSprite = this.add.sprite(400, 295, "waitingSprite", 0);
@@ -56,15 +57,35 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
     });
     waitingSprite.play("wait");
 
-    var button = this.add.rectangle(400, 140, 250, 30, 0x89cff0).setOrigin(0.5);
+    var button = this.add.rectangle(250, 140, 250, 30, 0x89cff0).setOrigin(0.5);
     button.setStrokeStyle(4, 0xffffff);
     button.setInteractive({ useHandCursor: true });
 
     button.on("pointerdown", function () {
-      button.fillColor = "0x15a5ff";
-      button.setStrokeStyle(2, 0xefc53f);
-      playRandom.text = "Finding Opponent...";
-      self.game.socket.emit("openRoom");
+      if (self.clickable) {
+        self.clickable = false;
+        button.fillColor = "0x15a5ff";
+        button.setStrokeStyle(2, 0xefc53f);
+        playRandom.text = "Finding Opponent...";
+        self.game.socket.emit("openRoom");
+      }
+    });
+
+    var button2 = this.add
+      .rectangle(550, 140, 250, 30, 0xf4cccc)
+      .setOrigin(0.5);
+    button2.setStrokeStyle(4, 0xffffff);
+    button2.setInteractive({ useHandCursor: true });
+
+    button2.on("pointerdown", function () {
+      if (self.clickable) {
+        self.clickable = false;
+        button2.fillColor = "0xa01c00";
+        button2.setStrokeStyle(2, 0xefc53f);
+        playComputer.text = "Setting up game...";
+        self.game.playerBComputer = true;
+        self.game.switchTime = self.time.now;
+      }
     });
 
     var waiting = this.make
@@ -83,9 +104,23 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
 
     var playRandom = this.make
       .text({
-        x: 400,
+        x: 250,
         y: 140,
         text: "Match With Random Opponent",
+        style: {
+          align: "center",
+          font: "bold 16px Marker Felt",
+          fill: "black",
+          wordWrap: { width: 500 },
+        },
+      })
+      .setOrigin(0.5);
+
+    var playComputer = this.make
+      .text({
+        x: 550,
+        y: 140,
+        text: "Play The Computer",
         style: {
           align: "center",
           font: "bold 16px Marker Felt",
@@ -131,25 +166,27 @@ class BluePlayerWaitingRoom extends Phaser.Scene {
     play.setInteractive({ useHandCursor: true });
     play.on("pointerdown", () => {
       self.game.sound.mute = false;
-      play.setVisible(false)
-      play.setActive(false)
-      pause.setVisible(true)
-      pause.setActive(true)
+      play.setVisible(false);
+      play.setActive(false);
+      pause.setVisible(true);
+      pause.setActive(true);
     });
     pause.setInteractive({ useHandCursor: true });
     pause.on("pointerdown", () => {
       self.game.sound.mute = true;
-      play.setVisible(true)
-      play.setActive(true)
-      pause.setVisible(false)
-      pause.setActive(false)
+      play.setVisible(true);
+      play.setActive(true);
+      pause.setVisible(false);
+      pause.setActive(false);
     });
   }
 
   update(time, delta) {
     if (this.game.switchTime) {
       if (this.game.switchTime + 5000 < this.time.now) {
-        this.scene.switch("preStart");
+        if (this.game.playerBComputer) {
+          this.scene.switch("game");
+        } else this.scene.switch("preStart");
       }
     }
   }

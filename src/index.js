@@ -49,6 +49,7 @@ game.scene.add("credits", Credits);
 
 //start title
 game.scene.start("introScene");
+//game.scene.start("game"); //for dev
 
 //socket connected
 game.socket = io();
@@ -62,6 +63,7 @@ game.redPlayerReady = false;
 game.bluePlayerReady = false;
 game.playerAReady = false;
 game.playerBReady = false;
+game.playerBComputer = true;
 
 game.socket.on("isPlayerA", function () {
   if (!game.isPlayerB) {
@@ -83,6 +85,9 @@ game.socket.on("gameReady", function (isPlayerA) {
   } else {
     game.playerBReady = true;
     console.log("PlayerB Ready");
+  }
+  if (game.playerBComputer) {
+    game.playerBReady = true;
   }
   if (game.playerAReady && game.playerBReady) {
     game.scene.resume("game");
