@@ -15,6 +15,13 @@ export default class Game extends Phaser.Scene {
     //game properties
     this.isPlayerA = false;
     this.isPlayerB = false;
+    this.sendAttacker = true;
+    this.placementOptions = [
+      [440, 180],
+      [500, 180],
+      [440, 280],
+      [500, 280],
+    ];
     this.myEnemies = [];
     this.myAttackers = [];
     this.enemyNumber = -1;
@@ -23,8 +30,8 @@ export default class Game extends Phaser.Scene {
     this.BULLET_DAMAGE = 20;
     this.gameTheme;
     this.scissor;
-    this.attackerLevel;
-		this.strikeCoordinate;
+    this.attackerLevel = 2;
+    this.strikeCoordinate;
     this.ouch;
     this.snips;
     this.plop;
@@ -103,7 +110,7 @@ export default class Game extends Phaser.Scene {
     this.resourceTimer = this.resourceTimer.bind(this);
     this.drawGrid = this.drawGrid.bind(this);
     // this.drawClock = this.drawClock.bind(this);
-    this.whereInMeter = this.whereInMeter.bind(this)
+    this.whereInMeter = this.whereInMeter.bind(this);
   }
 
   //Game methods
@@ -163,7 +170,7 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
-          attacker.attribute = event.attackerLevel
+          attacker.attribute = event.attackerLevel;
           // If Level 2, reassign attacker.atribute to 2
           // If Level 3, reassign attacker.attribute to 3
           this.resourcePoints -= 2;
@@ -181,7 +188,7 @@ export default class Game extends Phaser.Scene {
           this.oppResourcePoints -= 2;
           this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
           var enemy = this.enemies.get();
-          enemy.attribute = event.attackerLevel
+          enemy.attribute = event.attackerLevel;
           // If Level 2, reassign attacker.attribute to 2
           // If Level 3, reassign attacker.attribute to 3
           if (enemy) {
@@ -204,7 +211,7 @@ export default class Game extends Phaser.Scene {
       if (event.isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 1) {
           var attacker = this.attackers.get();
-          attacker.attribute = event.attackerLevel
+          attacker.attribute = event.attackerLevel;
           this.resourcePoints -= 2;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (attacker) {
@@ -435,28 +442,28 @@ export default class Game extends Phaser.Scene {
       location.reload();
     });
   }
-  	whereInMeter(strikeCoordinate) {
-		if (strikeCoordinate >= 216.5 && strikeCoordinate <= 277.5) {
-			//left red zone in meter
-			this.attackerLevel = 2;
-		}
-		if (strikeCoordinate >= 277.5 && strikeCoordinate <= 384.27) {
-			//left blue
-			this.attackerLevel = 1;
-		}
-		if (strikeCoordinate >= 384.27 && strikeCoordinate <= 421.44) {
-			//white
-			this.attackerLevel = 3;
-		}
-		if (strikeCoordinate >= 421.44 && strikeCoordinate <= 523.4) {
-			//right blue
-			this.attackerLevel = 1;
-		}
-		if (strikeCoordinate >= 523.4 && strikeCoordinate <= 582.1) {
-			//right red
-			this.attackerLevel = 2;
-		}
-	}
+  whereInMeter(strikeCoordinate) {
+    if (strikeCoordinate >= 216.5 && strikeCoordinate <= 277.5) {
+      //left red zone in meter
+      this.attackerLevel = 2;
+    }
+    if (strikeCoordinate >= 277.5 && strikeCoordinate <= 384.27) {
+      //left blue
+      this.attackerLevel = 1;
+    }
+    if (strikeCoordinate >= 384.27 && strikeCoordinate <= 421.44) {
+      //white
+      this.attackerLevel = 3;
+    }
+    if (strikeCoordinate >= 421.44 && strikeCoordinate <= 523.4) {
+      //right blue
+      this.attackerLevel = 1;
+    }
+    if (strikeCoordinate >= 523.4 && strikeCoordinate <= 582.1) {
+      //right red
+      this.attackerLevel = 2;
+    }
+  }
   preload() {
     // load the game assets –
     this.load.image("background", "/assets/background.png");
@@ -464,14 +471,22 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.spritesheet("p1attackersLvl2", "/assets/player1_attackers_level2.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
-    this.load.spritesheet("p1attackersLvl3", "/assets/player1_attackers_level3.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
+    this.load.spritesheet(
+      "p1attackersLvl2",
+      "/assets/player1_attackers_level2.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
+    this.load.spritesheet(
+      "p1attackersLvl3",
+      "/assets/player1_attackers_level3.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
     this.load.spritesheet(
       "p1return",
       "/assets/player1_returning_attackers.png",
@@ -500,14 +515,22 @@ export default class Game extends Phaser.Scene {
       frameWidth: 68,
       frameHeight: 45,
     });
-    this.load.spritesheet("p2attackersLvl2", "/assets/player2_attackers_level2.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
-    this.load.spritesheet("p2attackersLvl3", "/assets/player2_attackers_level3.png", {
-      frameWidth: 68,
-      frameHeight: 45,
-    });
+    this.load.spritesheet(
+      "p2attackersLvl2",
+      "/assets/player2_attackers_level2.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
+    this.load.spritesheet(
+      "p2attackersLvl3",
+      "/assets/player2_attackers_level3.png",
+      {
+        frameWidth: 68,
+        frameHeight: 45,
+      }
+    );
     this.load.spritesheet(
       "p2return",
       "/assets/player2_returning_attackers.png",
@@ -537,7 +560,7 @@ export default class Game extends Phaser.Scene {
     this.load.image("bullet", "/assets/bullet.png");
     this.load.image("scoreboard", "/assets/scoreboard.png");
     this.load.image("blackboard", "/assets/blackboard.png");
-    this.load.image("meter", "/assets/attack_meter.png")
+    this.load.image("meter", "/assets/attack_meter.png");
     this.load.spritesheet("p1base", "/assets/base1_v2.png", {
       frameWidth: 75,
       frameHeight: 89,
@@ -547,8 +570,6 @@ export default class Game extends Phaser.Scene {
       frameWidth: 75,
       frameHeight: 89,
     });
-
-
 
     this.load.image("logo", "/assets/logo_underline.png");
     this.load.image("play", "/assets/playing.png");
@@ -566,6 +587,7 @@ export default class Game extends Phaser.Scene {
   create() {
     this.isPlayerA = this.game.isPlayerA;
     this.isPlayerB = this.game.isPlayerB;
+    this.compTime = this.time.now;
     this.add.image(400, 300, "background");
     this.add.image(85, 508, "scoreboard");
     this.add.image(400, 535, "blackboard");
@@ -575,6 +597,8 @@ export default class Game extends Phaser.Scene {
     this.pause = this.add.image(50, 50, "pause");
     this.gameTheme = this.sound.add("gameTheme", { loop: true, volume: 0.5 });
     let self = this;
+
+    if (this.game.playerBComputer) this.isPlayerA = true;
 
     if (this.isPlayerA) {
       self.scissor = self.add
@@ -745,34 +769,75 @@ export default class Game extends Phaser.Scene {
     this.bulletSound = this.sound.add("bulletSound", { loop: false });
     this.plop = this.sound.add("plop", { loop: false });
     this.gameTheme.play();
-    this.play.setVisible(false)
-    this.play.setActive(false)
+    this.play.setVisible(false);
+    this.play.setActive(false);
 
     this.play.setInteractive({ useHandCursor: true });
     this.play.on("pointerdown", () => {
       self.game.sound.mute = false;
-      this.play.setVisible(false)
-      this.play.setActive(false)
-      this.pause.setVisible(true)
-      this.pause.setActive(true)
+      this.play.setVisible(false);
+      this.play.setActive(false);
+      this.pause.setVisible(true);
+      this.pause.setActive(true);
     });
     this.pause.setInteractive({ useHandCursor: true });
     this.pause.on("pointerdown", () => {
       self.game.sound.mute = true;
-      this.play.setVisible(true)
-      this.play.setActive(true)
-      this.pause.setVisible(false)
-      this.pause.setActive(false)
+      this.play.setVisible(true);
+      this.play.setActive(true);
+      this.pause.setVisible(false);
+      this.pause.setActive(false);
     });
 
-    var redArc1 = this.add.arc(450, 280, 230, 263, 347, false, 0xf4cccc);
-    redArc1.setStrokeStyle(3, 0xffffff);
-    var redArc2 = this.add.arc(450, 200, 230, 13, 97, false, 0xf4cccc);
-    redArc2.setStrokeStyle(3, 0xffffff);
-    var blueArc1 = this.add.arc(350, 200, 230, 83, 167, false, 0x9fc5e8);
-    blueArc1.setStrokeStyle(3, 0xffffff);
-    var blueArc2 = this.add.arc(350, 280, 230, 193, 277, false, 0x9fc5e8);
-    blueArc2.setStrokeStyle(3, 0xffffff);
+    var redTri1 = this.add.triangle(
+      550,
+      255,
+      162.5,
+      -85,
+      235,
+      50,
+      -10,
+      -120,
+      0xf4cccc
+    );
+    redTri1.setStrokeStyle(3, 0xffffff);
+    var redTri2 = this.add.triangle(
+      550,
+      295,
+      162.5,
+      185,
+      235,
+      50,
+      -10,
+      225,
+      0xf4cccc
+    );
+    redTri2.setStrokeStyle(3, 0xffffff);
+    var blueTri1 = this.add.triangle(
+      495,
+      295,
+      -162.5,
+      185,
+      -235,
+      50,
+      10,
+      225,
+      0x9fc5e8
+    );
+    blueTri1.setStrokeStyle(3, 0xffffff);
+    var blueTri2 = this.add.triangle(
+      267.5,
+      87.5,
+      72.5,
+      85,
+      235,
+      50,
+      -10,
+      225,
+      0x9fc5e8
+    );
+    blueTri2.setStrokeStyle(3, 0xffffff);
+
     var RUTri = this.add
       .triangle(520, 260, 5, 50, 235, 50, 5, -110, 0xf4cccc)
       .setInteractive(
@@ -907,19 +972,19 @@ export default class Game extends Phaser.Scene {
     groupZone3.add(this.path3ZoneL);
     groupZone3.add(this.path3ZoneR);
 
-		//path for cusor
-		this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
-		var line1 = new Phaser.Curves.Line([216.5, 50, 582.4, 50]);
-		this.cursorPath = this.add.path();
-		this.cursorPath.add(line1);
-		this.tweens.add({
-			targets: this.cursor,
-			t: 1,
-			ease: "Linear",
-			duration: 4000,
-			yoyo: true,
-			repeat: -1,
-		});
+    //path for cusor
+    this.cursor = { t: 0, vec: new Phaser.Math.Vector2() };
+    var line1 = new Phaser.Curves.Line([216.5, 50, 582.4, 50]);
+    this.cursorPath = this.add.path();
+    this.cursorPath.add(line1);
+    this.tweens.add({
+      targets: this.cursor,
+      t: 1,
+      ease: "Linear",
+      duration: 4000,
+      yoyo: true,
+      repeat: -1,
+    });
 
     this.enemies = this.physics.add.group({
       classType: Enemy,
@@ -1164,76 +1229,76 @@ export default class Game extends Phaser.Scene {
       }
     });
 
-		this.input.on("drop", function (pointer, gameObject, dropZone) {
-			if (gameObject.name === "scissor") {
-				self.strikeCoordinate = self.cursor.vec.x;
-				if (dropZone.name === "path1") {
-					dropZone.fillAlpha = 0;
-					dropZone.strokeAlpha = 0;
-					self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit("spawnScissor", {
-						isPlayerA: self.isPlayerA,
-						path: 1,
-						attackerLevel: self.attackerLevel,
-					});
-					gameObject.clearTint();
-					self.attackerReleased = self.time.now;
-				}
-				if (dropZone.name === "path2") {
-					for (const child of groupZone2.getChildren()) {
-						child.fillAlpha = 0;
-						child.strokeAlpha = 0;
-					}
-					self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit("spawnScissor", {
-						isPlayerA: self.isPlayerA,
-						path: 2,
-						attackerLevel: self.attackerLevel,
-					});
-					gameObject.clearTint();
-					self.attackerReleased = self.time.now;
-				}
-				if (dropZone.name === "path3") {
-					for (const child of groupZone3.getChildren()) {
-						child.fillAlpha = 0;
-						child.strokeAlpha = 0;
-					}
-					self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit("spawnScissor", {
-						isPlayerA: self.isPlayerA,
-						path: 3,
-						attackerLevel: self.attackerLevel,
-					});
-					gameObject.clearTint();
-					self.attackerReleased = self.time.now;
-				}
-			}
-			if (gameObject.name === "turret") {
-				if (dropZone.name === "triangleA" && self.isPlayerA) {
-					console.log(self.cursor.vec.x);
-					dropZone.fillColor = 0x9fc5e8;
-					dropZone.setStrokeStyle(4, 0xffffff);
-					gameObject.setTint(0xff0000);
-					self.game.socket.emit(
-						"placeTurret",
-						self.isPlayerA,
-						pointer.upX,
-						pointer.upY
-					);
-				}
-				if (dropZone.name === "triangleB" && self.isPlayerB) {
-					dropZone.fillColor = 0xf4cccc;
-					dropZone.setStrokeStyle(4, 0xffffff);
-					gameObject.setTint(0xff0000);
-					self.game.socket.emit(
-						"placeTurret",
-						self.isPlayerA,
-						pointer.upX,
-						pointer.upY
-					);
-				}
-			}
-		});
+    this.input.on("drop", function (pointer, gameObject, dropZone) {
+      if (gameObject.name === "scissor") {
+        self.strikeCoordinate = self.cursor.vec.x;
+        if (dropZone.name === "path1") {
+          dropZone.fillAlpha = 0;
+          dropZone.strokeAlpha = 0;
+          self.whereInMeter(self.strikeCoordinate);
+          self.game.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 1,
+            attackerLevel: self.attackerLevel,
+          });
+          gameObject.clearTint();
+          self.attackerReleased = self.time.now;
+        }
+        if (dropZone.name === "path2") {
+          for (const child of groupZone2.getChildren()) {
+            child.fillAlpha = 0;
+            child.strokeAlpha = 0;
+          }
+          self.whereInMeter(self.strikeCoordinate);
+          self.game.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 2,
+            attackerLevel: self.attackerLevel,
+          });
+          gameObject.clearTint();
+          self.attackerReleased = self.time.now;
+        }
+        if (dropZone.name === "path3") {
+          for (const child of groupZone3.getChildren()) {
+            child.fillAlpha = 0;
+            child.strokeAlpha = 0;
+          }
+          self.whereInMeter(self.strikeCoordinate);
+          self.game.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 3,
+            attackerLevel: self.attackerLevel,
+          });
+          gameObject.clearTint();
+          self.attackerReleased = self.time.now;
+        }
+      }
+      if (gameObject.name === "turret") {
+        if (dropZone.name === "triangleA" && self.isPlayerA) {
+          console.log(self.cursor.vec.x);
+          dropZone.fillColor = 0x9fc5e8;
+          dropZone.setStrokeStyle(4, 0xffffff);
+          gameObject.setTint(0xff0000);
+          self.game.socket.emit(
+            "placeTurret",
+            self.isPlayerA,
+            pointer.upX,
+            pointer.upY
+          );
+        }
+        if (dropZone.name === "triangleB" && self.isPlayerB) {
+          dropZone.fillColor = 0xf4cccc;
+          dropZone.setStrokeStyle(4, 0xffffff);
+          gameObject.setTint(0xff0000);
+          self.game.socket.emit(
+            "placeTurret",
+            self.isPlayerA,
+            pointer.upX,
+            pointer.upY
+          );
+        }
+      }
+    });
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
       gameObject.x = gameObject.input.dragStartX;
       gameObject.y = gameObject.input.dragStartY;
@@ -1256,18 +1321,50 @@ export default class Game extends Phaser.Scene {
   update(time, delta) {
     if (this.loadingText) this.loadingText.destroy();
 
-		var self = this;
-		this.graphics.clear();
-		this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
-		this.graphics.fillStyle(0xffffff, 1);
-		this.graphics.fillTriangle(
-			self.cursor.vec.x,
-			self.cursor.vec.y,
-			self.cursor.vec.x + 10,
-			self.cursor.vec.y - 10,
-			self.cursor.vec.x + 20,
-			self.cursor.vec.y
-		);
+    let path;
+    let idx;
+    let x;
+    let y;
+    var self = this;
+    this.graphics.clear();
+    this.cursorPath.getPoint(self.cursor.t, self.cursor.vec);
+    this.graphics.fillStyle(0xffffff, 1);
+    this.graphics.fillTriangle(
+      self.cursor.vec.x,
+      self.cursor.vec.y,
+      self.cursor.vec.x + 10,
+      self.cursor.vec.y - 10,
+      self.cursor.vec.x + 20,
+      self.cursor.vec.y
+    );
+
+    if (
+      this.sendAttacker &&
+      this.game.playerBComputer &&
+      this.compTime + 3000 < this.time.now
+    ) {
+      this.compTime = this.time.now;
+      this.sendAttacker = false;
+      path = Math.floor(Math.random() * 3) + 1;
+      this.game.socket.emit("spawnScissor", {
+        isPlayerA: false,
+        path: path,
+        attackerLevel: this.attackerLevel,
+      });
+    }
+
+    if (
+      !this.sendAttacker &&
+      this.game.playerBComputer &&
+      this.compTime + 4000 < this.time.now
+    ) {
+      this.compTime = this.time.now;
+      this.sendAttacker = true;
+      idx = Math.floor(Math.random() * 3) + 1;
+      x = this.placementOptions[idx][0];
+      y = this.placementOptions[idx][1];
+      self.game.socket.emit("placeTurret", false, x, y);
+    }
     //console.log(this.input.mousePointer.x);
   }
 }
