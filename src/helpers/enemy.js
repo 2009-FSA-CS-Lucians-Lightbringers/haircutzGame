@@ -24,6 +24,19 @@ export default new Phaser.Class({
       this.level2 = false;
       this.level3 = false;
     }
+    this.removeEnemy = function () {
+      if (scene.isPlayerA && this.hasSwitched) {
+        scene.incrementBlueScore();
+      }
+      if (!scene.isPlayerA && this.hasSwitched) {
+        scene.incrementRedScore();
+      }
+      console.log("Removing Enemy...");
+      scene.resourcePoints += 1;
+      scene.resourceText.setText("USER | " + scene.resourcePoints);
+      this.healthBar.destroy();
+      this.destroy();
+    };
   },
   //differentiate player attacks based on class
   //if playerA then create a playera attacker else create a playerb attacker
@@ -37,49 +50,73 @@ export default new Phaser.Class({
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      if(this.attribute === 1){
+      if (this.attribute === 1) {
         this.level1 = true;
         this.anims.play("blueWalk");
-        this.healthBar = this.scene.makeBar(this.follower.vec.x-10,this.follower.vec.y-20, 0x712ecc);
+        this.healthBar = this.scene.makeBar(
+          this.follower.vec.x - 10,
+          this.follower.vec.y - 20,
+          0x712ecc
+        );
         this.hp = 80;
       }
-      if(this.attribute === 2){
+      if (this.attribute === 2) {
         this.level2 = true;
         this.anims.play("blue2Walk");
-        this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y-20, 0x712ecc);
+        this.healthBar = this.scene.makeBar(
+          this.follower.vec.x - 20,
+          this.follower.vec.y - 20,
+          0x712ecc
+        );
         this.hp = 100;
       }
-      if(this.attribute === 3){
+      if (this.attribute === 3) {
         this.level3 = true;
         this.anims.play("blue3Walk");
-        this.healthBar = this.scene.makeBar(this.follower.vec.x-30,this.follower.vec.y-20, 0x712ecc);
+        this.healthBar = this.scene.makeBar(
+          this.follower.vec.x - 30,
+          this.follower.vec.y - 20,
+          0x712ecc
+        );
         this.hp = 120;
       }
-      this.scene.setValue(this.healthBar,this.hp)
+      this.scene.setValue(this.healthBar, this.hp);
     } else {
       this.follower.t = 1;
       this.path.getPoint(this.follower.t, this.follower.vec);
       // set the x and y of our enemy to the received from the previous step
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      if(this.attribute === 1){
+      if (this.attribute === 1) {
         this.level1 = true;
         this.anims.play("redWalk");
-        this.healthBar = this.scene.makeBar(this.follower.vec.x-10,this.follower.vec.y-20, 0x712ecc);
+        this.healthBar = this.scene.makeBar(
+          this.follower.vec.x - 10,
+          this.follower.vec.y - 20,
+          0x712ecc
+        );
         this.hp = 80;
       }
-      if(this.attribute === 2){
+      if (this.attribute === 2) {
         this.level2 = true;
         this.anims.play("red2Walk");
-        this.healthBar = this.scene.makeBar(this.follower.vec.x-20,this.follower.vec.y-20, 0x712ecc);
+        this.healthBar = this.scene.makeBar(
+          this.follower.vec.x - 20,
+          this.follower.vec.y - 20,
+          0x712ecc
+        );
         this.hp = 100;
       }
-      if(this.attribute === 3){
+      if (this.attribute === 3) {
         this.level3 = true;
         this.anims.play("red3Walk");
-        this.healthBar = this.scene.makeBar(this.follower.vec.x-30,this.follower.vec.y-20, 0x712ecc);
+        this.healthBar = this.scene.makeBar(
+          this.follower.vec.x - 30,
+          this.follower.vec.y - 20,
+          0x712ecc
+        );
         this.hp = 120;
       }
-      this.scene.setValue(this.healthBar,this.hp)
+      this.scene.setValue(this.healthBar, this.hp);
     }
   },
 
@@ -97,6 +134,7 @@ export default new Phaser.Class({
     }
   },
 
+
   removeEnemy() {
     if (this.scene.isPlayerA && this.hasSwitched) {
       this.scene.incrementBlueScore();
@@ -113,30 +151,40 @@ export default new Phaser.Class({
     this.destroy();
   },
 
+
   update: function (time, delta) {
     if (this.path) {
       this.path.getPoint(this.follower.t, this.follower.vec);
       this.setPosition(this.follower.vec.x, this.follower.vec.y);
-      if(this.level1){
-        this.healthBar.setPosition(this.follower.vec.x-10, this.follower.vec.y+20)
+      if (this.level1) {
+        this.healthBar.setPosition(
+          this.follower.vec.x - 10,
+          this.follower.vec.y + 20
+        );
       }
-      if(this.level2){
-        this.healthBar.setPosition(this.follower.vec.x-20, this.follower.vec.y+20)
+      if (this.level2) {
+        this.healthBar.setPosition(
+          this.follower.vec.x - 20,
+          this.follower.vec.y + 20
+        );
       }
-      if(this.level3){
-        this.healthBar.setPosition(this.follower.vec.x-30, this.follower.vec.y+20)
+      if (this.level3) {
+        this.healthBar.setPosition(
+          this.follower.vec.x - 30,
+          this.follower.vec.y + 20
+        );
       }
       if (this.createdByPlayerA) {
         this.follower.t += this.scene.SCISSOR_SPEED * delta;
 
         if (this.follower.t >= 0.5 && !this.hasSwitched) {
-          if(this.level1){
+          if (this.level1) {
             this.anims.play("reverseBlueWalk");
           }
-          if(this.level2){
+          if (this.level2) {
             this.anims.play("reverseBlue2Walk");
           }
-          if(this.level3){
+          if (this.level3) {
             this.anims.play("reverseBlue3Walk");
           }
           this.scene.decrementRedScore();
@@ -152,13 +200,13 @@ export default new Phaser.Class({
       } else {
         this.follower.t -= this.scene.SCISSOR_SPEED * delta;
         if (this.follower.t <= 0.5 && !this.hasSwitched) {
-          if(this.level1){
+          if (this.level1) {
             this.anims.play("reverseRedWalk");
           }
-          if(this.level2){
+          if (this.level2) {
             this.anims.play("reverseRed2Walk");
           }
-          if(this.level3){
+          if (this.level3) {
             this.anims.play("reverseRed3Walk");
           }
           this.scene.decrementBlueScore();
