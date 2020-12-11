@@ -92,11 +92,11 @@ io.on("connection", function (socket) {
     io.in(roomCode).emit("choosePath", event);
   });
 
-  socket.on("placeTurret", function (isPlayerA, x, y) {
+  socket.on("placeTurret", function (isPlayerA, x, y, turretLevel) {
     let roomCode = Array.from(socket.rooms).filter(
       (item) => item != socket.id
     )[0];
-    io.in(roomCode).emit("placeTurret", isPlayerA, x, y);
+    io.in(roomCode).emit("placeTurret", isPlayerA, x, y, turretLevel);
   });
 
   socket.on("stopTheme", function () {
