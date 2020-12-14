@@ -245,37 +245,37 @@ export default class Game extends Phaser.Scene {
 
   //Turret methods
   placeTurret(isPlayerA, x, y, turretLevel) {
+    var turretShiftUp = 39.5;
     var i = Math.floor(y / 64);
     var j = Math.floor(x / 64);
-    console.log(turretLevel);
     //this.turretLevel = event.turretLevel
-    if (this.canPlaceTurret(isPlayerA, i, j)) {
-      if (isPlayerA === this.isPlayerA) {
-        if (this.resourcePoints > 2) {
-          var turret = this.turrets.get();
-          turret.attribute = turretLevel;
-          this.resourcePoints -= 3;
-          this.resourceText.setText("USER | " + this.resourcePoints);
-          if (turret) {
-            this.plop.play();
-            turret.setActive(true);
-            turret.setVisible(true);
-            turret.place(i, j);
-          }
-        }
-      } else if (this.oppResourcePoints > 2) {
+    // if (this.canPlaceTurret(isPlayerA, i, j)) {
+    if (isPlayerA === this.isPlayerA) {
+      if (this.resourcePoints > 2) {
         var turret = this.turrets.get();
         turret.attribute = turretLevel;
-        this.oppResourcePoints -= 3;
-        this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
+        this.resourcePoints -= 3;
+        this.resourceText.setText("USER | " + this.resourcePoints);
         if (turret) {
           this.plop.play();
           turret.setActive(true);
           turret.setVisible(true);
-          turret.place(i, j);
+          turret.place(x, y);
         }
       }
+    } else if (this.oppResourcePoints > 2) {
+      var turret = this.turrets.get();
+      turret.attribute = turretLevel;
+      this.oppResourcePoints -= 3;
+      this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
+      if (turret) {
+        this.plop.play();
+        turret.setActive(true);
+        turret.setVisible(true);
+        turret.place(x, y);
+      }
     }
+    // }
   }
 
   canPlaceTurret(isPlayerA, i, j) {
@@ -374,15 +374,16 @@ export default class Game extends Phaser.Scene {
   }
 
   makeBar(x, y, color) {
-    //draw the bar
+    //create the graphics object
     let bar = this.add.graphics();
 
     //color the bar
-    bar.fillStyle(color, 1);
-
-    //fill the bar with a rectangle
+    bar.lineStyle(2, 0x000000);
+    bar.fillStyle(color);
+    //shape the bar
+    // bar.strokeRoundedRect(0, 0, 50, 10, 5);
     bar.fillRect(0, 0, 50, 10);
-
+    bar.strokeRect(0, 0, 50, 10);
     //position the bar
     bar.x = x;
     bar.y = y;
@@ -903,24 +904,30 @@ export default class Game extends Phaser.Scene {
     // its not related to our path
     this.graphics = this.add.graphics();
     this.drawGrid(self.graphics);
+    var drawPath1 = this.add.graphics().lineStyle(10, 0x00ff00, 0);
+    var drawPath2 = this.add.graphics().lineStyle(10, 0x00ff00, 0);
+    var drawPath3 = this.add.graphics().lineStyle(10, 0x00ff00, 0);
 
     // the path for our enemies
     // parameters are the start x and y of our path
     this.path1 = this.add.path(125, 240);
     this.path1.lineTo(675, 240);
     this.path1.lineTo(125, 240);
+    this.path1.draw(drawPath1);
 
     this.path2 = this.add.path(125, 240);
     this.path2.lineTo(400, 48);
     this.path2.lineTo(675, 240);
     this.path2.lineTo(400, 48);
     this.path2.lineTo(125, 240);
+    this.path2.draw(drawPath2);
 
     this.path3 = this.add.path(125, 240);
     this.path3.lineTo(400, 432);
     this.path3.lineTo(675, 240);
     this.path3.lineTo(400, 432);
     this.path3.lineTo(125, 240);
+    this.path3.draw(drawPath3);
 
     //Player B path
     this.path4 = this.add.path(675, 240);
@@ -1020,7 +1027,7 @@ export default class Game extends Phaser.Scene {
       targets: this.cursor,
       t: 1,
       ease: "Linear",
-      duration: 1000,
+      duration: 750,
       yoyo: true,
       repeat: -1,
     });
@@ -1182,35 +1189,46 @@ export default class Game extends Phaser.Scene {
       self.turretPlacer = isPlayerA;
       self.placeTurret(isPlayerA, x, y, turretLevel);
     });
-    this.input.dragDistanceThreshold = 16;
-
+    // this.input.dragDistanceThreshold = 16;
+    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+    });
     this.input.on("dragstart", function (pointer, gameObject) {
       gameObject.setTint(0xff0000);
       self.children.bringToTop(gameObject);
     });
 
-    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-    });
+    // this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+    //   gameObject.x = dragX;
+    //   gameObject.y = dragY;
+    // });
     this.input.on("dragenter", function (pointer, gameObject, dropZone) {
       if (gameObject.name === "scissor") {
         if (dropZone.name === "path1") {
-          dropZone.fillAlpha = 1;
-          dropZone.setStrokeStyle(4, 0xefc53f);
+          // dropZone.fillAlpha = 1;
+          // dropZone.setStrokeStyle(4, 0xefc53f);
+          drawPath1.lineStyle(10, 0x00ff00, 1);
+          self.path1.draw(drawPath1);
           gameObject.setTint(0x00ff00);
         }
         if (dropZone.name === "path2") {
           for (const child of groupZone2.getChildren()) {
-            child.fillAlpha = 1;
-            child.setStrokeStyle(4, 0xefc53f);
+            // child.fillAlpha = 1;
+            // child.setStrokeStyle(4, 0xefc53f);
+            drawPath2.lineStyle(10, 0x00ff00, 1);
+            self.path2.draw(drawPath2);
+
             gameObject.setTint(0x00ff00);
           }
         }
         if (dropZone.name === "path3") {
           for (const child of groupZone3.getChildren()) {
-            child.fillAlpha = 1;
-            child.setStrokeStyle(4, 0xefc53f);
+            // child.fillAlpha = 1;
+            // child.setStrokeStyle(4, 0xefc53f);
+            drawPath3.lineStyle(10, 0x00ff00, 1);
+            self.path3.draw(drawPath3);
+
             gameObject.setTint(0x00ff00);
           }
         }
@@ -1233,21 +1251,27 @@ export default class Game extends Phaser.Scene {
     this.input.on("dragleave", function (pointer, gameObject, dropZone) {
       if (gameObject.name === "scissor") {
         if (dropZone.name === "path1") {
-          dropZone.fillAlpha = 0;
-          dropZone.strokeAlpha = 0;
+          // dropZone.fillAlpha = 0;
+          // dropZone.strokeAlpha = 0;
+          // drawPath.strokeAlpha = 0;
+          drawPath1.clear();
           gameObject.setTint(0xff0000);
         }
         if (dropZone.name === "path2") {
           for (const child of groupZone2.getChildren()) {
-            child.fillAlpha = 0;
-            child.strokeAlpha = 0;
+            // child.fillAlpha = 0;
+            // child.strokeAlpha = 0;
+            drawPath2.clear();
+
             gameObject.setTint(0xff0000);
           }
         }
         if (dropZone.name === "path3") {
           for (const child of groupZone3.getChildren()) {
-            child.fillAlpha = 0;
-            child.strokeAlpha = 0;
+            // child.fillAlpha = 0;
+            // child.strokeAlpha = 0;
+            drawPath3.clear();
+
             gameObject.setTint(0xff0000);
           }
         }
@@ -1270,8 +1294,9 @@ export default class Game extends Phaser.Scene {
       if (gameObject.name === "scissor") {
         self.strikeCoordinate = self.cursor.vec.x;
         if (dropZone.name === "path1") {
-          dropZone.fillAlpha = 0;
-          dropZone.strokeAlpha = 0;
+          // dropZone.fillAlpha = 0;
+          // dropZone.strokeAlpha = 0;
+          drawPath1.clear();
           self.whereInMeter(self.strikeCoordinate);
           self.game.socket.emit("spawnScissor", {
             isPlayerA: self.isPlayerA,
@@ -1283,8 +1308,9 @@ export default class Game extends Phaser.Scene {
         }
         if (dropZone.name === "path2") {
           for (const child of groupZone2.getChildren()) {
-            child.fillAlpha = 0;
-            child.strokeAlpha = 0;
+            // child.fillAlpha = 0;
+            // child.strokeAlpha = 0;
+            drawPath2.clear();
           }
           self.whereInMeter(self.strikeCoordinate);
           self.game.socket.emit("spawnScissor", {
@@ -1297,8 +1323,9 @@ export default class Game extends Phaser.Scene {
         }
         if (dropZone.name === "path3") {
           for (const child of groupZone3.getChildren()) {
-            child.fillAlpha = 0;
-            child.strokeAlpha = 0;
+            // child.fillAlpha = 0;
+            // child.strokeAlpha = 0;
+            drawPath3.clear();
           }
           self.whereInMeter(self.strikeCoordinate);
           self.game.socket.emit("spawnScissor", {
@@ -1313,7 +1340,6 @@ export default class Game extends Phaser.Scene {
       if (gameObject.name === "turret") {
         self.strikeCoordinate = self.cursor.vec.x;
         if (dropZone.name === "triangleA" && self.isPlayerA) {
-          console.log(self.cursor.vec.x);
           dropZone.fillColor = 0x9fc5e8;
           dropZone.setStrokeStyle(4, 0xffffff);
           gameObject.setTint(0xff0000);
@@ -1342,6 +1368,7 @@ export default class Game extends Phaser.Scene {
       }
     });
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
+      console.log(dropZone);
       gameObject.x = gameObject.input.dragStartX;
       gameObject.y = gameObject.input.dragStartY;
       gameObject.clearTint();
