@@ -31,8 +31,8 @@ export default class Game extends Phaser.Scene {
     this.gameTheme;
     this.scissor;
     this.attackerLevel = 2;
-    this.turretLevel = 2
-		this.strikeCoordinate;
+    this.turretLevel = 2;
+    this.strikeCoordinate;
     this.ouch;
     this.snips;
     this.plop;
@@ -247,13 +247,13 @@ export default class Game extends Phaser.Scene {
   placeTurret(isPlayerA, x, y, turretLevel) {
     var i = Math.floor(y / 64);
     var j = Math.floor(x / 64);
-    console.log(turretLevel)
+    console.log(turretLevel);
     //this.turretLevel = event.turretLevel
     if (this.canPlaceTurret(isPlayerA, i, j)) {
       if (isPlayerA === this.isPlayerA) {
         if (this.resourcePoints > 2) {
           var turret = this.turrets.get();
-          turret.attribute = turretLevel
+          turret.attribute = turretLevel;
           this.resourcePoints -= 3;
           this.resourceText.setText("USER | " + this.resourcePoints);
           if (turret) {
@@ -265,7 +265,7 @@ export default class Game extends Phaser.Scene {
         }
       } else if (this.oppResourcePoints > 2) {
         var turret = this.turrets.get();
-        turret.attribute = turretLevel
+        turret.attribute = turretLevel;
         this.oppResourcePoints -= 3;
         this.oppResourceText.setText("ENEMY | " + this.oppResourcePoints);
         if (turret) {
@@ -448,32 +448,32 @@ export default class Game extends Phaser.Scene {
   }
 
   whereInMeter(strikeCoordinate) {
-		if (strikeCoordinate >= 216.5 && strikeCoordinate <= 277.5) {
-			//left red zone in meter
+    if (strikeCoordinate >= 216.5 && strikeCoordinate <= 277.5) {
+      //left red zone in meter
       this.attackerLevel = 2;
       this.turretLevel = 2;
-		}
-		if (strikeCoordinate >= 277.5 && strikeCoordinate <= 384.27) {
-			//left blue
+    }
+    if (strikeCoordinate >= 277.5 && strikeCoordinate <= 384.27) {
+      //left blue
       this.attackerLevel = 1;
       this.turretLevel = 1;
-		}
-		if (strikeCoordinate >= 384.27 && strikeCoordinate <= 421.44) {
-			//white
+    }
+    if (strikeCoordinate >= 384.27 && strikeCoordinate <= 421.44) {
+      //white
       this.attackerLevel = 3;
       this.turretLevel = 3;
-		}
-		if (strikeCoordinate >= 421.44 && strikeCoordinate <= 523.4) {
-			//right blue
+    }
+    if (strikeCoordinate >= 421.44 && strikeCoordinate <= 523.4) {
+      //right blue
       this.attackerLevel = 1;
       this.turretLevel = 1;
-		}
-		if (strikeCoordinate >= 523.4 && strikeCoordinate <= 582.1) {
-			//right red
+    }
+    if (strikeCoordinate >= 523.4 && strikeCoordinate <= 582.1) {
+      //right red
       this.attackerLevel = 2;
       this.turretLevel = 2;
-		}
-	}
+    }
+  }
 
   preload() {
     // load the game assets –
@@ -589,8 +589,8 @@ export default class Game extends Phaser.Scene {
 
     this.load.spritesheet("explosion", "/assets/explosion.png", {
       frameWidth: 72,
-      frameHeight: 72
-    })
+      frameHeight: 72,
+    });
 
     this.load.image("logo", "/assets/logo_underline.png");
     this.load.image("play", "/assets/playing.png");
@@ -1266,81 +1266,81 @@ export default class Game extends Phaser.Scene {
         }
       }
     });
-		this.input.on("drop", function (pointer, gameObject, dropZone) {
-			if (gameObject.name === "scissor") {
-				self.strikeCoordinate = self.cursor.vec.x;
-				if (dropZone.name === "path1") {
-					dropZone.fillAlpha = 0;
-					dropZone.strokeAlpha = 0;
-					self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit("spawnScissor", {
-						isPlayerA: self.isPlayerA,
-						path: 1,
-						attackerLevel: self.attackerLevel,
-					});
-					gameObject.clearTint();
-					self.attackerReleased = self.time.now;
-				}
-				if (dropZone.name === "path2") {
-					for (const child of groupZone2.getChildren()) {
-						child.fillAlpha = 0;
-						child.strokeAlpha = 0;
-					}
-					self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit("spawnScissor", {
-						isPlayerA: self.isPlayerA,
-						path: 2,
-						attackerLevel: self.attackerLevel,
-					});
-					gameObject.clearTint();
-					self.attackerReleased = self.time.now;
-				}
-				if (dropZone.name === "path3") {
-					for (const child of groupZone3.getChildren()) {
-						child.fillAlpha = 0;
-						child.strokeAlpha = 0;
-					}
-					self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit("spawnScissor", {
-						isPlayerA: self.isPlayerA,
-						path: 3,
-						attackerLevel: self.attackerLevel,
-					});
-					gameObject.clearTint();
-					self.attackerReleased = self.time.now;
-				}
-			}
-			if (gameObject.name === "turret") {
+    this.input.on("drop", function (pointer, gameObject, dropZone) {
+      if (gameObject.name === "scissor") {
         self.strikeCoordinate = self.cursor.vec.x;
-				if (dropZone.name === "triangleA" && self.isPlayerA) {
+        if (dropZone.name === "path1") {
+          dropZone.fillAlpha = 0;
+          dropZone.strokeAlpha = 0;
+          self.whereInMeter(self.strikeCoordinate);
+          self.game.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 1,
+            attackerLevel: self.attackerLevel,
+          });
+          gameObject.clearTint();
+          self.attackerReleased = self.time.now;
+        }
+        if (dropZone.name === "path2") {
+          for (const child of groupZone2.getChildren()) {
+            child.fillAlpha = 0;
+            child.strokeAlpha = 0;
+          }
+          self.whereInMeter(self.strikeCoordinate);
+          self.game.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 2,
+            attackerLevel: self.attackerLevel,
+          });
+          gameObject.clearTint();
+          self.attackerReleased = self.time.now;
+        }
+        if (dropZone.name === "path3") {
+          for (const child of groupZone3.getChildren()) {
+            child.fillAlpha = 0;
+            child.strokeAlpha = 0;
+          }
+          self.whereInMeter(self.strikeCoordinate);
+          self.game.socket.emit("spawnScissor", {
+            isPlayerA: self.isPlayerA,
+            path: 3,
+            attackerLevel: self.attackerLevel,
+          });
+          gameObject.clearTint();
+          self.attackerReleased = self.time.now;
+        }
+      }
+      if (gameObject.name === "turret") {
+        self.strikeCoordinate = self.cursor.vec.x;
+        if (dropZone.name === "triangleA" && self.isPlayerA) {
           console.log(self.cursor.vec.x);
-					dropZone.fillColor = 0x9fc5e8;
-					dropZone.setStrokeStyle(4, 0xffffff);
+          dropZone.fillColor = 0x9fc5e8;
+          dropZone.setStrokeStyle(4, 0xffffff);
           gameObject.setTint(0xff0000);
           self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit(
-						"placeTurret",
+          self.game.socket.emit(
+            "placeTurret",
             self.isPlayerA,
-						pointer.upX,
+            pointer.upX,
             pointer.upY,
             self.turretLevel
-					);
-				}
-				if (dropZone.name === "triangleB" && self.isPlayerB) {
-					dropZone.fillColor = 0xf4cccc;
-					dropZone.setStrokeStyle(4, 0xffffff);
+          );
+        }
+        if (dropZone.name === "triangleB" && self.isPlayerB) {
+          dropZone.fillColor = 0xf4cccc;
+          dropZone.setStrokeStyle(4, 0xffffff);
           gameObject.setTint(0xff0000);
           self.whereInMeter(self.strikeCoordinate);
-					self.game.socket.emit(
-						"placeTurret",
-						self.isPlayerA,
-						pointer.upX,
+          self.game.socket.emit(
+            "placeTurret",
+            self.isPlayerA,
+            pointer.upX,
             pointer.upY,
             self.turretLevel
-					);
-				}
-			}
-		});
+          );
+        }
+      }
+    });
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
       gameObject.x = gameObject.input.dragStartX;
       gameObject.y = gameObject.input.dragStartY;
