@@ -63,7 +63,6 @@ export default new Phaser.Class({
           0x008ee2
         );
         this.hp = 80;
-
       }
       if (this.attribute === 2) {
         this.level2 = true;
@@ -98,7 +97,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 10,
           this.follower.vec.y - 20,
-          0xFF033E
+          0xff033e
         );
         this.hp = 80;
       }
@@ -108,7 +107,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 20,
           this.follower.vec.y - 20,
-          0xFF033E
+          0xff033e
         );
         this.hp = 100;
       }
@@ -118,7 +117,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 30,
           this.follower.vec.y - 20,
-          0xFF033E
+          0xff033e
         );
         this.hp = 120;
       }
@@ -128,7 +127,6 @@ export default new Phaser.Class({
 
   receiveDamage: function (damage) {
     this.hp -= damage;
-    console.log(`attacker ${this.number} took damage`, this.hp);
     this.scene.setValue(this.healthBar, this.hp);
     // if hp drops below 0 we deactivate this enemy
     if (this.hp <= 0) {
@@ -143,11 +141,11 @@ export default new Phaser.Class({
   removeAttacker() {
     if (this.scene.isPlayerA && this.hasSwitched) {
       this.scene.incrementRedScore();
-      this.scene.woohoo.play()
+      this.scene.woohoo.play();
     }
     if (!this.scene.isPlayerA && this.hasSwitched) {
       this.scene.incrementBlueScore();
-      this.scene.woohoo.play()
+      this.scene.woohoo.play();
     }
     console.log("Removing Attacker...");
     this.scene.snips.stop();
@@ -200,7 +198,7 @@ export default new Phaser.Class({
         }
         if (this.follower.t >= 1) {
           this.scene.incrementBlueScore();
-          this.scene.woohoo.play()
+          this.scene.woohoo.play();
           this.healthBar.destroy();
           this.destroy();
         }
@@ -223,7 +221,7 @@ export default new Phaser.Class({
         if (this.follower.t <= 0) {
           this.healthBar.destroy();
           this.scene.incrementRedScore();
-          this.scene.woohoo.play()
+          this.scene.woohoo.play();
           this.destroy();
         }
       }
