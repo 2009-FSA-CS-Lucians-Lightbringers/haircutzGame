@@ -63,7 +63,7 @@ game.redPlayerReady = false;
 game.bluePlayerReady = false;
 game.playerAReady = false;
 game.playerBReady = false;
-game.playerBComputer = true;
+game.playerBComputer = false;
 
 game.socket.on("isPlayerA", function () {
   if (!game.isPlayerB) {

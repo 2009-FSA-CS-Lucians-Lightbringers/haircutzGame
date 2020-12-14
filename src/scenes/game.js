@@ -1291,7 +1291,6 @@ export default class Game extends Phaser.Scene {
       }
     });
     this.input.on("drop", function (pointer, gameObject, dropZone) {
-      console.log(pointer, dropZone);
       if (gameObject.name === "scissor") {
         self.strikeCoordinate = self.cursor.vec.x;
         if (dropZone.name === "path1") {
