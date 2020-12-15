@@ -31,7 +31,6 @@ export default new Phaser.Class({
       if (!scene.isPlayerA && this.hasSwitched) {
         scene.incrementRedScore();
       }
-      console.log("Removing Enemy...");
       scene.resourcePoints += 1;
       scene.resourceText.setText("USER | " + scene.resourcePoints);
       this.scene.addExplosion(this.x, this.y)
@@ -124,7 +123,6 @@ export default new Phaser.Class({
   receiveDamage: function (damage) {
     // decrement health points
     this.hp -= damage;
-    console.log(`enemy ${this.number} took damage`, this.hp);
     this.scene.setValue(this.healthBar, this.hp);
     if (this.hp <= 0) {
       this.scene.game.socket.emit(
@@ -145,7 +143,6 @@ export default new Phaser.Class({
       this.scene.incrementRedScore();
       this.scene.woohoo.play()
     }
-    console.log("Removing Enemy...");
     this.scene.resourcePoints += 1;
     this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
     this.healthBar.destroy();

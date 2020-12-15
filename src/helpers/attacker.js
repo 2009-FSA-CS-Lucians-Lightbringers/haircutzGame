@@ -34,7 +34,6 @@ export default new Phaser.Class({
       if (!scene.isPlayerA && this.hasSwitched) {
         scene.incrementBlueScore();
       }
-      console.log("Removing Attacker...");
       scene.snips.stop();
       scene.oppResourcePoints += 1;
       scene.oppResourceText.setText("ENEMY | " + scene.oppResourcePoints);

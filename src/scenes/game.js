@@ -296,7 +296,6 @@ export default class Game extends Phaser.Scene {
 
   addExplosion(x, y) {
     var explosion = this.explosions.get();
-    console.log("adding Explosion")
     explosion.fire(x, y);
     this.explosionSound.play()
   }
@@ -1385,7 +1384,6 @@ export default class Game extends Phaser.Scene {
       }
     });
     this.input.on("dragend", function (pointer, gameObject, dropZone) {
-      console.log(dropZone);
       gameObject.x = gameObject.input.dragStartX;
       gameObject.y = gameObject.input.dragStartY;
       gameObject.clearTint();

@@ -11,9 +11,7 @@ export default new Phaser.Class({
     this.setVisible(true);
     this.setPosition(x, y);
     this.anims.play("explosions");
-    console.log("explosion firing")
     this.once('animationcomplete', () => {
-      console.log('animationcomplete')
       this.destroy()
   })
 },
