@@ -4,6 +4,7 @@ import Enemy from "../helpers/enemy.js";
 import Attacker from "../helpers/attacker.js";
 import Turret from "../helpers/turret.js";
 import Bullet from "../helpers/bullet.js";
+import Explosion from "../helpers/explosion.js";
 // import HomeBase from "../helpers/homeBase.js";
 // import EnemyBase from "../helpers/enemyBase.js";
 
@@ -34,6 +35,7 @@ export default class Game extends Phaser.Scene {
     this.turretLevel = 2;
     this.strikeCoordinate;
     this.ouch;
+    this.explosionSound;
     this.snips;
     this.plop;
     this.bulletSound;
@@ -102,6 +104,7 @@ export default class Game extends Phaser.Scene {
     this.canPlaceTurret = this.canPlaceTurret.bind(this);
     // this.turretTimer = this.turretTimer.bind(this);
     this.addBullet = this.addBullet.bind(this);
+    this.addExplosion = this.addExplosion.bind(this);
     this.getEnemy = this.getEnemy.bind(this);
     this.getAttacker = this.getAttacker.bind(this);
     this.incrementBlueScore = this.incrementBlueScore.bind(this);
@@ -289,6 +292,13 @@ export default class Game extends Phaser.Scene {
       this.bulletSound.play();
       bullet.fire(x, y, angle);
     }
+  }
+
+  addExplosion(x, y) {
+    var explosion = this.explosions.get();
+    console.log("adding Explosion")
+    explosion.fire(x, y);
+    this.explosionSound.play()
   }
 
   getEnemy(x, y, distance) {
@@ -604,6 +614,7 @@ export default class Game extends Phaser.Scene {
     this.load.audio("ouch", ["/assets/ouch.mp3"]);
     this.load.audio("woohoo", ["/assets/woohoo.mp3"]);
     this.load.audio("plop", ["/assets/plop.mp3"]);
+    this.load.audio("explosionSound", ["/assets/explosion_sound.mp3"]);
   }
 
   create() {
@@ -801,6 +812,7 @@ export default class Game extends Phaser.Scene {
     this.gameTheme = this.sound.add("gameTheme", { loop: true });
     this.snips = this.sound.add("snips", { loop: true, delay: 0, rate: 4 });
     this.ouch = this.sound.add("ouch", { loop: false });
+    this.explosionSound = this.sound.add("explosionSound", { loop: false });
     this.woohoo = this.sound.add("woohoo", { loop: false });
     this.bulletSound = this.sound.add("bulletSound", { loop: false });
     this.plop = this.sound.add("plop", { loop: false });
@@ -1138,6 +1150,11 @@ export default class Game extends Phaser.Scene {
 
     this.bullets = this.physics.add.group({
       classType: Bullet,
+      runChildUpdate: true,
+    });
+
+    this.explosions = this.physics.add.group({
+      classType: Explosion,
       runChildUpdate: true,
     });
 

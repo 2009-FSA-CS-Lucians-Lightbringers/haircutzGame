@@ -34,6 +34,7 @@ export default new Phaser.Class({
       console.log("Removing Enemy...");
       scene.resourcePoints += 1;
       scene.resourceText.setText("USER | " + scene.resourcePoints);
+      this.scene.addExplosion(this.x, this.y)
       this.healthBar.destroy();
       this.destroy();
     };

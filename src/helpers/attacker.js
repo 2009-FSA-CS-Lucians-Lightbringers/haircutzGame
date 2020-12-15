@@ -38,6 +38,7 @@ export default new Phaser.Class({
       scene.snips.stop();
       scene.oppResourcePoints += 1;
       scene.oppResourceText.setText("ENEMY | " + scene.oppResourcePoints);
+      this.scene.addExplosion(this.x, this.y);
       this.healthBar.destroy();
       this.destroy();
     };
@@ -136,27 +137,6 @@ export default new Phaser.Class({
         this.createdByPlayerA
       );
     }
-  },
-
-  removeAttacker() {
-    if (this.scene.isPlayerA && this.hasSwitched) {
-      this.scene.incrementRedScore();
-      this.scene.woohoo.play();
-    }
-    if (!this.scene.isPlayerA && this.hasSwitched) {
-      this.scene.incrementBlueScore();
-      this.scene.woohoo.play();
-    }
-    console.log("Removing Attacker...");
-    this.scene.snips.stop();
-    this.scene.oppResourcePoints += 1;
-    this.scene.oppResourceText.setText(
-      "ENEMY | " + this.scene.oppResourcePoints
-    );
-    this.healthBar.destroy();
-    // this.anims.play('explosions')
-    //this.scene.explodeAnims(this.x, this.y)
-    this.destroy();
   },
 
   update: function (time, delta) {
