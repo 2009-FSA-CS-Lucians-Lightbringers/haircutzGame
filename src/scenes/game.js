@@ -297,7 +297,7 @@ export default class Game extends Phaser.Scene {
   addExplosion(x, y) {
     var explosion = this.explosions.get();
     explosion.fire(x, y);
-    this.explosionSound.play()
+    this.explosionSound.play();
   }
 
   getEnemy(x, y, distance) {
