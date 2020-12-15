@@ -33,7 +33,7 @@ export default new Phaser.Class({
       }
       scene.resourcePoints += 1;
       scene.resourceText.setText("USER | " + scene.resourcePoints);
-      this.scene.addExplosion(this.x, this.y)
+      scene.addExplosion(this.x, this.y);
       this.healthBar.destroy();
       this.destroy();
     };
@@ -92,7 +92,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 10,
           this.follower.vec.y - 20,
-          0xFF033E
+          0xff033e
         );
         this.hp = 80;
       }
@@ -102,7 +102,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 20,
           this.follower.vec.y - 20,
-          0xFF033E
+          0xff033e
         );
         this.hp = 100;
       }
@@ -112,7 +112,7 @@ export default new Phaser.Class({
         this.healthBar = this.scene.makeBar(
           this.follower.vec.x - 30,
           this.follower.vec.y - 20,
-          0xFF033E
+          0xff033e
         );
         this.hp = 120;
       }
@@ -132,23 +132,6 @@ export default new Phaser.Class({
       );
     }
   },
-
-
-  removeEnemy() {
-    if (this.scene.isPlayerA && this.hasSwitched) {
-      this.scene.incrementBlueScore();
-      this.scene.woohoo.play()
-    }
-    if (!this.scene.isPlayerA && this.hasSwitched) {
-      this.scene.incrementRedScore();
-      this.scene.woohoo.play()
-    }
-    this.scene.resourcePoints += 1;
-    this.scene.resourceText.setText("USER | " + this.scene.resourcePoints);
-    this.healthBar.destroy();
-    this.destroy();
-  },
-
 
   update: function (time, delta) {
     if (this.path) {
@@ -191,7 +174,7 @@ export default new Phaser.Class({
 
         if (this.follower.t >= 1) {
           this.scene.incrementBlueScore();
-          this.scene.woohoo.play()
+          this.scene.woohoo.play();
           this.healthBar.destroy();
           this.destroy();
         }
@@ -213,7 +196,7 @@ export default new Phaser.Class({
 
         if (this.follower.t <= 0) {
           this.scene.incrementRedScore();
-          this.scene.woohoo.play()
+          this.scene.woohoo.play();
           this.healthBar.destroy();
           this.destroy();
         }

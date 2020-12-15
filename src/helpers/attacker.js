@@ -37,7 +37,7 @@ export default new Phaser.Class({
       scene.snips.stop();
       scene.oppResourcePoints += 1;
       scene.oppResourceText.setText("ENEMY | " + scene.oppResourcePoints);
-      this.scene.addExplosion(this.x, this.y);
+      scene.addExplosion(this.x, this.y);
       this.healthBar.destroy();
       this.destroy();
     };
